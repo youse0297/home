@@ -8,6 +8,7 @@ add_executable(vecmath
     src/main.cpp
     src/Vec2.cpp
     src/Vec3.cpp
+    src/VectorUtils.cpp
 )
 
 target_include_directories(vecmath PRIVATE src)
