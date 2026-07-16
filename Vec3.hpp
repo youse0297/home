@@ -40,6 +40,9 @@ class Vec3 {
         //原地归一化
         Vec3& normalize();
 
+        // 三维叉积，返回一个新的 Vec3 向量
+        Vec3 cross(const Vec3& other) const;
+
         //打印
         friend std::ostream& operator<<(std::ostream& os, const Vec3& v);
 };
