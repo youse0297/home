@@ -40,6 +40,9 @@ class Vec2 {
         //原地归一化
         Vec2& normalize();
 
+        // 新增：二维叉积（返回标量）
+        double cross(const Vec2& other) const;   // a.x*b.y - a.y*b.x
+
         //打印
         friend std::ostream& operator<<(std::ostream& os, const Vec2& v);
 };
