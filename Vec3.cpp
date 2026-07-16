@@ -86,3 +86,11 @@ std::ostream& operator<<(std::ostream& os, const Vec3& v) {
     os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
     return os;
 }
+
+Vec3 Vec3::cross(const Vec3& other) const {
+    return Vec3(
+        y * other.z - z * other.y,   // 新 x 分量
+        z * other.x - x * other.z,   // 新 y 分量
+        x * other.y - y * other.x    // 新 z 分量
+    );
+}
