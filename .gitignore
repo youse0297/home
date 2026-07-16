@@ -11,3 +11,6 @@ CMakeCache.txt  # CMake 缓存文件
 CMakeFiles/
 cmake_install.cmake
 Makefile
+*.exe
+*.exe
+main.exe
