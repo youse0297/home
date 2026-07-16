@@ -82,3 +82,7 @@ std::ostream& operator<<(std::ostream& os, const Vec2& v) {
     os << "(" << v.x << ", " << v.y << ")";
     return os;
 }
+
+double Vec2::cross(const Vec2& other) const {
+    return x * other.y - y * other.x;
+}
