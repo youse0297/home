@@ -1,0 +1,13 @@
+build/          # 忽略构建目录
+*.exe           # Windows 可执行文件
+*.out           # Linux/macOS 可执行文件
+*.o             # 编译中间文件
+*.obj
+*.a             # 静态库
+*.so            # 共享库
+*.dll
+*.dylib
+CMakeCache.txt  # CMake 缓存文件
+CMakeFiles/
+cmake_install.cmake
+Makefile
