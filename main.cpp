@@ -1,54 +1,54 @@
 #include "Vec2.hpp"
 #include "Vec3.hpp"
+#include "VectorUtils.hpp"
 #include <iostream>
+#include <iomanip>
+#include <windows.h>
 
 int main() {
-    //测试 Vec2
-    Vec2 a(2.0, 4.0);
-    Vec2 b(4.0, -1.0);
+    SetConsoleOutputCP(CP_UTF8);
+    std::cout << std::fixed << std::setprecision(4);
 
-    std::cout << "Vec2 a= " << a << std::endl;
-    std::cout << "Vec2 b= " << b << std::endl;
+    // 设置坐标系为右手系 （默认）
+    g_handedness = Handedness::Right;
 
-    Vec2 c = a + b;
-    std::cout << "a + b = " << c << std::endl;
+    // 测试 Vec2
+    Vec2 a(1.0, 0.0);
+    Vec2 b(0.0, 1.0);
+    Vec2 c(2.0, 2.0);
 
-    Vec2 d = a - b;
-    std::cout << "a - b = " << d << std::endl;
+    std::cout << "=== Vec2 工具函数 ===" << "\n";
+    std::cout << "a = " << a << ", b = " << b << ", c = " << c << std::endl;
+    std::cout << "夹角 a - b (rad) = " << Vec2Utils::angle(a, b) << std::endl;
+    std::cout << "c 在 a 上的投影 = " << Vec2Utils::project(c, a) << std::endl;
+    std::cout << "a 相对于 b 的侧向符号 = " << Vec2Utils::side(a, b) << std::endl;
 
-    Vec2 e = a * 2.5;
-    std::cout << "a * 2.5 = " << e << std::endl;
+    // 切换到左手系
+    g_handedness = Handedness::Left;
+    std::cout << "切换到左手系,侧向符号 = " << Vec2Utils::side(a, b) << std::endl;
 
-    Vec2 f = 3.0 * a;
-    std::cout << "3.0 * a = " << f << std::endl;
+    // 测试 Vec3
+    Vec3 u(1.0, 0.0, 0.0);
+    Vec3 v(0.0, 1.0, 0.0);
+    Vec3 w(1.0, 1.0, 1.0);
+    Vec3 up(0.0, 0.0, 1.0);
 
-    Vec2 g = a.normalized();
-    std::cout << "normalized(a) = " << g << std::endl;
-    std::cout << "length of normalized(a) = " << g.length() << std::endl;
+    std::cout << "\n=== Vec3 工具函数 ===" << std::endl;
+    std::cout << "u = " << u << ", v = " << v << ", w = " << w << std::endl;
+    std::cout << "夹角 u - v (rad) = " << Vec3Utils::angle(u, v) << std::endl;
+    std::cout << "w 在 u 上的投影 = " << Vec3Utils::project(w, u) << std::endl;
 
-    //测试 Vec3
-    Vec3 p(1.0, 0.0, 0.0);
-    Vec3 q(0.0, 1.0, 3.0);
+    // 朝向判断 （右手系）
+    g_handedness = Handedness::Right;
+    Vec3 w2(1.0, -1.0, 0.0);
+    double side1 = Vec3Utils::side(u, w, up);
+    double side2 = Vec3Utils::side(u, w2, up);
+    std::cout << "w 相对于 u 的侧向符号 (右手系) = " << side1 << std::endl;
+    std::cout << "w2 相对于 u 的侧向符号 (右手系) = " << side2 << std::endl;
 
-    std::cout << "\nVec3 p = " << p << std::endl;
-    std::cout << "vec3 q = " << q << std::endl;
-
-    Vec3 r = p + q;
-    std::cout << "p + q = " << r << std::endl;
-
-    Vec3 s = p - q;
-    std::cout << "p - q = " << s << std::endl;
-
-    Vec3 t = p * 2.0;
-    std::cout << "p * 2.0 = " << t << std::endl;
-
-    Vec3 u = q.normalized();
-    std::cout << "normalized(q) = " << u << std::endl;
-
-    // 测试归一化后的长度
-    Vec3 v(3.0, 4.0, 0.0);
-    Vec3 vn = v.normalized();
-    std::cout << "v = " << v << ", normalized(v) = " << vn << ",length = " << vn.length() << std::endl;
+    // 切换到左手系
+    Vec3 vLeft = Vec3Utils::toHandedness(v, Handedness::Left);
+    std::cout << "切换到左手系, v = " << vLeft << std::endl;
 
     return 0;
 }
