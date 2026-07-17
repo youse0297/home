@@ -1,0 +1,10 @@
+{
+    "cmake.cmakePath": "E:\\TaProject\\tools\\cmake-4.3.3-windows-x86_64\\bin\\cmake.exe",
+    "cmake.generator": "Visual Studio 17 2022",
+    "cmake.configureArgs": [
+        "-A",
+        "x64"
+    ],
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureOnOpen": true
+}
