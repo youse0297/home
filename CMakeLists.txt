@@ -5,10 +5,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(vecmath
-    src/main.cpp
-    src/Vec2.cpp
-    src/Vec3.cpp
-    src/VectorUtils.cpp
+    main.cpp
+    Vec2.cpp
+    Vec3.cpp
+    VectorUtils.cpp
+    Vec4.cpp
+    Mat4.cpp
 )
 
-target_include_directories(vecmath PRIVATE src)
+target_include_directories(vecmath PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(MSVC)
+    target_compile_options(vecmath PRIVATE /utf-8)
+endif()
