@@ -13,6 +13,7 @@ add_executable(vecmath
     Mat4.cpp
     Transform.cpp
     Camera.cpp
+    Projection.cpp
 )
 
 target_include_directories(vecmath PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
