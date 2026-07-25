@@ -5,10 +5,15 @@
 namespace Camera {
 
     Mat4 perspective(double fovY, double aspect, double zNear, double zFar) {
-        if (zNear <= 0 || zFar <= zNear) {
+        constexpr double pi = 3.14159265358979323846;
+        if (!std::isfinite(fovY) || fovY <= 0.0 || fovY >= pi) {
+            throw std::invalid_argument("fovY must be finite and in the range (0, pi)");
+        }
+        if (!std::isfinite(zNear) || !std::isfinite(zFar) ||
+            zNear <= 0.0 || zFar <= zNear) {
             throw std::invalid_argument("zNear must be >0 and zFar > zNear");
         }
-        if (aspect <= 0) {
+        if (!std::isfinite(aspect) || aspect <= 0.0) {
             throw std::invalid_argument("aspect ratio must be positive");
         }
 
