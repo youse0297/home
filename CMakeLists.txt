@@ -9,12 +9,14 @@ add_executable(vecmath
     src/Vec2.cpp
     src/Vec3.cpp
     src/VectorUtils.cpp
+    src/Mat3.cpp
     src/Vec4.cpp
     src/Mat4.cpp
     src/Transform.cpp
     src/Camera.cpp
     src/Projection.cpp
     src/Pipeline.cpp
+    src/TangentSpace.cpp
 )
 
 target_include_directories(vecmath PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
