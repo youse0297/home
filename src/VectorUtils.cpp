@@ -54,7 +54,7 @@ namespace Vec3Utils {
         double lenSq = b.lengthSquared();
         if (lenSq == 0.0)
             return Vec3(0.0, 0.0, 0.0);
-            return b * (a.dot(b) / lenSq);
+        return b * (a.dot(b) / lenSq);
     }
 
     double side(const Vec3& dir, const Vec3& point, const Vec3& up){
