@@ -1,8 +1,8 @@
 # VecMath
 
-VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，提供二维、三维和四维向量运算、4×4 矩阵运算、左右手坐标系支持，以及图形学中常用的模型、视图、投影和视口变换。
+VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，提供二维、三维和四维向量运算、3×3/4×4 矩阵运算、左右手坐标系支持，以及图形学中常用的模型、视图、投影、视口、法线矩阵和切线空间变换。
 
-项目当前以控制台程序演示完整的 `Object → World → View → Clip → NDC → Screen` 顶点变换路径，并用固定数值验证最终屏幕坐标，不依赖第三方数学库。
+项目当前以控制台程序演示完整的 MVP 顶点路径，以及非均匀缩放下的逆转置法线变换和 TBN 映射，并使用固定数值自动验收，不依赖第三方数学库。
 
 ## 主要功能
 
@@ -12,11 +12,13 @@ VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，�
 | `Vec3` | 三维向量加减、数乘、点积、叉积、长度和归一化 |
 | `Vec4` | 四维向量运算，以及 `Vec3` 到齐次坐标的转换 |
 | `VectorUtils` | 夹角、投影、侧向判断和左右手坐标系转换 |
+| `Mat3` | 3×3 列主序矩阵、行列式、转置、求逆和方向向量变换 |
 | `Mat4` | 4×4 矩阵、矩阵乘法、矩阵与四维向量相乘 |
 | `Transform` | 平移、缩放、绕 X/Y/Z 轴旋转和绕任意轴旋转（Rodrigues 公式） |
 | `Camera` | `lookAt` 视图矩阵生成，支持任意相机位置与朝向 |
 | `Projection` | `perspective` 透视投影矩阵生成，采用右手系和 OpenGL 风格 NDC |
 | `Pipeline` | MVP 组合、齐次除法、裁剪体判断和屏幕视口映射 |
+| `TangentSpace` | 逆转置法线矩阵、方向/法线变换、TBN 构建和空间转换 |
 
 ## 数学约定
 
@@ -32,6 +34,8 @@ VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，�
 - MVP 组合顺序为 `Projection * View * Model`，矩阵作用于列向量时从右向左执行。
 - 默认屏幕视口采用左上角原点，X 向右、Y 向下；也可以选择左下角原点。
 - NDC 深度 `[-1, 1]` 会映射到视口的 `[minDepth, maxDepth]`，默认是 `[0, 1]`。
+- 法线矩阵使用模型矩阵左上 3×3 线性部分的逆转置：`NormalMatrix = transpose(inverse(Mat3(Model)))`。
+- TBN 矩阵按列存储 `T`、`B`、`N`，通过 Gram-Schmidt 保证切线与法线正交；切线符号用于处理镜像 UV。
 
 ## 环境要求
 
@@ -46,7 +50,7 @@ VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，�
 在项目根目录执行：
 
 ```powershell
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/main.cpp src/Vec2.cpp src/Vec3.cpp src/VectorUtils.cpp src/Vec4.cpp src/Mat4.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Pipeline.cpp -o main.exe
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/main.cpp src/Vec2.cpp src/Vec3.cpp src/VectorUtils.cpp src/Mat3.cpp src/Vec4.cpp src/Mat4.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Pipeline.cpp src/TangentSpace.cpp -o main.exe
 ./main.exe
 ```
 
@@ -177,6 +181,33 @@ screenY = viewportY + (1 - (ndcY + 1) / 2) * height   // 左上原点
 screenZ = minDepth + (ndcZ + 1) / 2 * (maxDepth - minDepth)
 ```
 
+### 法线矩阵与切线空间
+
+```cpp
+#include "TangentSpace.hpp"
+#include "Transform.hpp"
+
+Mat4 model = Transform::scaling(Vec3(2.0, 1.0, 0.5));
+Vec3 objectTangent = Vec3(1.0, 0.0, 1.0).normalized();
+Vec3 objectNormal = Vec3(1.0, 0.0, -1.0).normalized();
+
+Mat3 normalMatrix = TangentSpace::makeNormalMatrix(model);
+Vec3 worldTangent = TangentSpace::transformDirection(
+    model,
+    objectTangent
+).normalized();
+Vec3 worldNormal = TangentSpace::transformNormal(
+    normalMatrix,
+    objectNormal
+);
+Mat3 tbn = TangentSpace::buildTBN(worldNormal, worldTangent);
+
+Vec3 tangentNormal(0.0, 0.0, 1.0);
+Vec3 mappedWorldNormal = TangentSpace::tangentToWorld(tbn, tangentNormal);
+```
+
+固定基准中，正确逆转置变换得到 `T·N = 0`；如果错误地用模型矩阵直接变换法线，则 `T·N ≈ 0.8824`，说明非均匀缩放已经破坏垂直关系。构建 TBN 后，切线空间 `+Z` 会精确映射回世界空间法线。
+
 ## 项目结构
 
 ```text
@@ -191,11 +222,13 @@ screenZ = minDepth + (ndcZ + 1) / 2 * (maxDepth - minDepth)
     ├── Vec2.hpp / Vec2.cpp
     ├── Vec3.hpp / Vec3.cpp
     ├── Vec4.hpp / Vec4.cpp
+    ├── Mat3.hpp / Mat3.cpp
     ├── Mat4.hpp / Mat4.cpp
     ├── Transform.hpp / Transform.cpp
     ├── Camera.hpp / Camera.cpp
     ├── Projection.hpp / Projection.cpp
     ├── Pipeline.hpp / Pipeline.cpp
+    ├── TangentSpace.hpp / TangentSpace.cpp
     ├── VectorUtils.hpp / VectorUtils.cpp
     └── handedness.py
 ```
@@ -208,5 +241,8 @@ screenZ = minDepth + (ndcZ + 1) / 2 * (maxDepth - minDepth)
 - 透视除法要求裁剪坐标的 `w` 为有限非零值，否则 `Pipeline::perspectiveDivide` 会抛出异常。
 - `Pipeline::mapToViewport` 不会自动裁剪超出 NDC 的坐标；应先检查 `insideClipVolume`。
 - 常见失败点包括：MVP 乘法顺序写反、视图矩阵行列混淆、忘记齐次除法、混用 `[-1,1]` 与 `[0,1]` 深度范围，以及屏幕 Y 轴方向错误。
+- 法线不能在非均匀缩放下直接乘模型矩阵；平移分量也不参与法线变换。
+- 零缩放会使法线矩阵不可逆；切线与法线平行时也无法构建有效 TBN，接口会抛出异常。
+- 镜像 UV 应把顶点切线的手性符号传给 `buildTBN`，否则副切线方向会翻转。
 - `handedness.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。
