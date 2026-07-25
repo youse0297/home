@@ -1,6 +1,7 @@
 #include "Camera.hpp"
 #include "Pipeline.hpp"
 #include "Projection.hpp"
+#include "TangentSpace.hpp"
 #include "Transform.hpp"
 
 #include <cmath>
@@ -109,10 +110,77 @@ int main() {
         std::cout << "位于裁剪体内: " << result.insideClipVolume << '\n';
         std::cout << "视口左上角基准: " << viewportTopLeft << '\n';
         std::cout << "视口右下角基准: " << viewportBottomRight << '\n';
-        std::cout << "固定数值验证: PASS\n";
+        std::cout << "MVP 固定数值验证: PASS\n";
+
+        const Mat4 nonUniformScale = Transform::scaling(Vec3(2.0, 1.0, 0.5));
+        const Vec3 objectTangent = Vec3(1.0, 0.0, 1.0).normalized();
+        const Vec3 objectNormal = Vec3(1.0, 0.0, -1.0).normalized();
+        const Mat3 normalMatrix = TangentSpace::makeNormalMatrix(nonUniformScale);
+        const Vec3 worldTangent = TangentSpace::transformDirection(
+            nonUniformScale,
+            objectTangent
+        ).normalized();
+        const Vec3 worldNormal = TangentSpace::transformNormal(
+            normalMatrix,
+            objectNormal
+        );
+        const Vec3 naiveNormal = TangentSpace::transformDirection(
+            nonUniformScale,
+            objectNormal
+        ).normalized();
+        const double correctDot = worldTangent.dot(worldNormal);
+        const double naiveDot = worldTangent.dot(naiveNormal);
+        const Mat3 tbn = TangentSpace::buildTBN(worldNormal, worldTangent);
+        const Vec3 mappedNormal = TangentSpace::tangentToWorld(
+            tbn,
+            Vec3(0.0, 0.0, 1.0)
+        );
+        const Vec3 roundTripNormal = TangentSpace::worldToTangent(tbn, mappedNormal);
+
+        expectNear("normal matrix m00", normalMatrix.m[0], 0.5);
+        expectNear("normal matrix m11", normalMatrix.m[4], 1.0);
+        expectNear("normal matrix m22", normalMatrix.m[8], 2.0);
+        expectNear("world tangent.x", worldTangent.x, 0.9701425001);
+        expectNear("world tangent.z", worldTangent.z, 0.2425356250);
+        expectNear("world normal.x", worldNormal.x, 0.2425356250);
+        expectNear("world normal.z", worldNormal.z, -0.9701425001);
+        expectNear("correct tangent-normal dot", correctDot, 0.0);
+        expectNear("naive tangent-normal dot", naiveDot, 15.0 / 17.0);
+        expectNear("TBN determinant", tbn.determinant(), 1.0);
+        expectNear("mapped normal.x", mappedNormal.x, worldNormal.x);
+        expectNear("mapped normal.y", mappedNormal.y, worldNormal.y);
+        expectNear("mapped normal.z", mappedNormal.z, worldNormal.z);
+        expectNear("round trip normal.x", roundTripNormal.x, 0.0);
+        expectNear("round trip normal.y", roundTripNormal.y, 0.0);
+        expectNear("round trip normal.z", roundTripNormal.z, 1.0);
+
+        bool singularMatrixRejected = false;
+        try {
+            TangentSpace::makeNormalMatrix(
+                Transform::scaling(Vec3(1.0, 1.0, 0.0))
+            );
+        } catch (const std::domain_error&) {
+            singularMatrixRejected = true;
+        }
+        if (!singularMatrixRejected) {
+            throw std::runtime_error("singular normal matrix was not rejected");
+        }
+
+        std::cout << "\n=== 法线矩阵与切线空间 ===\n";
+        std::cout << "非均匀缩放矩阵: (2.0000, 1.0000, 0.5000)\n";
+        std::cout << "法线矩阵:\n" << normalMatrix << '\n';
+        std::cout << "世界切线 T: " << worldTangent << '\n';
+        std::cout << "正确世界法线 N: " << worldNormal << '\n';
+        std::cout << "错误法线（直接乘模型矩阵）: " << naiveNormal << '\n';
+        std::cout << "正确 T·N: " << correctDot << '\n';
+        std::cout << "错误 T·N: " << naiveDot << '\n';
+        std::cout << "TBN 矩阵:\n" << tbn << '\n';
+        std::cout << "切线空间 +Z 映射到世界空间: " << mappedNormal << '\n';
+        std::cout << "奇异缩放保护: " << singularMatrixRejected << '\n';
+        std::cout << "法线/TBN 固定数值验证: PASS\n";
         return 0;
     } catch (const std::exception& error) {
-        std::cerr << "MVP 验证失败: " << error.what() << '\n';
+        std::cerr << "图形数学验证失败: " << error.what() << '\n';
         return 1;
     }
 }
