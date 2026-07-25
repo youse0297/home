@@ -1,37 +1,46 @@
 #include "Camera.hpp"
 #include <cmath>
+#include <stdexcept>
 
 namespace Camera {
-    
-    Mat4 lookAt(const Vec3& eye, const Vec3& target, const Vec3& up) {
-        // 计算相机坐标系向量 （右手系）
-        Vec3 forward = (eye - target).normalized();
-        Vec3 right   = up.cross(forward).normalized();
-        Vec3 newUp   = forward.cross(right).normalized();
 
-        // 构造视图矩阵 （列主序）
-        // 旋转部分：将世界轴映射到相机轴
-        // 平移部分：将相机移到原点
+    Mat4 lookAt(const Vec3& eye, const Vec3& target, const Vec3& up) {
+        constexpr double epsilon = 1e-12;
+        const Vec3 backwardVector = eye - target;
+        if (backwardVector.lengthSquared() <= epsilon) {
+            throw std::invalid_argument("eye and target must be different");
+        }
+        if (up.lengthSquared() <= epsilon) {
+            throw std::invalid_argument("up vector must be non-zero");
+        }
+
+        const Vec3 backward = backwardVector.normalized();
+        const Vec3 rightVector = up.cross(backward);
+        if (rightVector.lengthSquared() <= epsilon) {
+            throw std::invalid_argument("up vector must not be parallel to the view direction");
+        }
+
+        const Vec3 right = rightVector.normalized();
+        const Vec3 cameraUp = backward.cross(right);
         Mat4 view = Mat4::identity();
 
-        // 第0列 （right）
         view.m[0] = right.x;
-        view.m[1] = right.y;
-        view.m[2] = right.z;
-        // 第1列 （newup）
-        view.m[4] = newUp.x;
-        view.m[5] = newUp.y;
-        view.m[6] = newUp.z;
-        // 第2列 （-forward）
-        view.m[8] = -forward.x;
-        view.m[9] = -forward.y;
-        view.m[10] = -forward.z;
-        // 第3列 （平移）
+        view.m[4] = right.y;
+        view.m[8] = right.z;
+
+        view.m[1] = cameraUp.x;
+        view.m[5] = cameraUp.y;
+        view.m[9] = cameraUp.z;
+
+        view.m[2] = backward.x;
+        view.m[6] = backward.y;
+        view.m[10] = backward.z;
+
         view.m[12] = -right.dot(eye);
-        view.m[13] = -newUp.dot(eye);
-        view.m[14] = forward.dot(eye);
+        view.m[13] = -cameraUp.dot(eye);
+        view.m[14] = -backward.dot(eye);
 
         return view;
     }
-    
-} // namespace Camera 
+
+} // namespace Camera
