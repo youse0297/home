@@ -1,8 +1,8 @@
-# VecMath
+# VecMath / CPU 软渲染器
 
-VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，提供二维、三维和四维向量运算、3×3/4×4 矩阵运算、左右手坐标系支持，以及图形学中常用的模型、视图、投影、视口、法线矩阵和切线空间变换。
+本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础，以及独立的 framebuffer、RGBA/深度缓冲和渲染循环骨架。
 
-项目当前以控制台程序演示完整的 MVP 顶点路径，以及非均匀缩放下的逆转置法线变换和 TBN 映射，并使用固定数值自动验收，不依赖第三方数学库。
+项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。图形数学阶段验收覆盖 4 组固定数值套件，并可通过 CTest 重复执行，不依赖第三方数学库。
 
 ## 主要功能
 
@@ -19,6 +19,9 @@ VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，�
 | `Projection` | `perspective` 透视投影矩阵生成，采用右手系和 OpenGL 风格 NDC |
 | `Pipeline` | MVP 组合、齐次除法、裁剪体判断和屏幕视口映射 |
 | `TangentSpace` | 逆转置法线矩阵、方向/法线变换、TBN 构建和空间转换 |
+| `Fresnel` | 介电材质基础反射率 `F0` 和标量/RGB Schlick 近似 |
+| `Framebuffer` | 行主序 RGBA/深度缓冲、清屏、尺寸与坐标校验 |
+| `SoftwareRenderer` | 固定帧生命周期、逐帧清屏、帧回调和完成帧计数 |
 
 ## 数学约定
 
@@ -36,6 +39,7 @@ VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，�
 - NDC 深度 `[-1, 1]` 会映射到视口的 `[minDepth, maxDepth]`，默认是 `[0, 1]`。
 - 法线矩阵使用模型矩阵左上 3×3 线性部分的逆转置：`NormalMatrix = transpose(inverse(Mat3(Model)))`。
 - TBN 矩阵按列存储 `T`、`B`、`N`，通过 Gram-Schmidt 保证切线与法线正交；切线符号用于处理镜像 UV。
+- 介电材质正入射反射率为 `F0 = ((n1 - n2) / (n1 + n2))²`；Schlick 近似为 `F = F0 + (1 - F0)(1 - cosθ)⁵`。
 
 ## 环境要求
 
@@ -45,13 +49,26 @@ VecMath 是一个使用 C++17 编写的轻量级向量与矩阵数学项目，�
 
 ## 编译与运行
 
+### CMake
+
+```powershell
+cmake -S . -B build
+cmake --build build --config Debug
+./build/Debug/vecmath.exe
+./build/Debug/soft_renderer.exe
+ctest --test-dir build -C Debug --output-on-failure
+```
+
 ### MinGW-w64
 
 在项目根目录执行：
 
 ```powershell
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/main.cpp src/Vec2.cpp src/Vec3.cpp src/VectorUtils.cpp src/Mat3.cpp src/Vec4.cpp src/Mat4.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Pipeline.cpp src/TangentSpace.cpp -o main.exe
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/main.cpp src/Vec2.cpp src/Vec3.cpp src/VectorUtils.cpp src/Mat3.cpp src/Vec4.cpp src/Mat4.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Pipeline.cpp src/TangentSpace.cpp src/Fresnel.cpp -o main.exe
 ./main.exe
+
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/soft_renderer_main.cpp src/Framebuffer.cpp src/SoftwareRenderer.cpp -o soft_renderer.exe
+./soft_renderer.exe
 ```
 
 ### 中文显示
@@ -64,6 +81,33 @@ chcp 65001
 ```
 
 编译参数 `-finput-charset=UTF-8` 用于指定源文件编码，`-fexec-charset=UTF-8` 用于保证字符串常量以 UTF-8 写入可执行文件。
+
+## 图形数学阶段验收
+
+| 验收套件 | 固定基准 |
+| --- | --- |
+| 向量、矩阵与组合变换 | Vec2 长度/点积/叉积、Vec3 右手系叉积、Mat3 求逆、`T * R * S` 顺序 |
+| MVP 与视口映射 | 世界/观察/裁剪/NDC/屏幕坐标，以及组合 MVP 一致性 |
+| 法线矩阵与切线空间 | 非均匀缩放逆转置、TBN 正交性、空间往返、奇异矩阵保护 |
+| Fresnel | 介电材质 `F0`、标量/RGB Schlick 近似、无效折射率与反射率保护 |
+
+使用 CMake 构建后，可重复运行阶段验收：
+
+```powershell
+cmake -S . -B build
+cmake --build build --config Debug
+ctest --test-dir build -C Debug --output-on-failure
+```
+
+四个套件全部执行且固定基准一致时，程序输出 `图形数学阶段验收: PASS` 并以退出码 `0` 结束；任何数值偏差、非有限值或参数保护失败都会以非零退出码结束。
+
+## 软渲染器骨架
+
+`Framebuffer` 分配同尺寸的 RGBA 颜色缓冲与 `[0, 1]` 深度缓冲。`SoftwareRenderer` 每帧先清理两组缓冲，再调用一次帧回调，回调成功后递增完成帧数。
+
+当前固定基准运行 4×3 framebuffer 共 3 帧，验证逐帧清屏、缓冲读写、帧序号，以及非法尺寸/深度/坐标保护。完整接口约定、后续范围和排除项见 [CPU 软渲染器 v1.0 范围冻结](docs/SOFTWARE_RENDERER_SCOPE.md)。
+
+本版本明确不做阴影、抗锯齿和次表面散射；OBJ、三角形光栅化、纹理和 PBR 属于后续已排期任务。
 
 ## 使用示例
 
@@ -208,6 +252,22 @@ Vec3 mappedWorldNormal = TangentSpace::tangentToWorld(tbn, tangentNormal);
 
 固定基准中，正确逆转置变换得到 `T·N = 0`；如果错误地用模型矩阵直接变换法线，则 `T·N ≈ 0.8824`，说明非均匀缩放已经破坏垂直关系。构建 TBN 后，切线空间 `+Z` 会精确映射回世界空间法线。
 
+### Fresnel 基础
+
+```cpp
+#include "Fresnel.hpp"
+
+double glassF0 = Fresnel::dielectricF0(1.0, 1.5);
+double facing = Fresnel::schlick(1.0, glassF0);
+double atSixtyDegrees = Fresnel::schlick(0.5, glassF0);
+double grazing = Fresnel::schlick(0.0, glassF0);
+
+Vec3 copperF0(0.95, 0.64, 0.54);
+Vec3 copperAtSixtyDegrees = Fresnel::schlick(0.5, copperF0);
+```
+
+空气到玻璃的固定基准得到 `F0 = 0.04`。正视时反射率为 `0.04`，60° 时为 `0.07`，掠射角时趋近 `1.0`；RGB 重载可表达金属的有色基础反射率。
+
 ## 项目结构
 
 ```text
@@ -215,10 +275,15 @@ Vec3 mappedWorldNormal = TangentSpace::tangentToWorld(tbn, tangentNormal);
 ├── CMakeLists.txt
 ├── README.md
 ├── ISSUES.md
+├── docs/
+│   └── SOFTWARE_RENDERER_SCOPE.md
 ├── output/
 │   └── handedness.png
 └── src/
     ├── main.cpp
+    ├── soft_renderer_main.cpp
+    ├── Framebuffer.hpp / Framebuffer.cpp
+    ├── SoftwareRenderer.hpp / SoftwareRenderer.cpp
     ├── Vec2.hpp / Vec2.cpp
     ├── Vec3.hpp / Vec3.cpp
     ├── Vec4.hpp / Vec4.cpp
@@ -229,6 +294,7 @@ Vec3 mappedWorldNormal = TangentSpace::tangentToWorld(tbn, tangentNormal);
     ├── Projection.hpp / Projection.cpp
     ├── Pipeline.hpp / Pipeline.cpp
     ├── TangentSpace.hpp / TangentSpace.cpp
+    ├── Fresnel.hpp / Fresnel.cpp
     ├── VectorUtils.hpp / VectorUtils.cpp
     └── handedness.py
 ```
@@ -244,5 +310,7 @@ Vec3 mappedWorldNormal = TangentSpace::tangentToWorld(tbn, tangentNormal);
 - 法线不能在非均匀缩放下直接乘模型矩阵；平移分量也不参与法线变换。
 - 零缩放会使法线矩阵不可逆；切线与法线平行时也无法构建有效 TBN，接口会抛出异常。
 - 镜像 UV 应把顶点切线的手性符号传给 `buildTBN`，否则副切线方向会翻转。
+- `Fresnel::schlick` 会把 `cosTheta` 夹到 `[0, 1]`；`F0` 必须位于 `[0, 1]`，折射率必须为有限正数。
+- framebuffer 采用左上原点和行主序，深度范围固定为 `[0, 1]`；本阶段不包含深度测试逻辑。
 - `handedness.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。
