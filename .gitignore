@@ -6,6 +6,7 @@ build/
 *.out
 *.o
 *.obj
+!tests/data/*.obj
 *.a
 *.so
 *.dll
