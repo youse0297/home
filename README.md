@@ -1,6 +1,6 @@
 # VecMath / CPU 软渲染器
 
-本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础、OBJ 顶点数据读取，以及独立的 framebuffer、RGBA/深度缓冲和渲染循环骨架。
+本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础、OBJ 顶点数据读取、MVP 顶点着色与屏幕空间三角形输出，以及独立的 framebuffer、RGBA/深度缓冲和渲染循环骨架。
 
 项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。图形数学阶段验收覆盖 4 组固定数值套件，并可通过 CTest 重复执行，不依赖第三方数学库。
 
@@ -22,6 +22,7 @@
 | `Fresnel` | 介电材质基础反射率 `F0` 和标量/RGB Schlick 近似 |
 | `Framebuffer` | 行主序 RGBA/深度缓冲、清屏、尺寸与坐标校验 |
 | `ObjLoader` | OBJ `v/vt/vn`、正负索引、三角面、多边形扇形三角化和结构化解析异常 |
+| `VertexStage` | OBJ 三角面装配、MVP 顶点变换、屏幕空间输出和保守裁剪分类 |
 | `SoftwareRenderer` | 固定帧生命周期、逐帧清屏、帧回调和完成帧计数 |
 
 ## 数学约定
@@ -58,6 +59,7 @@ cmake --build build --config Debug
 ./build/Debug/vecmath.exe
 ./build/Debug/soft_renderer.exe
 ./build/Debug/obj_loader_acceptance.exe
+./build/Debug/vertex_stage_acceptance.exe
 ctest --test-dir build -C Debug --output-on-failure
 ```
 
@@ -74,6 +76,9 @@ g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/soft_renderer_m
 
 g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/obj_loader_main.cpp src/ObjLoader.cpp src/Vec2.cpp src/Vec3.cpp -o obj_loader_acceptance.exe
 ./obj_loader_acceptance.exe
+
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/vertex_stage_main.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Pipeline.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o vertex_stage_acceptance.exe
+./vertex_stage_acceptance.exe
 ```
 
 ### 中文显示
@@ -112,7 +117,7 @@ ctest --test-dir build -C Debug --output-on-failure
 
 当前固定基准运行 4×3 framebuffer 共 3 帧，验证逐帧清屏、缓冲读写、帧序号，以及非法尺寸/深度/坐标保护。完整接口约定、后续范围和排除项见 [CPU 软渲染器 v1.0 范围冻结](docs/SOFTWARE_RENDERER_SCOPE.md)。
 
-OBJ 顶点数据读取已按首项日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射；三角形光栅化、纹理和 PBR 属于后续已排期任务。
+OBJ 读取和顶点着色已按前两项日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射；三角形光栅化、纹理和 PBR 属于后续已排期任务。
 
 ## 使用示例
 
@@ -288,9 +293,11 @@ Vec3 copperAtSixtyDegrees = Fresnel::schlick(0.5, copperF0);
     ├── main.cpp
     ├── soft_renderer_main.cpp
     ├── obj_loader_main.cpp
+    ├── vertex_stage_main.cpp
     ├── Framebuffer.hpp / Framebuffer.cpp
     ├── ObjLoader.hpp / ObjLoader.cpp
     ├── SoftwareRenderer.hpp / SoftwareRenderer.cpp
+    ├── VertexStage.hpp / VertexStage.cpp
     ├── Vec2.hpp / Vec2.cpp
     ├── Vec3.hpp / Vec3.cpp
     ├── Vec4.hpp / Vec4.cpp
@@ -323,5 +330,6 @@ Vec3 copperAtSixtyDegrees = Fresnel::schlick(0.5, copperF0);
 - `Fresnel::schlick` 会把 `cosTheta` 夹到 `[0, 1]`；`F0` 必须位于 `[0, 1]`，折射率必须为有限正数。
 - framebuffer 采用左上原点和行主序，深度范围固定为 `[0, 1]`；本阶段不包含深度测试逻辑。
 - OBJ 面索引在加载时转为零基下标；缺失的 UV/法线保留为 `kMissingObjIndex`。格式、数值或索引错误抛出 `ObjParseError`，可查询来源、行号和原因。
+- `VertexStage` 保留 OBJ 角点索引，输出世界/观察/裁剪/NDC/屏幕坐标及 `reciprocalW`；`RequiresClipping` 只标记待裁剪，不在本阶段修改三角形。
 - `handedness.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。
