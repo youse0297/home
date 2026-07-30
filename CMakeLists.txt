@@ -28,6 +28,7 @@ target_link_libraries(vecmath PRIVATE graphics_math)
 add_library(software_renderer
     src/Framebuffer.cpp
     src/ObjLoader.cpp
+    src/Rasterizer.cpp
     src/SoftwareRenderer.cpp
     src/VertexStage.cpp
 )
@@ -53,6 +54,16 @@ add_executable(vertex_stage_acceptance
 )
 target_link_libraries(vertex_stage_acceptance PRIVATE software_renderer)
 
+add_executable(triangle_rasterizer_acceptance
+    src/rasterizer_main.cpp
+)
+target_link_libraries(triangle_rasterizer_acceptance PRIVATE software_renderer)
+
+add_executable(depth_buffer_acceptance
+    src/depth_buffer_main.cpp
+)
+target_link_libraries(depth_buffer_acceptance PRIVATE software_renderer)
+
 if(MSVC)
     target_compile_options(graphics_math PRIVATE /utf-8)
     target_compile_options(vecmath PRIVATE /utf-8)
@@ -60,6 +71,8 @@ if(MSVC)
     target_compile_options(soft_renderer PRIVATE /utf-8)
     target_compile_options(obj_loader_acceptance PRIVATE /utf-8)
     target_compile_options(vertex_stage_acceptance PRIVATE /utf-8)
+    target_compile_options(triangle_rasterizer_acceptance PRIVATE /utf-8)
+    target_compile_options(depth_buffer_acceptance PRIVATE /utf-8)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(graphics_math PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(vecmath PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
@@ -67,6 +80,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(soft_renderer PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(obj_loader_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(vertex_stage_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+    target_compile_options(triangle_rasterizer_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+    target_compile_options(depth_buffer_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
 endif()
 
 include(CTest)
@@ -75,4 +90,6 @@ if(BUILD_TESTING)
     add_test(NAME software_renderer_skeleton_acceptance COMMAND soft_renderer)
     add_test(NAME obj_vertex_data_acceptance COMMAND obj_loader_acceptance)
     add_test(NAME vertex_shading_stage_acceptance COMMAND vertex_stage_acceptance)
+    add_test(NAME triangle_rasterizer_acceptance COMMAND triangle_rasterizer_acceptance)
+    add_test(NAME depth_buffer_acceptance COMMAND depth_buffer_acceptance)
 endif()
