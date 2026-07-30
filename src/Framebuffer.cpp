@@ -76,6 +76,33 @@ void Framebuffer::setDepth(std::size_t x, std::size_t y, double depth) {
     depthBuffer_[indexOf(x, y)] = depth;
 }
 
+bool Framebuffer::depthTest(
+    std::size_t x,
+    std::size_t y,
+    double depth
+) const {
+    requireDepth(depth);
+    return depth < depthBuffer_[indexOf(x, y)];
+}
+
+bool Framebuffer::writeFragment(
+    std::size_t x,
+    std::size_t y,
+    double depth,
+    const Color& color
+) {
+    requireDepth(depth);
+    requireColor(color);
+    const std::size_t index = indexOf(x, y);
+    if (depth >= depthBuffer_[index]) {
+        return false;
+    }
+
+    colorBuffer_[index] = color;
+    depthBuffer_[index] = depth;
+    return true;
+}
+
 const Color& Framebuffer::colorAt(std::size_t x, std::size_t y) const {
     return colorBuffer_[indexOf(x, y)];
 }
