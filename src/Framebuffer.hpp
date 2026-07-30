@@ -23,6 +23,13 @@ public:
 
     void setColor(std::size_t x, std::size_t y, const Color& color);
     void setDepth(std::size_t x, std::size_t y, double depth);
+    bool depthTest(std::size_t x, std::size_t y, double depth) const;
+    bool writeFragment(
+        std::size_t x,
+        std::size_t y,
+        double depth,
+        const Color& color
+    );
 
     const Color& colorAt(std::size_t x, std::size_t y) const;
     double depthAt(std::size_t x, std::size_t y) const;
