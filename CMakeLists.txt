@@ -30,6 +30,7 @@ add_library(software_renderer
     src/ObjLoader.cpp
     src/Rasterizer.cpp
     src/SoftwareRenderer.cpp
+    src/Texture2D.cpp
     src/VertexStage.cpp
 )
 target_include_directories(software_renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -64,6 +65,15 @@ add_executable(depth_buffer_acceptance
 )
 target_link_libraries(depth_buffer_acceptance PRIVATE software_renderer)
 
+add_executable(texture_sampling_acceptance
+    src/texture_sampling_main.cpp
+)
+target_link_libraries(texture_sampling_acceptance PRIVATE software_renderer)
+target_compile_definitions(
+    texture_sampling_acceptance
+    PRIVATE TEXTURE_FIXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/tests/data/checker.ppm"
+)
+
 if(MSVC)
     target_compile_options(graphics_math PRIVATE /utf-8)
     target_compile_options(vecmath PRIVATE /utf-8)
@@ -73,6 +83,7 @@ if(MSVC)
     target_compile_options(vertex_stage_acceptance PRIVATE /utf-8)
     target_compile_options(triangle_rasterizer_acceptance PRIVATE /utf-8)
     target_compile_options(depth_buffer_acceptance PRIVATE /utf-8)
+    target_compile_options(texture_sampling_acceptance PRIVATE /utf-8)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(graphics_math PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(vecmath PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
@@ -82,6 +93,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(vertex_stage_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(triangle_rasterizer_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(depth_buffer_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+    target_compile_options(texture_sampling_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
 endif()
 
 include(CTest)
@@ -92,4 +104,5 @@ if(BUILD_TESTING)
     add_test(NAME vertex_shading_stage_acceptance COMMAND vertex_stage_acceptance)
     add_test(NAME triangle_rasterizer_acceptance COMMAND triangle_rasterizer_acceptance)
     add_test(NAME depth_buffer_acceptance COMMAND depth_buffer_acceptance)
+    add_test(NAME texture_sampling_acceptance COMMAND texture_sampling_acceptance)
 endif()
