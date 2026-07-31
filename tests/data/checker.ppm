@@ -1,0 +1,6 @@
+P3
+# 2x2 acceptance texture, rows are stored top to bottom.
+2 2
+255
+255 0 0    0 255 0
+0 0 255    255 255 255
