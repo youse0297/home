@@ -1,6 +1,6 @@
 # VecMath / CPU 软渲染器
 
-本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础、OBJ 顶点数据读取、MVP 顶点着色、屏幕空间三角形覆盖、透视正确插值、深度测试与基础面剔除，以及独立的 framebuffer 和渲染循环骨架。
+本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础、OBJ 顶点数据读取、MVP 顶点着色、屏幕空间三角形覆盖、透视正确插值、深度测试、基础面剔除，以及 PPM 纹理加载与 UV 最近邻采样。
 
 项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。图形数学阶段验收覆盖 4 组固定数值套件，并可通过 CTest 重复执行，不依赖第三方数学库。
 
@@ -24,6 +24,7 @@
 | `ObjLoader` | OBJ `v/vt/vn`、正负索引、三角面、多边形扇形三角化和结构化解析异常 |
 | `VertexStage` | OBJ 三角面装配、MVP 顶点变换、屏幕空间输出和保守裁剪分类 |
 | `Rasterizer` | 包围盒、边函数、top-left 覆盖、重心坐标、透视权重和基础面剔除 |
+| `Texture2D` | PPM P3/P6 纹理加载、8/16 位归一化、Clamp/Repeat 最近邻 UV 采样 |
 | `SoftwareRenderer` | 固定帧生命周期、逐帧清屏、帧回调和完成帧计数 |
 
 ## 数学约定
@@ -63,6 +64,7 @@ cmake --build build --config Debug
 ./build/Debug/vertex_stage_acceptance.exe
 ./build/Debug/triangle_rasterizer_acceptance.exe
 ./build/Debug/depth_buffer_acceptance.exe
+./build/Debug/texture_sampling_acceptance.exe
 ctest --test-dir build -C Debug --output-on-failure
 ```
 
@@ -88,6 +90,9 @@ g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/rasterizer_main
 
 g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/depth_buffer_main.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Pipeline.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o depth_buffer_acceptance.exe
 ./depth_buffer_acceptance.exe
+
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/texture_sampling_main.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Pipeline.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o texture_sampling_acceptance.exe
+./texture_sampling_acceptance.exe
 ```
 
 ### 中文显示
@@ -126,7 +131,7 @@ ctest --test-dir build -C Debug --output-on-failure
 
 当前固定基准运行 4×3 framebuffer 共 3 帧，验证逐帧清屏、缓冲读写、帧序号，以及非法尺寸/深度/坐标保护。完整接口约定、后续范围和排除项见 [CPU 软渲染器 v1.0 范围冻结](docs/SOFTWARE_RENDERER_SCOPE.md)。
 
-OBJ 读取、顶点着色、三角形覆盖与深度缓冲已按前四项日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射；纹理和 PBR 属于后续已排期任务。
+OBJ 读取、顶点着色、三角形覆盖、深度缓冲及纹理/UV 采样已按前五项日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射；光照与 PBR 属于后续已排期任务。
 
 ## 使用示例
 
@@ -305,10 +310,12 @@ Vec3 copperAtSixtyDegrees = Fresnel::schlick(0.5, copperF0);
     ├── vertex_stage_main.cpp
     ├── rasterizer_main.cpp
     ├── depth_buffer_main.cpp
+    ├── texture_sampling_main.cpp
     ├── Framebuffer.hpp / Framebuffer.cpp
     ├── ObjLoader.hpp / ObjLoader.cpp
     ├── Rasterizer.hpp / Rasterizer.cpp
     ├── SoftwareRenderer.hpp / SoftwareRenderer.cpp
+    ├── Texture2D.hpp / Texture2D.cpp
     ├── VertexStage.hpp / VertexStage.cpp
     ├── Vec2.hpp / Vec2.cpp
     ├── Vec3.hpp / Vec3.cpp
@@ -325,6 +332,7 @@ Vec3 copperAtSixtyDegrees = Fresnel::schlick(0.5, copperF0);
     └── handedness.py
 └── tests/
     └── data/
+        ├── checker.ppm
         └── vertex_data.obj
 ```
 
@@ -346,5 +354,9 @@ Vec3 copperAtSixtyDegrees = Fresnel::schlick(0.5, copperF0);
 - `Rasterizer` 在像素中心采样并采用 top-left 共享边规则；线性重心坐标用于屏幕深度，`barycentric[i] * reciprocalW[i]` 归一化后用于透视正确属性插值。
 - `Rasterizer` 只接收 `FullyInside` 三角形；`FullyOutside` 不产生样本，`RequiresClipping` 必须先经过后续几何裁剪阶段。
 - `RasterizerOptions` 默认不剔除；启用背面剔除时，左上原点屏幕坐标默认以顺时针为正面，也可切换为逆时针或前面剔除。
+- `Texture2D` 支持 PPM `P3`/`P6`、最大 16 位通道，加载后统一为顶部起始行主序 `[0,1]` RGBA；当前不宣称支持 PNG/JPEG。
+- PPM 通道仅做数值归一化，本阶段不执行 sRGB 到线性空间转换；颜色空间处理留给后续光照/PBR 阶段。
+- UV 采样默认使用 OBJ/OpenGL 风格左下原点与 Clamp，可配置 Repeat 或顶部原点；边界 `1.0` 会安全落到最后一个 texel。
+- 应先用 `RasterSample::interpolatePerspective` 插值 UV，再调用 `sampleNearest`；直接用线性重心坐标会产生透视纹理形变。
 - `handedness.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。
