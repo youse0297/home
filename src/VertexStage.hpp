@@ -20,12 +20,21 @@ struct VertexStageUniforms {
     Mat4 view = Mat4::identity();
     Mat4 projection = Mat4::identity();
     Pipeline::Viewport viewport{};
+    bool generateMissingNormals = true;
 };
 
 struct ShadedVertex {
     ObjVertexIndex source;
     Pipeline::VertexResult transformed;
+    Vec2 texCoord;
+    Vec3 worldNormal;
+    Vec3 worldTangent;
     double reciprocalW = 0.0;
+    double tangentSign = 1.0;
+    bool hasTexCoord = false;
+    bool hasNormal = false;
+    bool hasTangent = false;
+    bool normalWasGenerated = false;
 };
 
 struct ScreenTriangle {
