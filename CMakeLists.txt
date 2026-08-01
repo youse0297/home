@@ -74,6 +74,11 @@ target_compile_definitions(
     PRIVATE TEXTURE_FIXTURE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/tests/data/checker.ppm"
 )
 
+add_executable(surface_attributes_acceptance
+    src/surface_attributes_main.cpp
+)
+target_link_libraries(surface_attributes_acceptance PRIVATE software_renderer)
+
 if(MSVC)
     target_compile_options(graphics_math PRIVATE /utf-8)
     target_compile_options(vecmath PRIVATE /utf-8)
@@ -84,6 +89,7 @@ if(MSVC)
     target_compile_options(triangle_rasterizer_acceptance PRIVATE /utf-8)
     target_compile_options(depth_buffer_acceptance PRIVATE /utf-8)
     target_compile_options(texture_sampling_acceptance PRIVATE /utf-8)
+    target_compile_options(surface_attributes_acceptance PRIVATE /utf-8)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(graphics_math PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(vecmath PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
@@ -94,6 +100,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(triangle_rasterizer_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(depth_buffer_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(texture_sampling_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+    target_compile_options(surface_attributes_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
 endif()
 
 include(CTest)
@@ -105,4 +112,5 @@ if(BUILD_TESTING)
     add_test(NAME triangle_rasterizer_acceptance COMMAND triangle_rasterizer_acceptance)
     add_test(NAME depth_buffer_acceptance COMMAND depth_buffer_acceptance)
     add_test(NAME texture_sampling_acceptance COMMAND texture_sampling_acceptance)
+    add_test(NAME surface_attributes_acceptance COMMAND surface_attributes_acceptance)
 endif()
