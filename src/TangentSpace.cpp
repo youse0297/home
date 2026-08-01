@@ -16,10 +16,12 @@ bool isFinite(const Vec3& vector) {
 }
 
 Vec3 requireNormalized(const Vec3& vector, const char* message) {
-    if (!isFinite(vector) || vector.lengthSquared() <= kEpsilon) {
+    const double lengthSquared = vector.lengthSquared();
+    if (!isFinite(vector) || !std::isfinite(lengthSquared) ||
+        lengthSquared <= kEpsilon) {
         throw std::invalid_argument(message);
     }
-    return vector.normalized();
+    return vector / std::sqrt(lengthSquared);
 }
 
 } // namespace
