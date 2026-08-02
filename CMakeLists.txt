@@ -29,6 +29,7 @@ add_library(software_renderer
     src/Framebuffer.cpp
     src/ObjLoader.cpp
     src/Rasterizer.cpp
+    src/Shading.cpp
     src/SoftwareRenderer.cpp
     src/Texture2D.cpp
     src/VertexStage.cpp
@@ -79,6 +80,11 @@ add_executable(surface_attributes_acceptance
 )
 target_link_libraries(surface_attributes_acceptance PRIVATE software_renderer)
 
+add_executable(diffuse_exposure_acceptance
+    src/diffuse_exposure_main.cpp
+)
+target_link_libraries(diffuse_exposure_acceptance PRIVATE software_renderer)
+
 if(MSVC)
     target_compile_options(graphics_math PRIVATE /utf-8)
     target_compile_options(vecmath PRIVATE /utf-8)
@@ -90,6 +96,7 @@ if(MSVC)
     target_compile_options(depth_buffer_acceptance PRIVATE /utf-8)
     target_compile_options(texture_sampling_acceptance PRIVATE /utf-8)
     target_compile_options(surface_attributes_acceptance PRIVATE /utf-8)
+    target_compile_options(diffuse_exposure_acceptance PRIVATE /utf-8)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(graphics_math PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(vecmath PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
@@ -101,6 +108,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(depth_buffer_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(texture_sampling_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(surface_attributes_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+    target_compile_options(diffuse_exposure_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
 endif()
 
 include(CTest)
@@ -113,4 +121,5 @@ if(BUILD_TESTING)
     add_test(NAME depth_buffer_acceptance COMMAND depth_buffer_acceptance)
     add_test(NAME texture_sampling_acceptance COMMAND texture_sampling_acceptance)
     add_test(NAME surface_attributes_acceptance COMMAND surface_attributes_acceptance)
+    add_test(NAME diffuse_exposure_acceptance COMMAND diffuse_exposure_acceptance)
 endif()
