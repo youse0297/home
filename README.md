@@ -1,6 +1,6 @@
 # VecMath / CPU 软渲染器
 
-本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础、OBJ 顶点数据读取、MVP 顶点着色、屏幕空间三角形覆盖、透视正确插值、深度测试、基础面剔除、PPM 纹理/UV 采样、世界空间法线与切线数据，以及 Lambert 漫反射、曝光、Reinhard 色调映射和 sRGB 转换。
+本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础、OBJ 顶点数据读取、MVP 顶点着色、屏幕空间三角形覆盖、透视正确插值、深度测试、基础面剔除、PPM 纹理/UV 采样、世界空间法线与切线数据，以及 Lambert 漫反射、简化 GGX BRDF、金属粗糙度材质、曝光、Reinhard 色调映射和 sRGB 转换。
 
 项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。图形数学阶段验收覆盖 4 组固定数值套件，并可通过 CTest 重复执行，不依赖第三方数学库。
 
@@ -25,7 +25,7 @@
 | `VertexStage` | OBJ 三角面装配、MVP 变换、UV/世界法线/切线/手性输出和保守裁剪分类 |
 | `Rasterizer` | 包围盒、边函数、top-left 覆盖、重心坐标、透视权重和基础面剔除 |
 | `Texture2D` | PPM P3/P6 纹理加载、8/16 位归一化、Clamp/Repeat 最近邻 UV 采样 |
-| `Shading` | 线性空间 Lambert 漫反射、EV 曝光、Reinhard 色调映射和 sRGB 编解码 |
+| `Shading` | Lambert、GGX NDF、Smith 遮蔽、金属粗糙度直接光照、曝光、Reinhard 和 sRGB 编解码 |
 | `SoftwareRenderer` | 固定帧生命周期、逐帧清屏、帧回调和完成帧计数 |
 
 ## 数学约定
@@ -46,6 +46,7 @@
 - TBN 矩阵按列存储 `T`、`B`、`N`，通过 Gram-Schmidt 保证切线与法线正交；切线符号用于处理镜像 UV。
 - 介电材质正入射反射率为 `F0 = ((n1 - n2) / (n1 + n2))²`；Schlick 近似为 `F = F0 + (1 - F0)(1 - cosθ)⁵`。
 - 漫反射在线性空间计算：`diffuse = albedo × radiance × max(N·L, 0) / π`，其中 `L` 从表面指向光源。
+- 简化 GGX 使用感知粗糙度、Trowbridge-Reitz NDF、Schlick-GGX Smith 几何项和 Schlick Fresnel；`F0 = lerp(0.04, baseColor, metallic)`。
 - 曝光档位 `EV` 使用乘数 `2^EV`；显示输出依次执行曝光、Reinhard 色调映射和线性到 sRGB 编码。
 
 ## 环境要求
@@ -70,6 +71,7 @@ cmake --build build --config Debug
 ./build/Debug/texture_sampling_acceptance.exe
 ./build/Debug/surface_attributes_acceptance.exe
 ./build/Debug/diffuse_exposure_acceptance.exe
+./build/Debug/ggx_brdf_acceptance.exe
 ctest --test-dir build -C Debug --output-on-failure
 ```
 
@@ -102,8 +104,11 @@ g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/texture_samplin
 g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/surface_attributes_main.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Rasterizer.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Transform.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o surface_attributes_acceptance.exe
 ./surface_attributes_acceptance.exe
 
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/diffuse_exposure_main.cpp src/Shading.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o diffuse_exposure_acceptance.exe
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/diffuse_exposure_main.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o diffuse_exposure_acceptance.exe
 ./diffuse_exposure_acceptance.exe
+
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/ggx_brdf_main.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o ggx_brdf_acceptance.exe
+./ggx_brdf_acceptance.exe
 ```
 
 ### 中文显示
@@ -142,7 +147,7 @@ ctest --test-dir build -C Debug --output-on-failure
 
 当前固定基准运行 4×3 framebuffer 共 3 帧，验证逐帧清屏、缓冲读写、帧序号，以及非法尺寸/深度/坐标保护。完整接口约定、后续范围和排除项见 [CPU 软渲染器 v1.0 范围冻结](docs/SOFTWARE_RENDERER_SCOPE.md)。
 
-OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、法线/切线数据，以及 Lambert 漫反射与曝光/色调映射已按日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射；简化 GGX 与金属粗糙度工作流属于后续已排期任务。
+OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、法线/切线数据、Lambert 漫反射、曝光/色调映射，以及简化 GGX 与金属粗糙度工作流已按日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射；材质回归与发布验收属于后续已排期任务。
 
 ## 使用示例
 
@@ -323,6 +328,24 @@ SoftRenderer::Color display = SoftRenderer::Shading::toDisplayColor(hdr, 1.0);
 
 纹理颜色先从 sRGB 解码到线性空间，再参与 Lambert 光照；HDR 结果按 EV 曝光并经 Reinhard 压缩后编码回 sRGB。`Framebuffer` 仍接受有限 HDR 值，显示变换由调用方显式执行。
 
+### 简化 GGX BRDF
+
+```cpp
+SoftRenderer::Shading::MetallicRoughnessMaterial material{
+    Vec3(0.8, 0.4, 0.2),
+    0.0,
+    0.5
+};
+Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
+    material,
+    Vec3(0.0, 0.0, 1.0),
+    Vec3(0.0, 0.0, 1.0),
+    light
+);
+```
+
+`baseColor` 必须是线性颜色，`metallic` 与感知 `roughness` 均位于 `[0,1]`。视线方向从表面指向相机；纯介电材质使用 `F0 = 0.04` 并保留漫反射，纯金属使用有色 `baseColor` 作为 `F0` 且漫反射归零。
+
 ## 项目结构
 
 ```text
@@ -344,6 +367,7 @@ SoftRenderer::Color display = SoftRenderer::Shading::toDisplayColor(hdr, 1.0);
     ├── texture_sampling_main.cpp
     ├── surface_attributes_main.cpp
     ├── diffuse_exposure_main.cpp
+    ├── ggx_brdf_main.cpp
     ├── Framebuffer.hpp / Framebuffer.cpp
     ├── ObjLoader.hpp / ObjLoader.cpp
     ├── Rasterizer.hpp / Rasterizer.cpp
@@ -397,6 +421,8 @@ SoftRenderer::Color display = SoftRenderer::Shading::toDisplayColor(hdr, 1.0);
 - UV 采样默认使用 OBJ/OpenGL 风格左下原点与 Clamp，可配置 Repeat 或顶部原点；边界 `1.0` 会安全落到最后一个 texel。
 - 应先用 `RasterSample::interpolatePerspective` 插值 UV，再调用 `sampleNearest`；直接用线性重心坐标会产生透视纹理形变。
 - `Shading::lambertDiffuse` 会归一化法线和光照方向，并拒绝非法反照率、负辐亮度及零方向；它返回未做曝光的线性 HDR 结果。
+- `Shading::ggxDirectLighting` 使用从表面指向相机/光源的方向；视线或光线位于表面背面时返回零，粗糙度零端通过最小 `alpha = 1e-4` 保持有限。
+- 金属粗糙度工作流对漫反射应用 `(1-F)(1-metallic)` 能量权重；不要再额外叠加一次独立 Lambert 项。
 - `Shading::toDisplayColor` 固定执行曝光 → Reinhard → sRGB 编码；色调映射之前不要截断 HDR，也不要对已经编码的 sRGB 颜色重复编码。
 - `handedness.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。
