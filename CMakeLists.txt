@@ -85,6 +85,11 @@ add_executable(diffuse_exposure_acceptance
 )
 target_link_libraries(diffuse_exposure_acceptance PRIVATE software_renderer)
 
+add_executable(ggx_brdf_acceptance
+    src/ggx_brdf_main.cpp
+)
+target_link_libraries(ggx_brdf_acceptance PRIVATE software_renderer)
+
 if(MSVC)
     target_compile_options(graphics_math PRIVATE /utf-8)
     target_compile_options(vecmath PRIVATE /utf-8)
@@ -97,6 +102,7 @@ if(MSVC)
     target_compile_options(texture_sampling_acceptance PRIVATE /utf-8)
     target_compile_options(surface_attributes_acceptance PRIVATE /utf-8)
     target_compile_options(diffuse_exposure_acceptance PRIVATE /utf-8)
+    target_compile_options(ggx_brdf_acceptance PRIVATE /utf-8)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(graphics_math PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(vecmath PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
@@ -109,6 +115,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(texture_sampling_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(surface_attributes_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
     target_compile_options(diffuse_exposure_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+    target_compile_options(ggx_brdf_acceptance PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
 endif()
 
 include(CTest)
@@ -122,4 +129,5 @@ if(BUILD_TESTING)
     add_test(NAME texture_sampling_acceptance COMMAND texture_sampling_acceptance)
     add_test(NAME surface_attributes_acceptance COMMAND surface_attributes_acceptance)
     add_test(NAME diffuse_exposure_acceptance COMMAND diffuse_exposure_acceptance)
+    add_test(NAME ggx_brdf_acceptance COMMAND ggx_brdf_acceptance)
 endif()
