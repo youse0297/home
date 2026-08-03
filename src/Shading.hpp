@@ -11,9 +11,29 @@ struct DirectionalLight {
     Vec3 radiance = Vec3(1.0, 1.0, 1.0);
 };
 
+struct MetallicRoughnessMaterial {
+    Vec3 baseColor = Vec3(1.0, 1.0, 1.0);
+    double metallic = 0.0;
+    double roughness = 0.5;
+};
+
 Vec3 lambertDiffuse(
     const Vec3& linearAlbedo,
     const Vec3& normal,
+    const DirectionalLight& light
+);
+
+double ggxNormalDistribution(double normalDotHalf, double roughness);
+double smithGgxGeometry(
+    double normalDotView,
+    double normalDotLight,
+    double roughness
+);
+Vec3 metallicRoughnessF0(const Vec3& baseColor, double metallic);
+Vec3 ggxDirectLighting(
+    const MetallicRoughnessMaterial& material,
+    const Vec3& normal,
+    const Vec3& directionToView,
     const DirectionalLight& light
 );
 
