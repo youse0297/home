@@ -28,3 +28,4 @@ UnityMaterialLab/[Mm]emoryCaptures/
 UnityMaterialLab/*.csproj
 UnityMaterialLab/*.sln
 UnityMaterialLab/*.suo
+!UnityMaterialLab/Assets/_TA/Art/Models/*.obj
