@@ -30,6 +30,8 @@
 | #37 | 缺少线性空间 Lambert 漫反射、曝光/色调映射及 sRGB 输入输出转换 | 2026-08-02 | 已新增 `Shading` 与固定验收，贯通纹理、法线、光照、显示变换和 framebuffer 片元路径 |
 | #38 | 缺少 GGX 微表面高光、几何遮蔽及金属粗糙度直接光工作流 | 2026-08-03 | 已扩展 `Shading`，加入 GGX NDF、Schlick-GGX Smith、金属度 F0 混合、能量权重和完整片元验收 |
 | #39 | GGX 仅接受常量材质参数，缺少纹理通道、因子组合和统一片元材质组装 | 2026-08-05 | 已新增 `Material`，支持 sRGB 基础色、线性 G/B 金属粗糙度贴图、独立采样状态、Alpha 与端到端验收 |
+| #40 | 缺少可发布图像写出、三材质回归、整图确定性基准和统一发布门禁 | 2026-08-08 | 已新增 `ImageIO`、`release_acceptance`、P6 产物、代表 RGB/覆盖/深度/FNV checksum 与 12 项 CTest 清单 |
+| #41 | 缺少 Unity URP 测试工程、统一资产导入规则、材质球 Prefab 和可复现导入验收 | 2026-08-08 | 已新增 `UnityMaterialLab`、CC0 OBJ/PNG、Editor Bootstrap、静态 C# 编译/结构验收；Editor 运行验收等待本机许可证激活 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
@@ -88,6 +90,10 @@
 - GGX 的零粗糙度通过 `alpha = max(roughness², 1e-4)` 保持数值稳定；当前仅覆盖单方向光，不包含阴影或 IBL。
 - `Material` 使用非持有纹理指针；基础色纹理执行 sRGB 解码，金属粗糙度贴图保持线性并采用 G=粗糙度、B=金属度约定。
 - 基础色与金属粗糙度纹理可使用独立采样状态；当前保留打包贴图 R/A 通道，不执行 Alpha 裁剪或混合。
+- v1.0 发布图固定为 `96×32` 三材质法线梯度场景，覆盖 `1872` 像素，完整 PPM FNV-1a64 为 `0x6e50ef105c6d04c`。
+- 发布门禁要求 CMake Debug 构建成功、CTest `12/12` 通过、P6 写出逐字节一致；详细记录见 `docs/RELEASE_ACCEPTANCE.md`。
+- Unity 导入工程固定 Editor `2022.3.62f3c1`、URP `14.0.12`，源模型/贴图命名分别使用 `SM_`/`T_`，材质/Prefab/场景使用 `MAT_`/`PF_`/`SCN_`。
+- Unity Editor 批处理会分别检查 `com.unity.editor.headless`，普通 Editor 会检查 `com.unity.editor.ui`；两者均缺失时只能报告静态验收 PASS 和运行验收 BLOCKED_LICENSE。
 
 ## 如何贡献
 
@@ -95,4 +101,4 @@
 
 ---
 
-*最后更新：2026-08-05*
+*最后更新：2026-08-08*
