@@ -1,0 +1,31 @@
+﻿{
+    "status":  "PASS",
+    "projectPath":  "E:\\ueProject\\home\\UnityMaterialLab",
+    "unityRoot":  "F:\\unity\\2022.3.62f3c1\\Editor",
+    "editorRuntimeValidation":  "BLOCKED_LICENSE",
+    "generatedAtUtc":  "2026-08-07T21:29:49.9211891Z",
+    "checks":  [
+                   "ProjectVersion.txt exists",
+                   "Packages/manifest.json exists",
+                   "CC0 model source exists",
+                   "CC0 texture source exists",
+                   "Asset source ledger exists",
+                   "Project bootstrap source exists",
+                   "Project pins Editor 2022.3.62f3c1",
+                   "Project pins URP 14.0.12",
+                   "OBJ contains 8 positions",
+                   "OBJ contains 4 UV coordinates",
+                   "OBJ contains 6 face normals",
+                   "OBJ contains 12 triangles",
+                   "Base color texture is 64x64",
+                   "Asset ledger records CC0 license",
+                   "Asset ledger excludes untracked third-party content",
+                   "Installed Unity C# compiler inputs are available",
+                   "ProjectBootstrap compiles against installed Unity assemblies",
+                   "Imported source uses naming prefix: SM_CC0_DisplayCrate.obj",
+                   "Imported source uses naming prefix: T_CC0_Crate_BaseColor.png"
+               ],
+    "errors":  [
+
+               ]
+}
