@@ -1,8 +1,10 @@
 # VecMath / CPU 软渲染器
 
-本项目使用 C++17 构建 CPU 软渲染器。当前包含完整的图形数学基础、OBJ 顶点数据读取、MVP 顶点着色、屏幕空间三角形覆盖、透视正确插值、深度测试、基础面剔除、PPM 纹理/UV 采样、世界空间法线与切线数据，以及 Lambert 漫反射、简化 GGX BRDF、纹理驱动金属粗糙度材质、曝光、Reinhard 色调映射和 sRGB 转换。
+本项目使用 C++17 构建 CPU 软渲染器，并附带 Unity URP 材质导入测试工程。当前包含完整的图形数学基础、OBJ 顶点数据读取、MVP 顶点着色、屏幕空间三角形覆盖、透视正确插值、深度测试、基础面剔除、PPM 纹理/UV 采样、世界空间法线与切线数据，以及 Lambert 漫反射、简化 GGX BRDF、纹理驱动金属粗糙度材质、曝光、Reinhard 色调映射和 sRGB 转换。
 
-项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。图形数学阶段验收覆盖 4 组固定数值套件，并可通过 CTest 重复执行，不依赖第三方数学库。
+项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。发布门禁覆盖 12 组固定验收，并生成具有代表色和整图 checksum 的三材质 PPM 基准图；完整流水线不依赖第三方图形或数学库。
+
+Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、Prefab、测试场景、导入 Bootstrap 和静态验收。工程打开、生成和验收步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)。
 
 ## 主要功能
 
@@ -21,6 +23,7 @@
 | `TangentSpace` | 逆转置法线矩阵、方向/法线变换、TBN 构建和空间转换 |
 | `Fresnel` | 介电材质基础反射率 `F0` 和标量/RGB Schlick 近似 |
 | `Framebuffer` | 行主序 RGBA/深度缓冲、严格 `Less` 深度测试、原子片元写入和清屏 |
+| `ImageIO` | framebuffer 到 P6 RGB8 编码、有限值检查、显示范围夹取和文件写出 |
 | `ObjLoader` | OBJ `v/vt/vn`、正负索引、三角面、多边形扇形三角化和结构化解析异常 |
 | `VertexStage` | OBJ 三角面装配、MVP 变换、UV/世界法线/切线/手性输出和保守裁剪分类 |
 | `Rasterizer` | 包围盒、边函数、top-left 覆盖、重心坐标、透视权重和基础面剔除 |
@@ -75,6 +78,7 @@ cmake --build build --config Debug
 ./build/Debug/diffuse_exposure_acceptance.exe
 ./build/Debug/ggx_brdf_acceptance.exe
 ./build/Debug/material_workflow_acceptance.exe
+./build/Debug/release_acceptance.exe ./build/release_acceptance.ppm
 ctest --test-dir build -C Debug --output-on-failure
 ```
 
@@ -115,6 +119,9 @@ g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/ggx_brdf_main.c
 
 g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/material_workflow_main.cpp src/Material.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o material_workflow_acceptance.exe
 ./material_workflow_acceptance.exe
+
+g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/release_acceptance_main.cpp src/ImageIO.cpp src/Material.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/SoftwareRenderer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o release_acceptance.exe
+./release_acceptance.exe release_acceptance.ppm
 ```
 
 ### 中文显示
@@ -153,7 +160,19 @@ ctest --test-dir build -C Debug --output-on-failure
 
 当前固定基准运行 4×3 framebuffer 共 3 帧，验证逐帧清屏、缓冲读写、帧序号，以及非法尺寸/深度/坐标保护。完整接口约定、后续范围和排除项见 [CPU 软渲染器 v1.0 范围冻结](docs/SOFTWARE_RENDERER_SCOPE.md)。
 
-OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、法线/切线数据、Lambert 漫反射、曝光/色调映射、简化 GGX，以及纹理驱动金属粗糙度工作流已按日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射；三组材质回归与发布验收属于后续已排期任务。
+OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、法线/切线数据、Lambert 漫反射、曝光/色调映射、简化 GGX、纹理驱动金属粗糙度，以及三组材质回归与发布验收均已按日程完成。本版本仍明确不做阴影、抗锯齿和次表面散射。
+
+## 发布验收
+
+`release_acceptance` 在 `96×32` framebuffer 中渲染哑光介电、粗糙金属和光滑金属三栏基准。验收固定 `1872` 个材质像素、中心 RGB8、背景色、深度和整图 FNV-1a64 `0x6e50ef105c6d04c`，并写出 `build/release_acceptance.ppm`。
+
+构建成功且 CTest `12/12` 通过后，v1.0 发布门禁才算通过。完整命令、流水线原理、材质参数、发布边界与验收记录见 [CPU 软渲染器 v1.0 发布验收](docs/RELEASE_ACCEPTANCE.md)。
+
+## Unity 工程与资产导入
+
+`UnityMaterialLab` 使用 Editor Bootstrap 统一导入 CC0 展示箱：模型按米制、源法线、MikkTSpace 切线、自动 Lightmap UV、禁用源材质；基础色 PNG 按 sRGB、Repeat、Bilinear、MipMap 导入。Bootstrap 生成五个材质球、导入资产 Prefab、场景、Build Settings、960×540 基线截图和 JSON 报告。
+
+在没有 Unity Editor 许可证时可运行 `UnityMaterialLab/Tools/StaticValidate.ps1`，它会完成工程结构、资产内容、命名、许可证台账和离线 C# 编译检查。当前机器的 Unity Editor 运行验收被本地许可证阻塞，证据和解锁步骤见 `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不替代 Editor 场景 PASS。
 
 ## 使用示例
 
@@ -383,7 +402,16 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
 ├── README.md
 ├── ISSUES.md
 ├── docs/
-│   └── SOFTWARE_RENDERER_SCOPE.md
+│   ├── SOFTWARE_RENDERER_SCOPE.md
+│   └── RELEASE_ACCEPTANCE.md
+├── UnityMaterialLab/
+│   ├── Assets/_TA/Art/Models/SM_CC0_DisplayCrate.obj
+│   ├── Assets/_TA/Art/Textures/T_CC0_Crate_BaseColor.png
+│   ├── Assets/_TA/Editor/ProjectBootstrap.cs
+│   ├── Packages/manifest.json
+│   ├── ProjectSettings/ProjectVersion.txt
+│   ├── Tools/BuildAndValidate.ps1
+│   └── Tools/StaticValidate.ps1
 ├── output/
 │   └── handedness.png
 ├── src/
@@ -398,7 +426,9 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
     ├── diffuse_exposure_main.cpp
     ├── ggx_brdf_main.cpp
     ├── material_workflow_main.cpp
+    ├── release_acceptance_main.cpp
     ├── Framebuffer.hpp / Framebuffer.cpp
+    ├── ImageIO.hpp / ImageIO.cpp
     ├── Material.hpp / Material.cpp
     ├── ObjLoader.hpp / ObjLoader.cpp
     ├── Rasterizer.hpp / Rasterizer.cpp
@@ -456,6 +486,8 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
 - 金属粗糙度工作流对漫反射应用 `(1-F)(1-metallic)` 能量权重；不要再额外叠加一次独立 Lambert 项。
 - `Material::sampleMetallicRoughness` 先验证 UV/因子，再分别使用基础色与打包贴图的采样状态；默认因子均为 `1`，未绑定贴图时直接输出因子值。
 - 基础色贴图必须按 sRGB 解码，金属粗糙度贴图必须保持线性；对 G/B 数据做伽马转换会改变实际粗糙度和金属度。
+- `ImageIO::encodePpmRgb8` 忽略 Alpha，将有限 RGB 夹到 `[0,1]` 并四舍五入为 8 位；`writePpmRgb8` 以二进制 P6 写出且拒绝空路径。
+- 发布 checksum 覆盖 PPM 头和全部 RGB 字节；修改光照、材质、色调映射、覆盖规则或量化方式时，必须人工确认图像后显式更新基准。
 - `Shading::toDisplayColor` 固定执行曝光 → Reinhard → sRGB 编码；色调映射之前不要截断 HDR，也不要对已经编码的 sRGB 颜色重复编码。
 - `handedness.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。
