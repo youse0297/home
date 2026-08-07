@@ -1,0 +1,6 @@
+Unity Editor runtime validation was attempted on 2026-08-08.
+Editor: F:\unity\2022.3.62f3c1\Editor\Unity.exe
+Batch entitlement error: com.unity.editor.headless was not found
+Interactive entitlement error: com.unity.editor.ui was not found
+Final message: No valid Unity Editor license found. Please activate your license.
+Static project validation and offline ProjectBootstrap compilation passed.
