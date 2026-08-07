@@ -17,3 +17,14 @@ CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 Makefile
+
+# UnityMaterialLab generated state
+UnityMaterialLab/[Ll]ibrary/
+UnityMaterialLab/[Tt]emp/
+UnityMaterialLab/[Oo]bj/
+UnityMaterialLab/[Ll]ogs/
+UnityMaterialLab/[Uu]serSettings/
+UnityMaterialLab/[Mm]emoryCaptures/
+UnityMaterialLab/*.csproj
+UnityMaterialLab/*.sln
+UnityMaterialLab/*.suo
