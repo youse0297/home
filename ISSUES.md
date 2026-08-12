@@ -32,6 +32,9 @@
 | #39 | GGX 仅接受常量材质参数，缺少纹理通道、因子组合和统一片元材质组装 | 2026-08-05 | 已新增 `Material`，支持 sRGB 基础色、线性 G/B 金属粗糙度贴图、独立采样状态、Alpha 与端到端验收 |
 | #40 | 缺少可发布图像写出、三材质回归、整图确定性基准和统一发布门禁 | 2026-08-08 | 已新增 `ImageIO`、`release_acceptance`、P6 产物、代表 RGB/覆盖/深度/FNV checksum 与 12 项 CTest 清单 |
 | #41 | 缺少 Unity URP 测试工程、统一资产导入规则、材质球 Prefab 和可复现导入验收 | 2026-08-08 | 已新增 `UnityMaterialLab`、CC0 OBJ/PNG、Editor Bootstrap、静态 C# 编译/结构验收；Editor 运行验收等待本机许可证激活 |
+| #42 | 缺少 Unity BaseColor/Normal/ORM 输入契约、基础 PBR 主材质和三个可复用实例 | 2026-08-08 | 已新增 `MaterialInputProfile`、线性 Normal/ORM 输入、PBR 主材质与三个 Profile/材质实例；静态验收覆盖纹理引用、通道约定和参数范围 |
+| #43 | 缺少 Unity Metallic/Roughness/Normal Scale 参数边界矩阵、可视对比板和物理合理性结论 | 2026-08-13 | 已新增 11 组固定基准、`MaterialBoundaryMatrix`、Editor 对比场景生成器、静态 PNG 板及公式/范围验收 |
+| #44 | 缺少可复用的 Shader Graph File 模式 Custom Function、纹理结构体端口契约及精度变体 | 2026-08-13 | 已新增 `TA_CustomFunctions.hlsl`、`float`/`half` 变体、`UnityTexture2D` 采样、示例子图生成器和静态接口验收 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
@@ -93,6 +96,8 @@
 - v1.0 发布图固定为 `96×32` 三材质法线梯度场景，覆盖 `1872` 像素，完整 PPM FNV-1a64 为 `0x6e50ef105c6d04c`。
 - 发布门禁要求 CMake Debug 构建成功、CTest `12/12` 通过、P6 写出逐字节一致；详细记录见 `docs/RELEASE_ACCEPTANCE.md`。
 - Unity 导入工程固定 Editor `2022.3.62f3c1`、URP `14.0.12`，源模型/贴图命名分别使用 `SM_`/`T_`，材质/Prefab/场景使用 `MAT_`/`PF_`/`SCN_`。
+- Unity 材质输入固定 BaseColor=sRGB、Normal/ORM=Linear；ORM 通道为 R=AO、G=roughness、B=metallic，三个实例 Profile 的 `metallic/roughness` 范围为 `[0,1]`。
+- Unity 参数边界固定 Metallic `0/0.5/1`、Roughness `0/0.25/0.5/0.75/1`、Normal Scale `0/1/2`；中间金属度只表示过渡，Normal Scale `2` 为验证上限。
 - Unity Editor 批处理会分别检查 `com.unity.editor.headless`，普通 Editor 会检查 `com.unity.editor.ui`；两者均缺失时只能报告静态验收 PASS 和运行验收 BLOCKED_LICENSE。
 
 ## 如何贡献
