@@ -1,0 +1,54 @@
+{
+  "status": "STATIC_MEMORY_VALIDATED",
+  "platform": "Standalone",
+  "benchmark": {
+    "width": 64,
+    "height": 64,
+    "mipLevels": 7,
+    "mipTexelCount": 5461,
+    "description": "Full 64x64 mip chain through 1x1; BC formats reserve at least one 4x4 block per level."
+  },
+  "formatComparison": [
+    { "format": "RGBA32", "bitsPerPixel": 32, "blockBytes": 64, "fullMipBytes": 21844, "fullMipKiB": 21.332, "relativeToRgba32": 1.0 },
+    { "format": "BC1", "bitsPerPixel": 4, "blockBytes": 8, "fullMipBytes": 2744, "fullMipKiB": 2.68, "relativeToRgba32": 0.125 },
+    { "format": "BC5", "bitsPerPixel": 8, "blockBytes": 16, "fullMipBytes": 5488, "fullMipKiB": 5.359, "relativeToRgba32": 0.251 },
+    { "format": "BC7", "bitsPerPixel": 8, "blockBytes": 16, "fullMipBytes": 5488, "fullMipKiB": 5.359, "relativeToRgba32": 0.251 }
+  ],
+  "assets": [
+    {
+      "asset": "Assets/_TA/Art/Textures/T_CC0_Crate_BaseColor.png",
+      "usage": "BaseColor",
+      "textureType": "Default",
+      "sRGB": true,
+      "standaloneFormat": "BC7",
+      "fullMipBytes": 5488,
+      "savingVsRgba32": 0.749,
+      "rationale": "High-quality RGB color blocks retain the crate's warm albedo gradients."
+    },
+    {
+      "asset": "Assets/_TA/Art/Textures/T_PBR_Normal.png",
+      "usage": "Normal",
+      "textureType": "NormalMap",
+      "sRGB": false,
+      "standaloneFormat": "BC5",
+      "fullMipBytes": 5488,
+      "savingVsRgba32": 0.749,
+      "rationale": "Independent two-channel normal compression; reconstruct Z after sampling."
+    },
+    {
+      "asset": "Assets/_TA/Art/Textures/T_PBR_ORM.png",
+      "usage": "PackedData",
+      "textureType": "Default",
+      "sRGB": false,
+      "standaloneFormat": "BC1",
+      "fullMipBytes": 2744,
+      "savingVsRgba32": 0.874,
+      "rationale": "Linear R=AO, G=roughness, B=metallic data without alpha."
+    }
+  ],
+  "qualityValidation": {
+    "actualCodec": "PVRTexTool BC1 reference round-trip for BaseColor",
+    "selectedFormats": ["BC1", "BC5", "BC7"],
+    "editorMeasurement": "Run TA/Material Lab/Build Test Scene after license activation to inspect final Unity import output."
+  }
+}
