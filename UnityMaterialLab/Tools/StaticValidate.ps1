@@ -54,6 +54,11 @@ $materialFunctionColorPath = Join-Path $materialFunctionRootPath 'TA_MaterialCol
 $materialFunctionManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\MaterialFunctionLibraryV1.json'
 $materialFunctionExamplePath = Join-Path $projectPath 'Assets\_TA\Documentation\MaterialFunctionLibraryExample.json'
 $materialFunctionValidationPath = Join-Path $projectPath 'Tools\ValidateMaterialFunctionLibrary.ps1'
+$textureCompressionPolicyPath = Join-Path $projectPath 'Assets\_TA\Editor\TextureCompressionPolicy.cs'
+$textureCompressionMatrixPath = Join-Path $projectPath 'Assets\_TA\Documentation\TextureCompressionMatrix.json'
+$textureCompressionBoardPath = Join-Path $projectPath 'Reports\TextureCompressionBoard.png'
+$textureCompressionReportPath = Join-Path $projectPath 'Reports\TextureCompressionValidation.json'
+$textureCompressionBoardScriptPath = Join-Path $projectPath 'Tools\GenerateTextureCompressionBoard.ps1'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -114,6 +119,16 @@ Add-Check (Test-Path -LiteralPath $materialFunctionExamplePath -PathType Leaf) `
     'Material function library fixed-baseline example exists'
 Add-Check (Test-Path -LiteralPath $materialFunctionValidationPath -PathType Leaf) `
     'Material function library numeric validator exists'
+Add-Check (Test-Path -LiteralPath $textureCompressionPolicyPath -PathType Leaf) `
+    'Texture compression policy source exists'
+Add-Check (Test-Path -LiteralPath $textureCompressionMatrixPath -PathType Leaf) `
+    'Texture compression matrix exists'
+Add-Check (Test-Path -LiteralPath $textureCompressionBoardPath -PathType Leaf) `
+    'Texture compression comparison board exists'
+Add-Check (Test-Path -LiteralPath $textureCompressionReportPath -PathType Leaf) `
+    'Texture compression validation report exists'
+Add-Check (Test-Path -LiteralPath $textureCompressionBoardScriptPath -PathType Leaf) `
+    'Texture compression board generator exists'
 
 if (Test-Path -LiteralPath $projectVersionPath) {
     $projectVersion = Get-Content -LiteralPath $projectVersionPath -Raw
@@ -366,6 +381,59 @@ if (Test-Path -LiteralPath $materialFunctionExamplePath) {
         'Material function library example connects required function categories'
 }
 
+if (Test-Path -LiteralPath $textureCompressionPolicyPath) {
+    $textureCompressionPolicy = Get-Content -LiteralPath $textureCompressionPolicyPath -Raw
+    Add-Check ($textureCompressionPolicy -match 'TextureImporterFormat\.BC7' -and
+        $textureCompressionPolicy -match 'TextureImporterFormat\.BC5' -and
+        $textureCompressionPolicy -match 'TextureImporterFormat\.DXT1' -and
+        $textureCompressionPolicy -match 'crunchedCompression = false') `
+        'Texture compression policy selects BC7, BC5 and BC1 without Crunch'
+}
+
+if (Test-Path -LiteralPath $textureCompressionMatrixPath) {
+    $textureCompressionMatrix = Get-Content -LiteralPath $textureCompressionMatrixPath -Raw | ConvertFrom-Json
+    Add-Check ($textureCompressionMatrix.platform -eq 'Standalone' -and
+        $textureCompressionMatrix.benchmark.width -eq 64 -and
+        $textureCompressionMatrix.benchmark.height -eq 64 -and
+        @($textureCompressionMatrix.assets).Count -eq 3) `
+        'Texture compression matrix fixes Standalone 64x64 benchmark and three assets'
+    $baseColor = @($textureCompressionMatrix.assets | Where-Object { $_.usage -eq 'BaseColor' })[0]
+    $normal = @($textureCompressionMatrix.assets | Where-Object { $_.usage -eq 'Normal' })[0]
+    $packedData = @($textureCompressionMatrix.assets | Where-Object { $_.usage -eq 'PackedData' })[0]
+    Add-Check ($baseColor.standaloneFormat -eq 'BC7' -and $baseColor.sRGB -eq $true -and
+        $normal.standaloneFormat -eq 'BC5' -and $normal.sRGB -eq $false -and
+        $packedData.standaloneFormat -eq 'BC1' -and $packedData.sRGB -eq $false) `
+        'Texture compression matrix preserves sRGB/linear semantics per asset'
+    $expectedRgbaBytes = 21844
+    $expectedBc1Bytes = 2744
+    $expectedBc5Bytes = 5488
+    Add-Check ($textureCompressionMatrix.formatComparison | Where-Object { $_.format -eq 'RGBA32' }).fullMipBytes -eq $expectedRgbaBytes `
+        'RGBA32 full mip footprint matches block benchmark'
+    Add-Check ($textureCompressionMatrix.formatComparison | Where-Object { $_.format -eq 'BC1' }).fullMipBytes -eq $expectedBc1Bytes `
+        'BC1 full mip footprint matches block benchmark'
+    Add-Check ($textureCompressionMatrix.formatComparison | Where-Object { $_.format -eq 'BC5' }).fullMipBytes -eq $expectedBc5Bytes `
+        'BC5 full mip footprint matches block benchmark'
+    Add-Check ($textureCompressionMatrix.formatComparison | Where-Object { $_.format -eq 'BC7' }).fullMipBytes -eq $expectedBc5Bytes `
+        'BC7 full mip footprint matches block benchmark'
+}
+
+if (Test-Path -LiteralPath $textureCompressionReportPath) {
+    $textureCompressionReport = Get-Content -LiteralPath $textureCompressionReportPath -Raw | ConvertFrom-Json
+    Add-Check ($textureCompressionReport.status -eq 'PASS' -and
+        $textureCompressionReport.codecStatus -eq 'BC1_REFERENCE_PASS') `
+        'Texture compression report contains a passing BC1 reference round-trip'
+}
+
+if (Test-Path -LiteralPath $textureCompressionBoardPath) {
+    $textureCompressionImage = [System.Drawing.Image]::FromFile($textureCompressionBoardPath)
+    try {
+        Add-Check ($textureCompressionImage.Width -eq 1440 -and $textureCompressionImage.Height -eq 900) `
+            'Texture compression comparison board is 1440x900'
+    } finally {
+        $textureCompressionImage.Dispose()
+    }
+}
+
 $dataPath = Join-Path $UnityRoot 'Data'
 $dotnetPath = Join-Path $dataPath 'NetCoreRuntime\dotnet.exe'
 $compilerPath = Join-Path $dataPath 'DotNetSdkRoslyn\csc.dll'
@@ -394,7 +462,8 @@ if ($compilerAvailable -and (Test-Path -LiteralPath $bootstrapPath)) {
         $profilePath `
         $boundarySourcePath `
         $boundaryEditorPath `
-        $shaderGraphBootstrapPath
+        $shaderGraphBootstrapPath `
+        $textureCompressionPolicyPath
     Add-Check ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $compileOutput)) `
         'ProjectBootstrap compiles against installed Unity assemblies'
 }
