@@ -77,6 +77,13 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - `MaterialFunctionLibraryV1.json` 记录输入/输出契约和 6 组固定数值基准；`MaterialFunctionLibraryExample.json` 可直接作为最小 Shader Graph 节点配方。
 - 运行 `Tools/ValidateMaterialFunctionLibrary.ps1` 后，检查 `Reports/MaterialFunctionLibraryValidation.json`；详细接口和失败点见 `../docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md`。
 
+## 贴图压缩
+
+- Standalone 平台按用途压缩：BaseColor=`BC7+sRGB`、Normal=`BC5+Linear/NormalMap`、ORM=`BC1+Linear`，均为质量 `100` 且禁用 Crunch。
+- `TextureCompressionPolicy` 由 Bootstrap 执行并在 Editor 验收中校验平台覆盖；ORM 通道保持 `R=AO/G=roughness/B=metallic`。
+- `Tools/GenerateTextureCompressionBoard.ps1` 生成 `Reports/TextureCompressionBoard.png`，包含 BC1 实际往返预览/误差、BC1/BC5/BC7 显存对照和用途选择。
+- 策略、显存公式和失败点见 `../docs/UNITY_TEXTURE_COMPRESSION.md`；固定数据见 `Assets/_TA/Documentation/TextureCompressionMatrix.json`。
+
 ## 常见失败点
 
 - 用错误 Editor 打开导致包升级、材质序列化变化或场景重导入。
@@ -87,6 +94,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例，以及材质函数库 v1。完整 Shader Graph 主材质属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1，以及 Standalone 贴图压缩策略与对照基准。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
