@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "caseCount": 11,
+  "ranges": {
+    "metallic": [0.0, 1.0],
+    "roughness": [0.0, 1.0],
+    "normalScale": [0.0, 2.0]
+  },
+  "baselines": {
+    "dielectricF0": 0.04,
+    "minimumGgxAlpha": 0.0001,
+    "smoothnessFormula": "1 - roughness",
+    "ggxAlphaFormula": "max(roughness * roughness, 0.0001)",
+    "dielectricWeightFormula": "1 - metallic"
+  },
+  "cases": [
+    {"id":"M00","parameter":"Metallic","value":0.0,"metallic":0.0,"roughness":0.45,"normalScale":1.0,"smoothness":0.55,"ggxAlpha":0.2025,"dielectricWeight":1.0},
+    {"id":"M05","parameter":"Metallic","value":0.5,"metallic":0.5,"roughness":0.45,"normalScale":1.0,"smoothness":0.55,"ggxAlpha":0.2025,"dielectricWeight":0.5},
+    {"id":"M10","parameter":"Metallic","value":1.0,"metallic":1.0,"roughness":0.45,"normalScale":1.0,"smoothness":0.55,"ggxAlpha":0.2025,"dielectricWeight":0.0},
+    {"id":"R00","parameter":"Roughness","value":0.0,"metallic":0.0,"roughness":0.0,"normalScale":1.0,"smoothness":1.0,"ggxAlpha":0.0001,"dielectricWeight":1.0},
+    {"id":"R025","parameter":"Roughness","value":0.25,"metallic":0.0,"roughness":0.25,"normalScale":1.0,"smoothness":0.75,"ggxAlpha":0.0625,"dielectricWeight":1.0},
+    {"id":"R05","parameter":"Roughness","value":0.5,"metallic":0.0,"roughness":0.5,"normalScale":1.0,"smoothness":0.5,"ggxAlpha":0.25,"dielectricWeight":1.0},
+    {"id":"R075","parameter":"Roughness","value":0.75,"metallic":0.0,"roughness":0.75,"normalScale":1.0,"smoothness":0.25,"ggxAlpha":0.5625,"dielectricWeight":1.0},
+    {"id":"R10","parameter":"Roughness","value":1.0,"metallic":0.0,"roughness":1.0,"normalScale":1.0,"smoothness":0.0,"ggxAlpha":1.0,"dielectricWeight":1.0},
+    {"id":"N00","parameter":"NormalScale","value":0.0,"metallic":0.0,"roughness":0.45,"normalScale":0.0,"smoothness":0.55,"ggxAlpha":0.2025,"dielectricWeight":1.0},
+    {"id":"N10","parameter":"NormalScale","value":1.0,"metallic":0.0,"roughness":0.45,"normalScale":1.0,"smoothness":0.55,"ggxAlpha":0.2025,"dielectricWeight":1.0},
+    {"id":"N20","parameter":"NormalScale","value":2.0,"metallic":0.0,"roughness":0.45,"normalScale":2.0,"smoothness":0.55,"ggxAlpha":0.2025,"dielectricWeight":1.0}
+  ]
+}
