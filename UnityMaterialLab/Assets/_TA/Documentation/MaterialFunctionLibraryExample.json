@@ -1,0 +1,49 @@
+{
+  "status": "FIXED_BASELINE_VALIDATED",
+  "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialFunctions.hlsl",
+  "usage": "Create a Shader Graph Custom Function node in File mode for each listed source/function pair; leave the precision suffix out of Name.",
+  "nodes": [
+    {
+      "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialUV.hlsl",
+      "function": "TA_TransformUV",
+      "role": "Apply tiling and offset before texture sampling",
+      "inputs": { "UV": [0.25, 0.75], "Tiling": [2.0, 0.5], "Offset": [0.1, -0.2] },
+      "output": { "Out": [0.6, 0.175] }
+    },
+    {
+      "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialUV.hlsl",
+      "function": "TA_RotateUV",
+      "role": "Rotate transformed UV about the texture center",
+      "inputs": { "UV": [1.0, 0.5], "Center": [0.5, 0.5], "RotationDegrees": 90.0 },
+      "output": { "Out": [0.5, 1.0] }
+    },
+    {
+      "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialNormal.hlsl",
+      "function": "TA_NormalStrength",
+      "role": "Scale tangent-space normal XY and normalize",
+      "inputs": { "NormalTS": [0.6, 0.0, 0.8], "Strength": 2.0 },
+      "output": { "Out": [0.8320502943, 0.0, 0.5547001962] }
+    },
+    {
+      "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialChannels.hlsl",
+      "function": "TA_UnpackORM",
+      "role": "Map packed R/G/B to AO, roughness and metallic",
+      "inputs": { "Packed": [0.8, 0.35, 0.6, 1.0] },
+      "output": { "AO": 0.8, "Roughness": 0.35, "Metallic": 0.6 }
+    },
+    {
+      "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialChannels.hlsl",
+      "function": "TA_UnpackRGBA",
+      "role": "Expose four independent packed channels",
+      "inputs": { "Packed": [0.1, 0.2, 0.3, 0.4] },
+      "output": { "R": 0.1, "G": 0.2, "B": 0.3, "A": 0.4 }
+    },
+    {
+      "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialColor.hlsl",
+      "function": "TA_AdjustColor",
+      "role": "Adjust linear color saturation, contrast and brightness",
+      "inputs": { "Color": [0.8, 0.2, 0.1], "Saturation": 0.0, "Contrast": 1.0, "Brightness": 1.0 },
+      "output": { "Out": [0.32034, 0.32034, 0.32034] }
+    }
+  ]
+}
