@@ -45,6 +45,15 @@ $shaderGraphHlslPath = Join-Path $projectPath 'Assets\_TA\ShaderGraph\TA_CustomF
 $shaderGraphHlslMetaPath = Join-Path $projectPath 'Assets\_TA\ShaderGraph\TA_CustomFunctions.hlsl.meta'
 $shaderGraphBootstrapPath = Join-Path $projectPath 'Assets\_TA\Editor\ShaderGraphCustomFunctionBootstrap.cs'
 $shaderGraphContractPath = Join-Path $projectPath 'Assets\_TA\Documentation\ShaderGraphCustomFunctionContract.json'
+$materialFunctionRootPath = Join-Path $projectPath 'Assets\_TA\ShaderGraph\Library'
+$materialFunctionAggregatePath = Join-Path $materialFunctionRootPath 'TA_MaterialFunctions.hlsl'
+$materialFunctionUvPath = Join-Path $materialFunctionRootPath 'TA_MaterialUV.hlsl'
+$materialFunctionNormalPath = Join-Path $materialFunctionRootPath 'TA_MaterialNormal.hlsl'
+$materialFunctionChannelsPath = Join-Path $materialFunctionRootPath 'TA_MaterialChannels.hlsl'
+$materialFunctionColorPath = Join-Path $materialFunctionRootPath 'TA_MaterialColor.hlsl'
+$materialFunctionManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\MaterialFunctionLibraryV1.json'
+$materialFunctionExamplePath = Join-Path $projectPath 'Assets\_TA\Documentation\MaterialFunctionLibraryExample.json'
+$materialFunctionValidationPath = Join-Path $projectPath 'Tools\ValidateMaterialFunctionLibrary.ps1'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -88,6 +97,23 @@ Add-Check (Test-Path -LiteralPath $shaderGraphBootstrapPath -PathType Leaf) `
     'Shader Graph Custom Function example generator exists'
 Add-Check (Test-Path -LiteralPath $shaderGraphContractPath -PathType Leaf) `
     'Shader Graph Custom Function contract exists'
+Add-Check (Test-Path -LiteralPath $materialFunctionAggregatePath -PathType Leaf) `
+    'Material function library aggregate include exists'
+foreach ($materialFunctionSourcePath in @(
+    $materialFunctionUvPath,
+    $materialFunctionNormalPath,
+    $materialFunctionChannelsPath,
+    $materialFunctionColorPath
+)) {
+    Add-Check (Test-Path -LiteralPath $materialFunctionSourcePath -PathType Leaf) `
+        ('Material function library source exists: ' + (Split-Path $materialFunctionSourcePath -Leaf))
+}
+Add-Check (Test-Path -LiteralPath $materialFunctionManifestPath -PathType Leaf) `
+    'Material function library manifest exists'
+Add-Check (Test-Path -LiteralPath $materialFunctionExamplePath -PathType Leaf) `
+    'Material function library fixed-baseline example exists'
+Add-Check (Test-Path -LiteralPath $materialFunctionValidationPath -PathType Leaf) `
+    'Material function library numeric validator exists'
 
 if (Test-Path -LiteralPath $projectVersionPath) {
     $projectVersion = Get-Content -LiteralPath $projectVersionPath -Raw
@@ -252,8 +278,9 @@ if (Test-Path -LiteralPath $shaderGraphHlslPath) {
     Add-Check ($shaderGraphHlsl -match 'saturate\(Metallic\)' -and
         $shaderGraphHlsl -match 'saturate\(Roughness\)' -and
         $shaderGraphHlsl -match 'clamp\(NormalScale, 0\.0, 2\.0\)' -and
-        $shaderGraphHlsl -match 'float3\(0\.0, 0\.0, 1\.0\)') `
-        'Shader Graph Custom Function clamps material inputs and handles zero normals'
+        $shaderGraphHlsl -match 'TA_NormalStrength_float' -and
+        $shaderGraphHlsl -match 'TA_UnpackORM_float') `
+        'Shader Graph Custom Function clamps parameters and reuses library safety functions'
 }
 
 if (Test-Path -LiteralPath $shaderGraphContractPath) {
@@ -274,6 +301,69 @@ if (Test-Path -LiteralPath $shaderGraphContractPath) {
         @($shaderGraphContract.textureContract.accessors) -contains '.tex' -and
         @($shaderGraphContract.textureContract.accessors) -contains '.samplerstate') `
         'Shader Graph contract records struct texture sampling interface'
+}
+
+if (Test-Path -LiteralPath $materialFunctionAggregatePath) {
+    $materialFunctionAggregate = Get-Content -LiteralPath $materialFunctionAggregatePath -Raw
+    Add-Check ($materialFunctionAggregate -match '#include "TA_MaterialUV\.hlsl"' -and
+        $materialFunctionAggregate -match '#include "TA_MaterialNormal\.hlsl"' -and
+        $materialFunctionAggregate -match '#include "TA_MaterialChannels\.hlsl"' -and
+        $materialFunctionAggregate -match '#include "TA_MaterialColor\.hlsl"') `
+        'Material function aggregate includes UV, normal, channel and color modules'
+}
+
+if ((Test-Path -LiteralPath $materialFunctionUvPath) -and
+    (Test-Path -LiteralPath $materialFunctionNormalPath) -and
+    (Test-Path -LiteralPath $materialFunctionChannelsPath) -and
+    (Test-Path -LiteralPath $materialFunctionColorPath)) {
+    $materialFunctionSources = @(
+        (Get-Content -LiteralPath $materialFunctionUvPath -Raw),
+        (Get-Content -LiteralPath $materialFunctionNormalPath -Raw),
+        (Get-Content -LiteralPath $materialFunctionChannelsPath -Raw),
+        (Get-Content -LiteralPath $materialFunctionColorPath -Raw)
+    ) -join [Environment]::NewLine
+    foreach ($functionName in @(
+        'TA_TransformUV',
+        'TA_RotateUV',
+        'TA_NormalStrength',
+        'TA_UnpackORM',
+        'TA_UnpackRGBA',
+        'TA_AdjustColor'
+    )) {
+        Add-Check ($materialFunctionSources -match ('void ' + $functionName + '_float') -and
+            $materialFunctionSources -match ('void ' + $functionName + '_half')) `
+            ('Material function provides float and half variants: ' + $functionName)
+    }
+    Add-Check ($materialFunctionSources -match 'clamp\(Strength, 0\.0, 2\.0\)' -and
+        $materialFunctionSources -match 'saturate\(Packed\.rgb\)' -and
+        $materialFunctionSources -match 'dot\(Color, float3\(0\.2126, 0\.7152, 0\.0722\)\)') `
+        'Material function library applies normal, channel and color safety rules'
+}
+
+if (Test-Path -LiteralPath $materialFunctionManifestPath) {
+    $materialFunctionManifest = Get-Content -LiteralPath $materialFunctionManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($materialFunctionManifest.version -eq '1.0.0' -and
+        @($materialFunctionManifest.functions).Count -eq 6 -and
+        @($materialFunctionManifest.fixtures).Count -eq 6) `
+        'Material function library v1 declares six functions and fixed fixtures'
+    $categories = @($materialFunctionManifest.functions | ForEach-Object { $_.category } | Select-Object -Unique)
+    Add-Check (($categories -contains 'UV') -and ($categories -contains 'Normal') -and
+        ($categories -contains 'Channels') -and ($categories -contains 'Color')) `
+        'Material function library covers required UV, normal, channel and color categories'
+}
+
+if (Test-Path -LiteralPath $materialFunctionExamplePath) {
+    $materialFunctionExample = Get-Content -LiteralPath $materialFunctionExamplePath -Raw | ConvertFrom-Json
+    $exampleFunctions = @($materialFunctionExample.nodes | ForEach-Object { $_.function })
+    Add-Check ($materialFunctionExample.status -eq 'FIXED_BASELINE_VALIDATED' -and
+        @($materialFunctionExample.nodes).Count -eq 6 -and
+        @($exampleFunctions | Select-Object -Unique).Count -eq 6) `
+        'Material function library example covers six fixed node baselines'
+    Add-Check (($exampleFunctions -contains 'TA_TransformUV') -and
+        ($exampleFunctions -contains 'TA_NormalStrength') -and
+        ($exampleFunctions -contains 'TA_UnpackORM') -and
+        ($exampleFunctions -contains 'TA_AdjustColor')) `
+        'Material function library example connects required function categories'
 }
 
 $dataPath = Join-Path $UnityRoot 'Data'
