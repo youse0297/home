@@ -44,8 +44,31 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ## 输入与输出
 
 - 输入：CC0 OBJ、CC0 PNG、URP Lit 参数、固定相机/灯光。
-- 输出：一个材质球 Prefab、一个导入资产 Prefab、五个 URP Lit 材质、可复用测试场景、基线截图和 JSON 验收报告。
+- 输出：一个材质球 Prefab、一个导入资产 Prefab、一个 PBR 主材质、三个 PBR 材质实例、三个输入 Profile、可复用测试场景、基线截图和 JSON 验收报告。
 - 验收：URP 已启用；模型含法线/UV；贴图导入设置正确；场景根节点、Prefab、材质和 Build Settings 完整。
+
+## 材质输入与实例
+
+- `T_CC0_Crate_BaseColor.png` 按 sRGB 导入，作为 BaseColor 输入。
+- `T_PBR_Normal.png` 按 Linear/Normal Map 导入，作为切线空间法线输入。
+- `T_PBR_ORM.png` 按 Linear/Default 导入，通道固定为 R=AO、G=roughness、B=metallic。
+- `MAT_PBR_Master.mat` 是基础 URP Lit 主材质；`MAT_PBR_*.mat` 是三个独立实例，参数由 `MI_PBR_*.asset` Profile 暴露并应用。
+- `roughness` 在 URP Lit 中转换为 `smoothness = 1 - roughness`；ORM 的 G/B 保留给后续自定义 PBR 路径。
+
+## 材质参数边界验证
+
+- 固定矩阵包含 Metallic `0/0.5/1`、Roughness `0/0.25/0.5/0.75/1`、Normal Scale `0/1/2`，共 11 个样例。
+- `MaterialBoundaryMatrix` 统一计算 `smoothness=1-roughness`、`alpha=max(roughness²,1e-4)` 和介电权重 `1-metallic`。
+- `MaterialBoundaryValidator` 生成 11 个边界材质、三行对比场景、1200×720 截图和 JSON 报告。
+- 无 Editor 许可证时，`Tools/GenerateBoundaryBoard.ps1` 从同一 JSON 基准生成 `Reports/MaterialBoundaryBoard.png`，`StaticValidate.ps1` 校验全部公式与范围。
+- 结论：Metallic 中间值仅作为混合过渡；Normal Scale `2` 为验证上限；零粗糙度使用 GGX 数值下限避免奇异值。
+
+## Shader Graph Custom Function 节点
+
+- `Assets/_TA/ShaderGraph/TA_CustomFunctions.hlsl` 提供 File 模式的 `TA_SanitizeMaterial` 与 `TA_SampleMaterialInputs`，均含 `_float` / `_half` 精度变体。
+- `TA_SampleMaterialInputs` 覆盖标量（Metallic/Roughness/NormalScale）、向量（UV）和纹理（BaseColor/Normal/ORM）端口，并以 `UnityTexture2D.tex` + `UnityTexture2D.samplerstate` 采样。
+- 在 Unity 菜单执行 `TA/Material Lab/Create Custom Function Example`，生成 `SG_CustomFunctionExample.shadersubgraph`；函数名填 `TA_SampleMaterialInputs`，不要追加精度后缀。
+- 端口表、失败点和静态验收见 `../docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md` 与 `Assets/_TA/Documentation/ShaderGraphCustomFunctionContract.json`。
 
 ## 常见失败点
 
@@ -57,6 +80,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段只建立工程、资产基线和 URP Lit 验证材质。Shader Graph 主材质、BaseColor/Normal/ORM 实例参数和参数边界矩阵属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵，以及可生成的 Shader Graph Custom Function 子图示例。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
