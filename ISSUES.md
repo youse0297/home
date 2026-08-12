@@ -36,6 +36,7 @@
 | #43 | 缺少 Unity Metallic/Roughness/Normal Scale 参数边界矩阵、可视对比板和物理合理性结论 | 2026-08-13 | 已新增 11 组固定基准、`MaterialBoundaryMatrix`、Editor 对比场景生成器、静态 PNG 板及公式/范围验收 |
 | #44 | 缺少可复用的 Shader Graph File 模式 Custom Function、纹理结构体端口契约及精度变体 | 2026-08-13 | 已新增 `TA_CustomFunctions.hlsl`、`float`/`half` 变体、`UnityTexture2D` 采样、示例子图生成器和静态接口验收 |
 | #45 | 缺少可复用的 Unity 材质函数库，UV、法线、通道与颜色逻辑散落在单一节点 | 2026-08-13 | 已新增 4 个 HLSL 模块、6 个精度变体函数、聚合入口、固定数值基准、示例清单和静态验收 |
+| #46 | 缺少按贴图语义选择的 Standalone 压缩格式、显存对照和质量留痕 | 2026-08-13 | 已新增 BaseColor=BC7、Normal=BC5、ORM=BC1 策略、BC1 实际往返误差、显存矩阵和对照截图 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
