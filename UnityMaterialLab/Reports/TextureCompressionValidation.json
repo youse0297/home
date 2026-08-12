@@ -1,0 +1,54 @@
+﻿{
+    "status":  "PASS",
+    "codecStatus":  "BC1_REFERENCE_PASS",
+    "benchmark":  {
+                      "width":  64,
+                      "height":  64,
+                      "mipLevels":  7,
+                      "mipTexelCount":  5461,
+                      "description":  "Full 64x64 mip chain through 1x1; BC formats reserve at least one 4x4 block per level."
+                  },
+    "formatBytes":  {
+                        "RGBA32":  21844,
+                        "BC1":  2744,
+                        "BC5":  5488,
+                        "BC7":  5488
+                    },
+    "selectedAssets":  [
+                           {
+                               "asset":  "Assets/_TA/Art/Textures/T_CC0_Crate_BaseColor.png",
+                               "usage":  "BaseColor",
+                               "textureType":  "Default",
+                               "sRGB":  true,
+                               "standaloneFormat":  "BC7",
+                               "fullMipBytes":  5488,
+                               "savingVsRgba32":  0.749,
+                               "rationale":  "High-quality RGB color blocks retain the crate\u0027s warm albedo gradients."
+                           },
+                           {
+                               "asset":  "Assets/_TA/Art/Textures/T_PBR_Normal.png",
+                               "usage":  "Normal",
+                               "textureType":  "NormalMap",
+                               "sRGB":  false,
+                               "standaloneFormat":  "BC5",
+                               "fullMipBytes":  5488,
+                               "savingVsRgba32":  0.749,
+                               "rationale":  "Independent two-channel normal compression; reconstruct Z after sampling."
+                           },
+                           {
+                               "asset":  "Assets/_TA/Art/Textures/T_PBR_ORM.png",
+                               "usage":  "PackedData",
+                               "textureType":  "Default",
+                               "sRGB":  false,
+                               "standaloneFormat":  "BC1",
+                               "fullMipBytes":  2744,
+                               "savingVsRgba32":  0.874,
+                               "rationale":  "Linear R=AO, G=roughness, B=metallic data without alpha."
+                           }
+                       ],
+    "bc1Reference":  {
+                         "meanAbsoluteError8Bit":  1.8542,
+                         "maximumAbsoluteError8Bit":  78
+                     },
+    "generatedAtUtc":  "2026-08-12T20:01:58.3080583Z"
+}
