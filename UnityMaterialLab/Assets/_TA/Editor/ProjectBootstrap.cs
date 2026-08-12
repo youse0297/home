@@ -197,8 +197,13 @@ namespace TA.MaterialLab.Editor
             textureImporter.mipmapEnabled = true;
             textureImporter.wrapMode = TextureWrapMode.Repeat;
             textureImporter.filterMode = FilterMode.Bilinear;
-            textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
+            textureImporter.textureCompression = TextureImporterCompression.CompressedHQ;
+            textureImporter.compressionQuality = 100;
             textureImporter.maxTextureSize = 256;
+            TextureCompressionPolicy.ApplyStandalone(
+                textureImporter,
+                TextureCompressionProfile.BaseColor
+            );
             textureImporter.SaveAndReimport();
             AssetDatabase.SetLabels(
                 AssetDatabase.LoadMainAssetAtPath(TexturePath),
@@ -208,19 +213,22 @@ namespace TA.MaterialLab.Editor
             ConfigureDataTextureImporter(
                 NormalTexturePath,
                 TextureImporterType.NormalMap,
-                "Normal"
+                "Normal",
+                TextureCompressionProfile.Normal
             );
             ConfigureDataTextureImporter(
                 OrmTexturePath,
                 TextureImporterType.Default,
-                "ORM"
+                "ORM",
+                TextureCompressionProfile.PackedData
             );
         }
 
         private static void ConfigureDataTextureImporter(
             string assetPath,
             TextureImporterType textureType,
-            string label
+            string label,
+            TextureCompressionProfile compressionProfile
         )
         {
             AssetDatabase.ImportAsset(
@@ -239,8 +247,10 @@ namespace TA.MaterialLab.Editor
             importer.mipmapEnabled = true;
             importer.wrapMode = TextureWrapMode.Repeat;
             importer.filterMode = FilterMode.Bilinear;
-            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.textureCompression = TextureImporterCompression.CompressedHQ;
+            importer.compressionQuality = 100;
             importer.maxTextureSize = 256;
+            TextureCompressionPolicy.ApplyStandalone(importer, compressionProfile);
             importer.SaveAndReimport();
             AssetDatabase.SetLabels(
                 AssetDatabase.LoadMainAssetAtPath(assetPath),
@@ -785,8 +795,16 @@ namespace TA.MaterialLab.Editor
                 Check(textureImporter.sRGBTexture, "Base color texture uses sRGB", report);
                 Check(textureImporter.mipmapEnabled, "Base color mipmaps are enabled", report);
                 Check(
-                    textureImporter.textureCompression == TextureImporterCompression.Uncompressed,
-                    "Baseline texture compression is disabled",
+                    textureImporter.textureCompression == TextureImporterCompression.CompressedHQ,
+                    "Base color uses high-quality default compression",
+                    report
+                );
+                Check(
+                    TextureCompressionPolicy.HasExpectedStandaloneFormat(
+                        textureImporter,
+                        TextureCompressionProfile.BaseColor
+                    ),
+                    "Base color Standalone format is BC7 without Crunch",
                     report
                 );
             }
@@ -802,6 +820,14 @@ namespace TA.MaterialLab.Editor
                 );
                 Check(!normalImporter.sRGBTexture, "Normal input stays linear", report);
                 Check(normalImporter.mipmapEnabled, "Normal input mipmaps are enabled", report);
+                Check(
+                    TextureCompressionPolicy.HasExpectedStandaloneFormat(
+                        normalImporter,
+                        TextureCompressionProfile.Normal
+                    ),
+                    "Normal Standalone format is BC5 without Crunch",
+                    report
+                );
             }
 
             TextureImporter ormImporter = AssetImporter.GetAtPath(OrmTexturePath) as TextureImporter;
@@ -815,6 +841,14 @@ namespace TA.MaterialLab.Editor
                 );
                 Check(!ormImporter.sRGBTexture, "ORM input stays linear", report);
                 Check(ormImporter.mipmapEnabled, "ORM input mipmaps are enabled", report);
+                Check(
+                    TextureCompressionPolicy.HasExpectedStandaloneFormat(
+                        ormImporter,
+                        TextureCompressionProfile.PackedData
+                    ),
+                    "ORM Standalone format is BC1 without Crunch",
+                    report
+                );
             }
 
             string[] requiredAssets =
