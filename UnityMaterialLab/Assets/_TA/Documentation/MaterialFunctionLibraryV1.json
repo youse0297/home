@@ -1,0 +1,83 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "source": "Assets/_TA/ShaderGraph/Library/TA_MaterialFunctions.hlsl",
+  "nodeMode": "Custom Function / File",
+  "precisionPolicy": "Each public function provides _float and _half variants",
+  "functions": [
+    {
+      "category": "UV",
+      "name": "TA_TransformUV",
+      "inputs": ["UV:Vector2", "Tiling:Vector2", "Offset:Vector2"],
+      "outputs": ["Out:Vector2"]
+    },
+    {
+      "category": "UV",
+      "name": "TA_RotateUV",
+      "inputs": ["UV:Vector2", "Center:Vector2", "RotationDegrees:Float"],
+      "outputs": ["Out:Vector2"]
+    },
+    {
+      "category": "Normal",
+      "name": "TA_NormalStrength",
+      "inputs": ["NormalTS:Vector3", "Strength:Float"],
+      "outputs": ["Out:Vector3"]
+    },
+    {
+      "category": "Channels",
+      "name": "TA_UnpackORM",
+      "inputs": ["Packed:Vector4"],
+      "outputs": ["AO:Float", "Roughness:Float", "Metallic:Float"]
+    },
+    {
+      "category": "Channels",
+      "name": "TA_UnpackRGBA",
+      "inputs": ["Packed:Vector4"],
+      "outputs": ["R:Float", "G:Float", "B:Float", "A:Float"]
+    },
+    {
+      "category": "Color",
+      "name": "TA_AdjustColor",
+      "inputs": ["Color:Vector3", "Saturation:Float", "Contrast:Float", "Brightness:Float"],
+      "outputs": ["Out:Vector3"]
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "UV_TRANSFORM",
+      "function": "TA_TransformUV",
+      "input": { "uv": [0.25, 0.75], "tiling": [2.0, 0.5], "offset": [0.1, -0.2] },
+      "expected": [0.6, 0.175]
+    },
+    {
+      "id": "UV_ROTATE_90",
+      "function": "TA_RotateUV",
+      "input": { "uv": [1.0, 0.5], "center": [0.5, 0.5], "degrees": 90.0 },
+      "expected": [0.5, 1.0]
+    },
+    {
+      "id": "NORMAL_STRENGTH_2",
+      "function": "TA_NormalStrength",
+      "input": { "normal": [0.6, 0.0, 0.8], "strength": 2.0 },
+      "expected": [0.8320502943, 0.0, 0.5547001962]
+    },
+    {
+      "id": "ORM_UNPACK",
+      "function": "TA_UnpackORM",
+      "input": { "packed": [0.8, 0.35, 0.6, 1.0] },
+      "expected": [0.8, 0.35, 0.6]
+    },
+    {
+      "id": "RGBA_UNPACK",
+      "function": "TA_UnpackRGBA",
+      "input": { "packed": [0.1, 0.2, 0.3, 0.4] },
+      "expected": [0.1, 0.2, 0.3, 0.4]
+    },
+    {
+      "id": "COLOR_GRAYSCALE",
+      "function": "TA_AdjustColor",
+      "input": { "color": [0.8, 0.2, 0.1], "saturation": 0.0, "contrast": 1.0, "brightness": 1.0 },
+      "expected": [0.32034, 0.32034, 0.32034]
+    }
+  ]
+}
