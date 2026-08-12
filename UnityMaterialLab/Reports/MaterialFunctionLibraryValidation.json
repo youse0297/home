@@ -1,0 +1,98 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "functionCount":  6,
+    "fixtureCount":  6,
+    "tolerance":  1E-06,
+    "generatedAtUtc":  "2026-08-12T19:38:32.7816198Z",
+    "checks":  [
+                   {
+                       "id":  "UV_TRANSFORM",
+                       "actual":  [
+                                      0.6,
+                                      0.175
+                                  ],
+                       "expected":  [
+                                        0.6,
+                                        0.175
+                                    ],
+                       "maximumError":  0,
+                       "pass":  true
+                   },
+                   {
+                       "id":  "UV_ROTATE_90",
+                       "actual":  [
+                                      0.5,
+                                      1
+                                  ],
+                       "expected":  [
+                                        0.5,
+                                        1
+                                    ],
+                       "maximumError":  0,
+                       "pass":  true
+                   },
+                   {
+                       "id":  "NORMAL_STRENGTH_2",
+                       "actual":  [
+                                      0.83205029433784361,
+                                      0,
+                                      0.55470019622522915
+                                  ],
+                       "expected":  [
+                                        0.8320502943,
+                                        0,
+                                        0.5547001962
+                                    ],
+                       "maximumError":  3.78436171288854E-11,
+                       "pass":  true
+                   },
+                   {
+                       "id":  "ORM_UNPACK",
+                       "actual":  [
+                                      0.8,
+                                      0.35,
+                                      0.6
+                                  ],
+                       "expected":  [
+                                        0.8,
+                                        0.35,
+                                        0.6
+                                    ],
+                       "maximumError":  0,
+                       "pass":  true
+                   },
+                   {
+                       "id":  "RGBA_UNPACK",
+                       "actual":  [
+                                      0.1,
+                                      0.2,
+                                      0.3,
+                                      0.4
+                                  ],
+                       "expected":  [
+                                        0.1,
+                                        0.2,
+                                        0.3,
+                                        0.4
+                                    ],
+                       "maximumError":  0,
+                       "pass":  true
+                   },
+                   {
+                       "id":  "COLOR_GRAYSCALE",
+                       "actual":  [
+                                      0.32034,
+                                      0.32034,
+                                      0.32034
+                                  ],
+                       "expected":  [
+                                        0.32034,
+                                        0.32034,
+                                        0.32034
+                                    ],
+                       "maximumError":  0,
+                       "pass":  true
+                   }
+               ]
+}
