@@ -4,6 +4,10 @@
   "source": "Assets/_TA/ShaderGraph/TA_CustomFunctions.hlsl",
   "functionName": "TA_SampleMaterialInputs",
   "precisionVariants": ["TA_SampleMaterialInputs_float", "TA_SampleMaterialInputs_half"],
+  "libraryDependencies": [
+    "Assets/_TA/ShaderGraph/Library/TA_MaterialNormal.hlsl",
+    "Assets/_TA/ShaderGraph/Library/TA_MaterialChannels.hlsl"
+  ],
   "inputs": [
     { "name": "BaseColorTex", "type": "Texture2D", "role": "sRGB base color" },
     { "name": "NormalTex", "type": "Texture2D", "role": "linear tangent-space normal" },
