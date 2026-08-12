@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <radialGradient id="dielectric" cx="36%" cy="30%" r="72%">
+      <stop offset="0" stop-color="#f3b66e"/><stop offset="0.28" stop-color="#9b4d24"/><stop offset="1" stop-color="#29130e"/>
+    </radialGradient>
+    <radialGradient id="transition" cx="38%" cy="31%" r="72%">
+      <stop offset="0" stop-color="#ffe0a2"/><stop offset="0.2" stop-color="#c57b2e"/><stop offset="1" stop-color="#372112"/>
+    </radialGradient>
+    <radialGradient id="metal" cx="39%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#fff4bc"/><stop offset="0.14" stop-color="#e5a438"/><stop offset="0.5" stop-color="#7e4b16"/><stop offset="1" stop-color="#21150d"/>
+    </radialGradient>
+    <radialGradient id="rough0" cx="38%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="0.09" stop-color="#f0a84f"/><stop offset="0.2" stop-color="#8d3c1c"/><stop offset="1" stop-color="#28130d"/>
+    </radialGradient>
+    <radialGradient id="rough25" cx="38%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#fff4d4"/><stop offset="0.16" stop-color="#e89d4d"/><stop offset="0.34" stop-color="#7e351a"/><stop offset="1" stop-color="#28130d"/>
+    </radialGradient>
+    <radialGradient id="rough50" cx="38%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#f8cc92"/><stop offset="0.28" stop-color="#be6a35"/><stop offset="0.52" stop-color="#6a2d1a"/><stop offset="1" stop-color="#28130d"/>
+    </radialGradient>
+    <radialGradient id="rough75" cx="38%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#d99b69"/><stop offset="0.42" stop-color="#9b4e2c"/><stop offset="0.68" stop-color="#54271a"/><stop offset="1" stop-color="#28130d"/>
+    </radialGradient>
+    <radialGradient id="rough100" cx="38%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#b66f4d"/><stop offset="0.56" stop-color="#753b28"/><stop offset="1" stop-color="#28130d"/>
+    </radialGradient>
+    <filter id="normal1"><feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="8"/></filter>
+    <filter id="normal2"><feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="18"/></filter>
+    <style>
+      .title{font:700 30px 'Segoe UI',sans-serif;fill:#f3f6fb}.subtitle{font:14px 'Segoe UI',sans-serif;fill:#9eabc0}.row{font:700 20px 'Segoe UI',sans-serif;fill:#d9e3f3}.label{font:600 15px 'Segoe UI',sans-serif;fill:#e8eef8;text-anchor:middle}.value{font:13px Consolas,monospace;fill:#9eabc0;text-anchor:middle}.rule{stroke:#28364e;stroke-width:1}.sphere{stroke:#60708a;stroke-width:1}
+    </style>
+  </defs>
+  <rect width="1200" height="720" fill="#0c1220"/>
+  <text x="52" y="54" class="title">Material Parameter Boundary Matrix</text>
+  <text x="52" y="82" class="subtitle">11 fixed cases · Metallic [0,1] · Roughness [0,1] · Normal Scale [0,2]</text>
+  <line x1="52" y1="102" x2="1148" y2="102" class="rule"/>
+
+  <text x="52" y="155" class="row">Metallic</text>
+  <g transform="translate(350 165)"><circle r="64" class="sphere" fill="url(#dielectric)"/><text y="86" class="label">M00</text><text y="106" class="value">m=0.0 · diffuse=1.0</text></g>
+  <g transform="translate(600 165)"><circle r="64" class="sphere" fill="url(#transition)"/><text y="86" class="label">M05</text><text y="106" class="value">m=0.5 · diffuse=0.5</text></g>
+  <g transform="translate(850 165)"><circle r="64" class="sphere" fill="url(#metal)"/><text y="86" class="label">M10</text><text y="106" class="value">m=1.0 · diffuse=0.0</text></g>
+
+  <line x1="52" y1="292" x2="1148" y2="292" class="rule"/>
+  <text x="52" y="340" class="row">Roughness</text>
+  <g transform="translate(250 360)"><circle r="55" class="sphere" fill="url(#rough0)"/><text y="75" class="label">R00</text><text y="95" class="value">r=0 · α=0.0001</text></g>
+  <g transform="translate(425 360)"><circle r="55" class="sphere" fill="url(#rough25)"/><text y="75" class="label">R025</text><text y="95" class="value">r=.25 · α=.0625</text></g>
+  <g transform="translate(600 360)"><circle r="55" class="sphere" fill="url(#rough50)"/><text y="75" class="label">R05</text><text y="95" class="value">r=.50 · α=.25</text></g>
+  <g transform="translate(775 360)"><circle r="55" class="sphere" fill="url(#rough75)"/><text y="75" class="label">R075</text><text y="95" class="value">r=.75 · α=.5625</text></g>
+  <g transform="translate(950 360)"><circle r="55" class="sphere" fill="url(#rough100)"/><text y="75" class="label">R10</text><text y="95" class="value">r=1 · α=1</text></g>
+
+  <line x1="52" y1="488" x2="1148" y2="488" class="rule"/>
+  <text x="52" y="538" class="row">Normal Scale</text>
+  <g transform="translate(350 555)"><circle r="58" class="sphere" fill="url(#rough50)"/><text y="78" class="label">N00</text><text y="98" class="value">scale=0 · geometry normal</text></g>
+  <g transform="translate(600 555)"><circle r="58" class="sphere" fill="url(#rough50)" filter="url(#normal1)"/><text y="78" class="label">N10</text><text y="98" class="value">scale=1 · authored normal</text></g>
+  <g transform="translate(850 555)"><circle r="58" class="sphere" fill="url(#rough50)" filter="url(#normal2)"/><text y="78" class="label">N20</text><text y="98" class="value">scale=2 · validation ceiling</text></g>
+
+  <text x="52" y="690" class="subtitle">Conclusion: all cases remain finite and inside the physical input ranges; values above Normal Scale 2 are rejected by the profile contract.</text>
+</svg>
