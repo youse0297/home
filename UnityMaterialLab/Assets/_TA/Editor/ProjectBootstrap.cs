@@ -7,6 +7,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.SceneManagement;
+using TA.MaterialLab;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,8 @@ namespace TA.MaterialLab.Editor
         private const string Root = "Assets/_TA";
         private const string ModelPath = Root + "/Art/Models/SM_CC0_DisplayCrate.obj";
         private const string TexturePath = Root + "/Art/Textures/T_CC0_Crate_BaseColor.png";
+        private const string NormalTexturePath = Root + "/Art/Textures/T_PBR_Normal.png";
+        private const string OrmTexturePath = Root + "/Art/Textures/T_PBR_ORM.png";
         private const string PipelinePath = Root + "/Settings/RP_MaterialLab_URP.asset";
         private const string RendererPath = Root + "/Settings/RD_MaterialLab_Forward.asset";
         private const string BallPrefabPath = Root + "/Prefabs/PF_MaterialBall.prefab";
@@ -31,6 +34,14 @@ namespace TA.MaterialLab.Editor
         private const string SmoothMetalMaterialPath = Root + "/Materials/MAT_Baseline_SmoothMetal.mat";
         private const string CrateMaterialPath = Root + "/Materials/MAT_CC0_DisplayCrate.mat";
         private const string FloorMaterialPath = Root + "/Materials/MAT_Environment_Floor.mat";
+        private const string PbrMasterMaterialPath = Root + "/Materials/MAT_PBR_Master.mat";
+        private const string PbrInstancesPath = Root + "/Materials/Instances";
+        private const string PbrDielectricMaterialPath = PbrInstancesPath + "/MAT_PBR_Dielectric.mat";
+        private const string PbrRoughMetalMaterialPath = PbrInstancesPath + "/MAT_PBR_RoughMetal.mat";
+        private const string PbrSmoothMetalMaterialPath = PbrInstancesPath + "/MAT_PBR_SmoothMetal.mat";
+        private const string PbrDielectricProfilePath = PbrInstancesPath + "/MI_PBR_Dielectric.asset";
+        private const string PbrRoughMetalProfilePath = PbrInstancesPath + "/MI_PBR_RoughMetal.asset";
+        private const string PbrSmoothMetalProfilePath = PbrInstancesPath + "/MI_PBR_SmoothMetal.asset";
 
         [Serializable]
         private sealed class ValidationReport
@@ -43,6 +54,8 @@ namespace TA.MaterialLab.Editor
             public int importedVertexCount;
             public int screenshotWidth;
             public int screenshotHeight;
+            public int pbrMaterialCount;
+            public int pbrProfileCount;
             public string generatedAtUtc;
             public List<string> checks = new List<string>();
             public List<string> errors = new List<string>();
@@ -100,7 +113,9 @@ namespace TA.MaterialLab.Editor
                 Root + "/Documentation",
                 Root + "/Editor",
                 Root + "/Materials",
+                PbrInstancesPath,
                 Root + "/Prefabs",
+                Root + "/Runtime",
                 Root + "/Scenes",
                 Root + "/Settings"
             };
@@ -189,6 +204,48 @@ namespace TA.MaterialLab.Editor
                 AssetDatabase.LoadMainAssetAtPath(TexturePath),
                 new[] { "TA", "ImportedAsset", "CC0", "BaseColor" }
             );
+
+            ConfigureDataTextureImporter(
+                NormalTexturePath,
+                TextureImporterType.NormalMap,
+                "Normal"
+            );
+            ConfigureDataTextureImporter(
+                OrmTexturePath,
+                TextureImporterType.Default,
+                "ORM"
+            );
+        }
+
+        private static void ConfigureDataTextureImporter(
+            string assetPath,
+            TextureImporterType textureType,
+            string label
+        )
+        {
+            AssetDatabase.ImportAsset(
+                assetPath,
+                ImportAssetOptions.ForceUpdate |
+                ImportAssetOptions.ForceSynchronousImport
+            );
+            TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            if (importer == null)
+            {
+                throw new BuildFailedException("Data texture importer is unavailable: " + assetPath);
+            }
+            importer.textureType = textureType;
+            importer.sRGBTexture = false;
+            importer.alphaSource = TextureImporterAlphaSource.None;
+            importer.mipmapEnabled = true;
+            importer.wrapMode = TextureWrapMode.Repeat;
+            importer.filterMode = FilterMode.Bilinear;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.maxTextureSize = 256;
+            importer.SaveAndReimport();
+            AssetDatabase.SetLabels(
+                AssetDatabase.LoadMainAssetAtPath(assetPath),
+                new[] { "TA", "ImportedAsset", "PBR", label }
+            );
         }
 
         private static RenderPipelineAsset CreatePipeline()
@@ -254,6 +311,13 @@ namespace TA.MaterialLab.Editor
             {
                 throw new BuildFailedException("Imported crate texture is unavailable.");
             }
+            Texture2D normalTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(NormalTexturePath);
+            Texture2D ormTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(OrmTexturePath);
+            if (normalTexture == null || ormTexture == null)
+            {
+                throw new BuildFailedException("PBR input textures are unavailable.");
+            }
+            CreatePbrMaterials(shader, crateTexture, normalTexture, ormTexture);
 
             return new Dictionary<string, Material>
             {
@@ -311,8 +375,126 @@ namespace TA.MaterialLab.Editor
                         0.12f,
                         null
                     )
+                },
+                {
+                    "pbrDielectric",
+                    AssetDatabase.LoadAssetAtPath<Material>(PbrDielectricMaterialPath)
+                },
+                {
+                    "pbrRoughMetal",
+                    AssetDatabase.LoadAssetAtPath<Material>(PbrRoughMetalMaterialPath)
+                },
+                {
+                    "pbrSmoothMetal",
+                    AssetDatabase.LoadAssetAtPath<Material>(PbrSmoothMetalMaterialPath)
                 }
             };
+        }
+
+        private static void CreatePbrMaterials(
+            Shader shader,
+            Texture2D baseColor,
+            Texture2D normal,
+            Texture2D orm
+        )
+        {
+            Material master = CreateMaterial(
+                PbrMasterMaterialPath,
+                shader,
+                Color.white,
+                0.0f,
+                0.5f,
+                baseColor
+            );
+            master.SetTexture("_BumpMap", normal);
+            master.SetTexture("_OcclusionMap", orm);
+            master.SetFloat("_BumpScale", 1.0f);
+            master.SetFloat("_OcclusionStrength", 1.0f);
+            EditorUtility.SetDirty(master);
+
+            CreatePbrInstance(
+                PbrDielectricMaterialPath,
+                PbrDielectricProfilePath,
+                master,
+                baseColor,
+                normal,
+                orm,
+                new Color(0.58f, 0.16f, 0.07f, 1.0f),
+                0.0f,
+                0.64f,
+                1.0f,
+                1.0f
+            );
+            CreatePbrInstance(
+                PbrRoughMetalMaterialPath,
+                PbrRoughMetalProfilePath,
+                master,
+                baseColor,
+                normal,
+                orm,
+                new Color(0.74f, 0.48f, 0.10f, 1.0f),
+                1.0f,
+                0.72f,
+                0.85f,
+                0.95f
+            );
+            CreatePbrInstance(
+                PbrSmoothMetalMaterialPath,
+                PbrSmoothMetalProfilePath,
+                master,
+                baseColor,
+                normal,
+                orm,
+                new Color(0.90f, 0.64f, 0.18f, 1.0f),
+                1.0f,
+                0.16f,
+                0.65f,
+                1.0f
+            );
+        }
+
+        private static void CreatePbrInstance(
+            string materialPath,
+            string profilePath,
+            Material master,
+            Texture2D baseColor,
+            Texture2D normal,
+            Texture2D orm,
+            Color baseColorTint,
+            float metallic,
+            float roughness,
+            float normalScale,
+            float occlusionStrength
+        )
+        {
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            if (material == null)
+            {
+                material = new Material(master);
+                material.name = Path.GetFileNameWithoutExtension(materialPath);
+                AssetDatabase.CreateAsset(material, materialPath);
+            }
+            material.shader = master.shader;
+            MaterialInputProfile profile =
+                AssetDatabase.LoadAssetAtPath<MaterialInputProfile>(profilePath);
+            if (profile == null)
+            {
+                profile = ScriptableObject.CreateInstance<MaterialInputProfile>();
+                profile.name = Path.GetFileNameWithoutExtension(profilePath);
+                AssetDatabase.CreateAsset(profile, profilePath);
+            }
+            profile.baseColor = baseColor;
+            profile.normal = normal;
+            profile.orm = orm;
+            profile.baseColorTint = baseColorTint;
+            profile.metallic = metallic;
+            profile.roughness = roughness;
+            profile.normalScale = normalScale;
+            profile.occlusionStrength = occlusionStrength;
+            profile.alpha = 1.0f;
+            profile.ApplyTo(material);
+            EditorUtility.SetDirty(profile);
+            EditorUtility.SetDirty(material);
         }
 
         private static Material CreateMaterial(
@@ -388,21 +570,21 @@ namespace TA.MaterialLab.Editor
                 geometryRoot.transform,
                 "GEO_MatBall_01_Dielectric",
                 new Vector3(-2.7f, 1.0f, 0.0f),
-                materials["dielectric"]
+                materials["pbrDielectric"]
             );
             CreateMaterialBall(
                 ballPrefab,
                 geometryRoot.transform,
                 "GEO_MatBall_02_RoughMetal",
                 new Vector3(-0.9f, 1.0f, 0.0f),
-                materials["roughMetal"]
+                materials["pbrRoughMetal"]
             );
             CreateMaterialBall(
                 ballPrefab,
                 geometryRoot.transform,
                 "GEO_MatBall_03_SmoothMetal",
                 new Vector3(0.9f, 1.0f, 0.0f),
-                materials["smoothMetal"]
+                materials["pbrSmoothMetal"]
             );
 
             GameObject cratePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(CratePrefabPath);
@@ -516,6 +698,18 @@ namespace TA.MaterialLab.Editor
                 ImportAssetOptions.ForceUpdate |
                 ImportAssetOptions.ForceSynchronousImport
             );
+            TextureImporter screenshotImporter =
+                AssetImporter.GetAtPath(ScreenshotPath) as TextureImporter;
+            if (screenshotImporter == null)
+            {
+                throw new BuildFailedException("Screenshot importer is unavailable.");
+            }
+            screenshotImporter.textureType = TextureImporterType.Default;
+            screenshotImporter.sRGBTexture = true;
+            screenshotImporter.mipmapEnabled = false;
+            screenshotImporter.npotScale = TextureImporterNPOTScale.None;
+            screenshotImporter.textureCompression = TextureImporterCompression.Uncompressed;
+            screenshotImporter.SaveAndReimport();
         }
 
         private static void ValidateInternal()
@@ -597,6 +791,32 @@ namespace TA.MaterialLab.Editor
                 );
             }
 
+            TextureImporter normalImporter = AssetImporter.GetAtPath(NormalTexturePath) as TextureImporter;
+            Check(normalImporter != null, "Normal input importer exists", report);
+            if (normalImporter != null)
+            {
+                Check(
+                    normalImporter.textureType == TextureImporterType.NormalMap,
+                    "Normal input uses Normal Map importer",
+                    report
+                );
+                Check(!normalImporter.sRGBTexture, "Normal input stays linear", report);
+                Check(normalImporter.mipmapEnabled, "Normal input mipmaps are enabled", report);
+            }
+
+            TextureImporter ormImporter = AssetImporter.GetAtPath(OrmTexturePath) as TextureImporter;
+            Check(ormImporter != null, "ORM input importer exists", report);
+            if (ormImporter != null)
+            {
+                Check(
+                    ormImporter.textureType == TextureImporterType.Default,
+                    "ORM input uses data texture importer",
+                    report
+                );
+                Check(!ormImporter.sRGBTexture, "ORM input stays linear", report);
+                Check(ormImporter.mipmapEnabled, "ORM input mipmaps are enabled", report);
+            }
+
             string[] requiredAssets =
             {
                 BallPrefabPath,
@@ -606,6 +826,15 @@ namespace TA.MaterialLab.Editor
                 SmoothMetalMaterialPath,
                 CrateMaterialPath,
                 FloorMaterialPath,
+                PbrMasterMaterialPath,
+                PbrDielectricMaterialPath,
+                PbrRoughMetalMaterialPath,
+                PbrSmoothMetalMaterialPath,
+                PbrDielectricProfilePath,
+                PbrRoughMetalProfilePath,
+                PbrSmoothMetalProfilePath,
+                NormalTexturePath,
+                OrmTexturePath,
                 ScenePath,
                 ScreenshotPath
             };
@@ -616,6 +845,77 @@ namespace TA.MaterialLab.Editor
                     "Required asset exists: " + assetPath,
                     report
                 );
+            }
+
+            Material masterMaterial =
+                AssetDatabase.LoadAssetAtPath<Material>(PbrMasterMaterialPath);
+            Material[] pbrMaterials =
+            {
+                AssetDatabase.LoadAssetAtPath<Material>(PbrDielectricMaterialPath),
+                AssetDatabase.LoadAssetAtPath<Material>(PbrRoughMetalMaterialPath),
+                AssetDatabase.LoadAssetAtPath<Material>(PbrSmoothMetalMaterialPath)
+            };
+            MaterialInputProfile[] pbrProfiles =
+            {
+                AssetDatabase.LoadAssetAtPath<MaterialInputProfile>(PbrDielectricProfilePath),
+                AssetDatabase.LoadAssetAtPath<MaterialInputProfile>(PbrRoughMetalProfilePath),
+                AssetDatabase.LoadAssetAtPath<MaterialInputProfile>(PbrSmoothMetalProfilePath)
+            };
+            report.pbrMaterialCount = pbrMaterials.Count(material => material != null) +
+                                      (masterMaterial == null ? 0 : 1);
+            report.pbrProfileCount = pbrProfiles.Count(profile => profile != null);
+            Check(masterMaterial != null, "PBR master material is loaded", report);
+            Check(report.pbrMaterialCount == 4, "PBR master plus 3 instances are loaded", report);
+            Check(report.pbrProfileCount == 3, "Three PBR input profiles are loaded", report);
+            if (masterMaterial != null)
+            {
+                Check(
+                    masterMaterial.GetTexture("_BaseMap") != null,
+                    "PBR master has BaseColor input",
+                    report
+                );
+                Check(
+                    masterMaterial.GetTexture("_BumpMap") != null,
+                    "PBR master has Normal input",
+                    report
+                );
+                Check(
+                    masterMaterial.GetTexture("_OcclusionMap") != null,
+                    "PBR master has ORM input",
+                    report
+                );
+            }
+            for (int index = 0; index < pbrMaterials.Length; ++index)
+            {
+                Material material = pbrMaterials[index];
+                MaterialInputProfile profile = pbrProfiles[index];
+                Check(material != null, "PBR instance material is loaded: " + index, report);
+                Check(profile != null, "PBR instance profile is loaded: " + index, report);
+                if (material != null && profile != null)
+                {
+                    Check(
+                        material.GetTexture("_BaseMap") == profile.baseColor,
+                        "PBR instance BaseColor matches profile: " + index,
+                        report
+                    );
+                    Check(
+                        material.GetTexture("_BumpMap") == profile.normal,
+                        "PBR instance Normal matches profile: " + index,
+                        report
+                    );
+                    Check(
+                        material.GetTexture("_OcclusionMap") == profile.orm,
+                        "PBR instance ORM matches profile: " + index,
+                        report
+                    );
+                    Check(
+                        profile.metallic >= 0.0f && profile.metallic <= 1.0f &&
+                        profile.roughness >= 0.0f && profile.roughness <= 1.0f &&
+                        profile.normalScale >= 0.0f && profile.normalScale <= 2.0f,
+                        "PBR instance parameters are within exposed ranges: " + index,
+                        report
+                    );
+                }
             }
 
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
