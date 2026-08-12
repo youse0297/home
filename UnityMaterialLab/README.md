@@ -70,6 +70,13 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - 在 Unity 菜单执行 `TA/Material Lab/Create Custom Function Example`，生成 `SG_CustomFunctionExample.shadersubgraph`；函数名填 `TA_SampleMaterialInputs`，不要追加精度后缀。
 - 端口表、失败点和静态验收见 `../docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md` 与 `Assets/_TA/Documentation/ShaderGraphCustomFunctionContract.json`。
 
+## 材质函数库
+
+- `Assets/_TA/ShaderGraph/Library/TA_MaterialFunctions.hlsl` 聚合 UV 变换/旋转、法线强度、ORM/RGBA 通道解包与颜色调整共 6 个可复用函数。
+- 每个函数都有 `_float` / `_half` 版本；在 Custom Function 的 File 模式填写基础函数名，不填写精度后缀。
+- `MaterialFunctionLibraryV1.json` 记录输入/输出契约和 6 组固定数值基准；`MaterialFunctionLibraryExample.json` 可直接作为最小 Shader Graph 节点配方。
+- 运行 `Tools/ValidateMaterialFunctionLibrary.ps1` 后，检查 `Reports/MaterialFunctionLibraryValidation.json`；详细接口和失败点见 `../docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md`。
+
 ## 常见失败点
 
 - 用错误 Editor 打开导致包升级、材质序列化变化或场景重导入。
@@ -80,6 +87,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵，以及可生成的 Shader Graph Custom Function 子图示例。完整 Shader Graph 主材质属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例，以及材质函数库 v1。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
