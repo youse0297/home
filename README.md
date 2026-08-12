@@ -4,7 +4,7 @@
 
 项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。发布门禁覆盖 12 组固定验收，并生成具有代表色和整图 checksum 的三材质 PPM 基准图；完整流水线不依赖第三方图形或数学库。
 
-Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、Prefab、测试场景、导入 Bootstrap 和静态验收。工程打开、生成和验收步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)。
+Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、BaseColor/Normal/ORM 输入、三个材质实例、11 组参数边界、Prefab、测试场景、导入 Bootstrap 和静态验收。工程步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)，输入契约见 [Unity 材质输入与实例](docs/UNITY_MATERIAL_INPUTS.md)，边界结论见 [Unity 材质参数边界验证](docs/UNITY_MATERIAL_BOUNDARIES.md)，Custom Function 接入见 [Shader Graph Custom Function 节点](docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md)。
 
 ## 主要功能
 
@@ -172,7 +172,9 @@ OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、
 
 `UnityMaterialLab` 使用 Editor Bootstrap 统一导入 CC0 展示箱：模型按米制、源法线、MikkTSpace 切线、自动 Lightmap UV、禁用源材质；基础色 PNG 按 sRGB、Repeat、Bilinear、MipMap 导入。Bootstrap 生成五个材质球、导入资产 Prefab、场景、Build Settings、960×540 基线截图和 JSON 报告。
 
-在没有 Unity Editor 许可证时可运行 `UnityMaterialLab/Tools/StaticValidate.ps1`，它会完成工程结构、资产内容、命名、许可证台账和离线 C# 编译检查。当前机器的 Unity Editor 运行验收被本地许可证阻塞，证据和解锁步骤见 `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不替代 Editor 场景 PASS。
+在没有 Unity Editor 许可证时可运行 `UnityMaterialLab/Tools/StaticValidate.ps1`，它会完成工程结构、资产内容、输入契约、实例范围、命名和离线 C# 编译检查。当前机器的 Unity Editor 批处理验收仍可能被本地许可证阻塞，证据和解锁步骤见 `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不替代 Editor 场景 PASS。
+
+材质边界验收额外固定 Metallic `0/0.5/1`、Roughness `0/0.25/0.5/0.75/1`、Normal Scale `0/1/2`。静态报告校验所有样例的范围、`smoothness`、GGX `alpha` 和介电权重，并生成可直接查看的对比板。
 
 ## 使用示例
 
@@ -403,7 +405,9 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
 ├── ISSUES.md
 ├── docs/
 │   ├── SOFTWARE_RENDERER_SCOPE.md
-│   └── RELEASE_ACCEPTANCE.md
+│   ├── RELEASE_ACCEPTANCE.md
+│   ├── UNITY_MATERIAL_BOUNDARIES.md
+│   └── UNITY_MATERIAL_INPUTS.md
 ├── UnityMaterialLab/
 │   ├── Assets/_TA/Art/Models/SM_CC0_DisplayCrate.obj
 │   ├── Assets/_TA/Art/Textures/T_CC0_Crate_BaseColor.png
