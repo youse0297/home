@@ -1,0 +1,27 @@
+{
+  "status": "STATIC_INTERFACE_VALIDATED",
+  "sourceType": "File",
+  "source": "Assets/_TA/ShaderGraph/TA_CustomFunctions.hlsl",
+  "functionName": "TA_SampleMaterialInputs",
+  "precisionVariants": ["TA_SampleMaterialInputs_float", "TA_SampleMaterialInputs_half"],
+  "inputs": [
+    { "name": "BaseColorTex", "type": "Texture2D", "role": "sRGB base color" },
+    { "name": "NormalTex", "type": "Texture2D", "role": "linear tangent-space normal" },
+    { "name": "OrmTex", "type": "Texture2D", "role": "linear packed ORM, R=AO G=roughness B=metallic" },
+    { "name": "UV", "type": "Vector2", "role": "sample coordinates" },
+    { "name": "Metallic", "type": "Float", "role": "clamped to [0,1]" },
+    { "name": "Roughness", "type": "Float", "role": "clamped to [0,1]" },
+    { "name": "NormalScale", "type": "Float", "role": "clamped to [0,2]" }
+  ],
+  "outputs": [
+    { "name": "BaseColor", "type": "Vector4" },
+    { "name": "NormalTS", "type": "Vector3" },
+    { "name": "ORM", "type": "Vector3" },
+    { "name": "Parameters", "type": "Vector3", "encoding": "metallic, roughness, normalScale/2" }
+  ],
+  "textureContract": {
+    "resourceType": "UnityTexture2D",
+    "sampleMacro": "SAMPLE_TEXTURE2D",
+    "accessors": [".tex", ".samplerstate"]
+  }
+}
