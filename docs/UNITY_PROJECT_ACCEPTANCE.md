@@ -6,8 +6,8 @@
 - Editor：`2022.3.62f3c1`
 - URP：`14.0.12`
 - 模型：`SM_CC0_DisplayCrate.obj`，8 个位置、4 个 UV、6 个法线、12 个三角形
-- 贴图：`T_CC0_Crate_BaseColor.png`，64×64，自制 CC0 基础色
-- 生成内容：5 个材质球、2 个 Prefab、1 个测试场景、Build Settings、960×540 基线截图和 JSON 报告
+- 输入：`T_CC0_Crate_BaseColor.png`、`T_PBR_Normal.png`、`T_PBR_ORM.png`，分别对应 sRGB BaseColor、Linear Normal 和 Linear ORM
+- 生成内容：1 个 PBR 主材质、3 个 PBR 材质实例、3 个输入 Profile、2 个 Prefab、1 个测试场景、Build Settings、960×540 基线截图和 JSON 报告
 
 ## 验收命令
 
@@ -27,6 +27,10 @@ powershell -ExecutionPolicy Bypass -File .\UnityMaterialLab\Tools\BuildAndValida
 
 - `Assets/_TA/Prefabs/PF_MaterialBall.prefab`
 - `Assets/_TA/Prefabs/PF_CC0_DisplayCrate.prefab`
+- `Assets/_TA/Materials/MAT_PBR_Master.mat`
+- `Assets/_TA/Materials/Instances/MAT_PBR_Dielectric.mat`
+- `Assets/_TA/Materials/Instances/MAT_PBR_RoughMetal.mat`
+- `Assets/_TA/Materials/Instances/MAT_PBR_SmoothMetal.mat`
 - `Assets/_TA/Scenes/SCN_MaterialImportLab.unity`
 - `Assets/_TA/Documentation/UnityAssetImportBaseline.png`
 - `Assets/_TA/Documentation/ImportValidation.json`
