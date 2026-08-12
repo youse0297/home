@@ -35,6 +35,7 @@
 | #42 | 缺少 Unity BaseColor/Normal/ORM 输入契约、基础 PBR 主材质和三个可复用实例 | 2026-08-08 | 已新增 `MaterialInputProfile`、线性 Normal/ORM 输入、PBR 主材质与三个 Profile/材质实例；静态验收覆盖纹理引用、通道约定和参数范围 |
 | #43 | 缺少 Unity Metallic/Roughness/Normal Scale 参数边界矩阵、可视对比板和物理合理性结论 | 2026-08-13 | 已新增 11 组固定基准、`MaterialBoundaryMatrix`、Editor 对比场景生成器、静态 PNG 板及公式/范围验收 |
 | #44 | 缺少可复用的 Shader Graph File 模式 Custom Function、纹理结构体端口契约及精度变体 | 2026-08-13 | 已新增 `TA_CustomFunctions.hlsl`、`float`/`half` 变体、`UnityTexture2D` 采样、示例子图生成器和静态接口验收 |
+| #45 | 缺少可复用的 Unity 材质函数库，UV、法线、通道与颜色逻辑散落在单一节点 | 2026-08-13 | 已新增 4 个 HLSL 模块、6 个精度变体函数、聚合入口、固定数值基准、示例清单和静态验收 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
