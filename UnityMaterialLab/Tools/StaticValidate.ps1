@@ -59,6 +59,21 @@ $textureCompressionMatrixPath = Join-Path $projectPath 'Assets\_TA\Documentation
 $textureCompressionBoardPath = Join-Path $projectPath 'Reports\TextureCompressionBoard.png'
 $textureCompressionReportPath = Join-Path $projectPath 'Reports\TextureCompressionValidation.json'
 $textureCompressionBoardScriptPath = Join-Path $projectPath 'Tools\GenerateTextureCompressionBoard.ps1'
+$lodPolicyPath = Join-Path $projectPath 'Assets\_TA\Runtime\LodPolicy.cs'
+$lodPolicyMetaPath = Join-Path $projectPath 'Assets\_TA\Runtime\LodPolicy.cs.meta'
+$lodBootstrapPath = Join-Path $projectPath 'Assets\_TA\Editor\LodTestBootstrap.cs'
+$lodMatrixPath = Join-Path $projectPath 'Assets\_TA\Documentation\LODValidation.json'
+$lodBoardPath = Join-Path $projectPath 'Reports\LODComparisonBoard.png'
+$lodReportPath = Join-Path $projectPath 'Reports\LODValidationReport.json'
+$lodBoardScriptPath = Join-Path $projectPath 'Tools\GenerateLodBoard.ps1'
+$renderDocFeaturePath = Join-Path $projectPath 'Assets\_TA\Runtime\RenderDocCaptureFeature.cs'
+$renderDocFeatureMetaPath = Join-Path $projectPath 'Assets\_TA\Runtime\RenderDocCaptureFeature.cs.meta'
+$renderDocBootstrapPath = Join-Path $projectPath 'Assets\_TA\Editor\RenderDocCaptureBootstrap.cs'
+$renderDocBootstrapMetaPath = Join-Path $projectPath 'Assets\_TA\Editor\RenderDocCaptureBootstrap.cs.meta'
+$renderDocManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\RenderDocCaptureManifest.json'
+$renderDocReadinessPath = Join-Path $projectPath 'Reports\RenderDocCaptureReadiness.json'
+$renderDocCheckScriptPath = Join-Path $projectPath 'Tools\RenderDocCaptureCheck.ps1'
+$renderDocDropReadmePath = Join-Path $projectPath 'Reports\RenderDoc\README.md'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -129,6 +144,36 @@ Add-Check (Test-Path -LiteralPath $textureCompressionReportPath -PathType Leaf) 
     'Texture compression validation report exists'
 Add-Check (Test-Path -LiteralPath $textureCompressionBoardScriptPath -PathType Leaf) `
     'Texture compression board generator exists'
+Add-Check (Test-Path -LiteralPath $lodPolicyPath -PathType Leaf) `
+    'LOD policy source exists'
+Add-Check (Test-Path -LiteralPath $lodPolicyMetaPath -PathType Leaf) `
+    'LOD policy meta exists'
+Add-Check (Test-Path -LiteralPath $lodBootstrapPath -PathType Leaf) `
+    'LOD test scene generator exists'
+Add-Check (Test-Path -LiteralPath $lodMatrixPath -PathType Leaf) `
+    'LOD validation baseline exists'
+Add-Check (Test-Path -LiteralPath $lodBoardPath -PathType Leaf) `
+    'LOD comparison board exists'
+Add-Check (Test-Path -LiteralPath $lodReportPath -PathType Leaf) `
+    'LOD validation report exists'
+Add-Check (Test-Path -LiteralPath $lodBoardScriptPath -PathType Leaf) `
+    'LOD board generator exists'
+Add-Check (Test-Path -LiteralPath $renderDocFeaturePath -PathType Leaf) `
+    'RenderDoc marker Renderer Feature source exists'
+Add-Check (Test-Path -LiteralPath $renderDocFeatureMetaPath -PathType Leaf) `
+    'RenderDoc marker Renderer Feature meta exists'
+Add-Check (Test-Path -LiteralPath $renderDocBootstrapPath -PathType Leaf) `
+    'RenderDoc capture preparation menu source exists'
+Add-Check (Test-Path -LiteralPath $renderDocBootstrapMetaPath -PathType Leaf) `
+    'RenderDoc capture preparation menu meta exists'
+Add-Check (Test-Path -LiteralPath $renderDocManifestPath -PathType Leaf) `
+    'RenderDoc capture manifest exists'
+Add-Check (Test-Path -LiteralPath $renderDocReadinessPath -PathType Leaf) `
+    'RenderDoc readiness report exists'
+Add-Check (Test-Path -LiteralPath $renderDocCheckScriptPath -PathType Leaf) `
+    'RenderDoc readiness checker exists'
+Add-Check (Test-Path -LiteralPath $renderDocDropReadmePath -PathType Leaf) `
+    'RenderDoc capture drop instructions exist'
 
 if (Test-Path -LiteralPath $projectVersionPath) {
     $projectVersion = Get-Content -LiteralPath $projectVersionPath -Raw
@@ -434,23 +479,144 @@ if (Test-Path -LiteralPath $textureCompressionBoardPath) {
     }
 }
 
+if (Test-Path -LiteralPath $lodPolicyPath) {
+    $lodPolicy = Get-Content -LiteralPath $lodPolicyPath -Raw
+    Add-Check ($lodPolicy -match 'HighScreenHeight = 0\.60f' -and
+        $lodPolicy -match 'MediumScreenHeight = 0\.25f' -and
+        $lodPolicy -match 'LowScreenHeight = 0\.05f' -and
+        $lodPolicy -match 'CrossFadeDuration = 0\.15f' -and
+        $lodPolicy -match 'ResolveLevel' -and
+        $lodPolicy -match 'HasMonotonicThresholds') `
+        'LOD policy fixes thresholds, cross-fade duration and resolver'
+}
+
+if (Test-Path -LiteralPath $lodBootstrapPath) {
+    $lodBootstrap = Get-Content -LiteralPath $lodBootstrapPath -Raw
+    Add-Check ($lodBootstrap -match 'LODGroup' -and
+        $lodBootstrap -match 'SetLODs' -and
+        $lodBootstrap -match 'LODFadeMode\.CrossFade' -and
+        $lodBootstrap -match 'QualitySettings\.lodBias' -and
+        $lodBootstrap -match 'SCN_LOD_Baseline') `
+        'LOD bootstrap creates a three-level cross-fade comparison scene'
+}
+
+if (Test-Path -LiteralPath $lodMatrixPath) {
+    $lodMatrix = Get-Content -LiteralPath $lodMatrixPath -Raw | ConvertFrom-Json
+    Add-Check ($lodMatrix.status -eq 'STATIC_BASELINE_VALIDATED' -and
+        $lodMatrix.lodBias -eq 1.0 -and $lodMatrix.crossFadeDuration -eq 0.15 -and
+        @($lodMatrix.levels).Count -eq 3 -and @($lodMatrix.switches).Count -eq 4) `
+        'LOD baseline records three levels, four switch samples and fixed runtime settings'
+    Add-Check ($lodMatrix.levels[0].screenHeight -gt $lodMatrix.levels[1].screenHeight -and
+        $lodMatrix.levels[1].screenHeight -gt $lodMatrix.levels[2].screenHeight -and
+        $lodMatrix.levels[2].screenHeight -gt 0.0) `
+        'LOD baseline thresholds are strictly monotonic'
+    $expectedSwitches = @(
+        @{ id = 'LOD0'; level = 0; name = 'High' },
+        @{ id = 'LOD1'; level = 1; name = 'Medium' },
+        @{ id = 'LOD2'; level = 2; name = 'Low' },
+        @{ id = 'CULLED'; level = 3; name = 'Culled' }
+    )
+    foreach ($expected in $expectedSwitches) {
+        $actual = @($lodMatrix.switches | Where-Object { $_.id -eq $expected.id })[0]
+        Add-Check ($null -ne $actual -and $actual.expectedLevel -eq $expected.level -and
+            $actual.expectedName -eq $expected.name) `
+            ('LOD switch sample resolves as expected: ' + $expected.id)
+    }
+}
+
+if (Test-Path -LiteralPath $lodReportPath) {
+    $lodReport = Get-Content -LiteralPath $lodReportPath -Raw | ConvertFrom-Json
+    Add-Check ($lodReport.status -eq 'PASS' -and $lodReport.policyStatus -eq 'STATIC_BASELINE_VALIDATED' -and
+        $lodReport.thresholdsMonotonic -eq $true) `
+        'LOD report confirms passing static baseline and monotonic thresholds'
+}
+
+if (Test-Path -LiteralPath $lodBoardPath) {
+    $lodImage = [System.Drawing.Image]::FromFile($lodBoardPath)
+    try {
+        Add-Check ($lodImage.Width -eq 1440 -and $lodImage.Height -eq 900) `
+            'LOD comparison board is 1440x900'
+    } finally {
+        $lodImage.Dispose()
+    }
+}
+
+if (Test-Path -LiteralPath $renderDocFeaturePath) {
+    $renderDocFeature = Get-Content -LiteralPath $renderDocFeaturePath -Raw
+    Add-Check ($renderDocFeature -match 'ScriptableRendererFeature' -and
+        $renderDocFeature -match 'ScriptableRenderPass' -and
+        $renderDocFeature -match 'RD/Opaque/Boundary' -and
+        $renderDocFeature -match 'RD/Lighting/Forward' -and
+        $renderDocFeature -match 'RD/PostFX/Boundary' -and
+        $renderDocFeature -match 'ProfilingScope') `
+        'RenderDoc feature exposes GPU bookmarks for frame, opaque, lighting, transparent and post FX boundaries'
+}
+
+if (Test-Path -LiteralPath $renderDocBootstrapPath) {
+    $renderDocBootstrap = Get-Content -LiteralPath $renderDocBootstrapPath -Raw
+    Add-Check ($renderDocBootstrap -match 'Prepare RenderDoc Capture' -and
+        $renderDocBootstrap -match 'defaultScreenWidth = 1280' -and
+        $renderDocBootstrap -match 'defaultScreenHeight = 720' -and
+        $renderDocBootstrap -match 'vSyncCount = 0' -and
+        $renderDocBootstrap -match 'AttachMarkerFeature' -and
+        $renderDocBootstrap -match 'EditorBuildSettings\.scenes') `
+        'RenderDoc preparation fixes resolution, VSync, marker attachment and scene selection'
+}
+
+if (Test-Path -LiteralPath $renderDocManifestPath) {
+    $renderDocManifest = Get-Content -LiteralPath $renderDocManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($renderDocManifest.status -eq 'PREPARED' -and
+        $renderDocManifest.captureStatus -eq 'PENDING_CAPTURE' -and
+        $renderDocManifest.width -eq 1280 -and $renderDocManifest.height -eq 720 -and
+        $renderDocManifest.targetFrameRate -eq 30 -and $renderDocManifest.vSyncCount -eq 0 -and
+        $renderDocManifest.renderScale -eq 1.0 -and $renderDocManifest.msaaSamples -eq 1 -and
+        @($renderDocManifest.markers).Count -eq 6 -and @($renderDocManifest.bookmarks).Count -eq 6) `
+        'RenderDoc manifest fixes a stable 1280x720 capture and six event bookmarks'
+    Add-Check (($renderDocManifest.bookmarks -contains 'RD/Opaque/Boundary') -and
+        ($renderDocManifest.bookmarks -contains 'RD/Lighting/Forward') -and
+        ($renderDocManifest.bookmarks -contains 'RD/Transparent/Boundary') -and
+        ($renderDocManifest.bookmarks -contains 'RD/PostFX/Boundary')) `
+        'RenderDoc manifest records Opaque, Lighting, Transparent and PostFX bookmark names'
+}
+
+if (Test-Path -LiteralPath $renderDocReadinessPath) {
+    $renderDocReadiness = Get-Content -LiteralPath $renderDocReadinessPath -Raw | ConvertFrom-Json
+    Add-Check ($renderDocReadiness.preparationStatus -eq 'PREPARED' -and
+        $renderDocReadiness.markerCount -eq 6 -and
+        $renderDocReadiness.captureStatus -in @('RENDERDOC_FOUND', 'RENDERDOC_NOT_INSTALLED')) `
+        'RenderDoc readiness report matches the six-marker preparation manifest'
+}
+
 $dataPath = Join-Path $UnityRoot 'Data'
 $dotnetPath = Join-Path $dataPath 'NetCoreRuntime\dotnet.exe'
 $compilerPath = Join-Path $dataPath 'DotNetSdkRoslyn\csc.dll'
 $netStandardPath = Join-Path $dataPath 'NetStandard\ref\2.1.0\netstandard.dll'
 $unityEnginePath = Join-Path $dataPath 'Managed\UnityEngine.dll'
 $unityEditorPath = Join-Path $dataPath 'Managed\UnityEditor.dll'
+$urpRuntimePath = Join-Path $projectPath 'Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll'
+$coreRuntimePath = Join-Path $projectPath 'Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll'
+$unityCorePath = Join-Path $dataPath 'Managed\UnityEngine\UnityEngine.CoreModule.dll'
 $compilerInputs = @(
     $dotnetPath,
     $compilerPath,
     $netStandardPath,
     $unityEnginePath,
-    $unityEditorPath
+    $unityEditorPath,
+    $urpRuntimePath,
+    $coreRuntimePath
 )
 $compilerAvailable = ($compilerInputs | Where-Object {
     -not (Test-Path -LiteralPath $_ -PathType Leaf)
 }).Count -eq 0
 Add-Check $compilerAvailable 'Installed Unity C# compiler inputs are available'
+
+$urpFeatureCompilerAvailable = $compilerAvailable -and
+    (Test-Path -LiteralPath $unityCorePath -PathType Leaf)
+if ($urpFeatureCompilerAvailable) {
+    $checks.Add('Unity CoreModule is available for URP RenderDoc feature compilation')
+} else {
+    $checks.Add('Unity CoreModule unavailable; RenderDoc URP feature compilation deferred to licensed Editor')
+}
 
 if ($compilerAvailable -and (Test-Path -LiteralPath $bootstrapPath)) {
     & $dotnetPath $compilerPath /nologo /target:library /langversion:latest `
@@ -458,14 +624,33 @@ if ($compilerAvailable -and (Test-Path -LiteralPath $bootstrapPath)) {
         /reference:$netStandardPath `
         /reference:$unityEnginePath `
         /reference:$unityEditorPath `
+        /reference:$urpRuntimePath `
+        /reference:$coreRuntimePath `
         $bootstrapPath `
         $profilePath `
         $boundarySourcePath `
         $boundaryEditorPath `
         $shaderGraphBootstrapPath `
-        $textureCompressionPolicyPath
+        $textureCompressionPolicyPath `
+        $lodPolicyPath `
+        $lodBootstrapPath
     Add-Check ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $compileOutput)) `
         'ProjectBootstrap compiles against installed Unity assemblies'
+}
+
+if ($urpFeatureCompilerAvailable) {
+    $renderDocCompileOutput = Join-Path $reportsPath 'RenderDocCapture.Static.dll'
+    & $dotnetPath $compilerPath /nologo /target:library /langversion:latest `
+        /define:UNITY_EDITOR /out:$renderDocCompileOutput `
+        /reference:$netStandardPath `
+        /reference:$unityCorePath `
+        /reference:$unityEditorPath `
+        /reference:$urpRuntimePath `
+        /reference:$coreRuntimePath `
+        $renderDocFeaturePath
+    Add-Check ($LASTEXITCODE -eq 0 -and
+        (Test-Path -LiteralPath $renderDocCompileOutput)) `
+        'RenderDoc capture preparation compiles against Unity and URP assemblies'
 }
 
 $assetFiles = Get-ChildItem -LiteralPath (Join-Path $projectPath 'Assets\_TA') `
