@@ -1,0 +1,32 @@
+﻿{
+    "status":  "PASS",
+    "policyStatus":  "STATIC_BASELINE_VALIDATED",
+    "thresholdsMonotonic":  true,
+    "switches":  [
+                     {
+                         "id":  "LOD0",
+                         "screenHeight":  0.80,
+                         "expectedLevel":  0,
+                         "expectedName":  "High"
+                     },
+                     {
+                         "id":  "LOD1",
+                         "screenHeight":  0.40,
+                         "expectedLevel":  1,
+                         "expectedName":  "Medium"
+                     },
+                     {
+                         "id":  "LOD2",
+                         "screenHeight":  0.10,
+                         "expectedLevel":  2,
+                         "expectedName":  "Low"
+                     },
+                     {
+                         "id":  "CULLED",
+                         "screenHeight":  0.02,
+                         "expectedLevel":  3,
+                         "expectedName":  "Culled"
+                     }
+                 ],
+    "generatedAtUtc":  "2026-08-13T16:15:11.8766898Z"
+}
