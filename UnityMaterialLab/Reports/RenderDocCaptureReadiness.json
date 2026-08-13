@@ -1,0 +1,20 @@
+﻿{
+    "status":  "BLOCKED_TOOLING",
+    "preparationStatus":  "PREPARED",
+    "captureStatus":  "RENDERDOC_NOT_INSTALLED",
+    "unityStatus":  "UNITY_EDITOR_FOUND",
+    "renderDocExecutable":  null,
+    "unityExecutable":  "F:\\unity\\2022.3.62f3c1\\Editor\\Unity.exe",
+    "manifest":  "E:\\ueProject\\home\\UnityMaterialLab\\Assets\\_TA\\Documentation\\RenderDocCaptureManifest.json",
+    "expectedCapture":  "E:\\ueProject\\home\\UnityMaterialLab\\Reports\\RenderDoc\\MaterialLab_Frame_0001.rdc",
+    "markerCount":  6,
+    "bookmarks":  [
+                      "RD/Frame/Begin",
+                      "RD/Opaque/Boundary",
+                      "RD/Lighting/Forward",
+                      "RD/Transparent/Boundary",
+                      "RD/PostFX/Boundary",
+                      "RD/Frame/End"
+                  ],
+    "generatedAtUtc":  "2026-08-13T17:03:40.3395437Z"
+}
