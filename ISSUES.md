@@ -37,6 +37,8 @@
 | #44 | 缺少可复用的 Shader Graph File 模式 Custom Function、纹理结构体端口契约及精度变体 | 2026-08-13 | 已新增 `TA_CustomFunctions.hlsl`、`float`/`half` 变体、`UnityTexture2D` 采样、示例子图生成器和静态接口验收 |
 | #45 | 缺少可复用的 Unity 材质函数库，UV、法线、通道与颜色逻辑散落在单一节点 | 2026-08-13 | 已新增 4 个 HLSL 模块、6 个精度变体函数、聚合入口、固定数值基准、示例清单和静态验收 |
 | #46 | 缺少按贴图语义选择的 Standalone 压缩格式、显存对照和质量留痕 | 2026-08-13 | 已新增 BaseColor=BC7、Normal=BC5、ORM=BC1 策略、BC1 实际往返误差、显存矩阵和对照截图 |
+| #47 | 缺少可复现的 LOD 屏幕阈值、切换样本和场景记录 | 2026-08-14 | 已新增三档 `LodPolicy`、四个固定切换样本、LODGroup CrossFade 场景生成器、JSON 基准与 1440x900 对比图 |
+| #48 | 缺少可重复的 Unity RenderDoc 截帧入口、GPU 事件书签和工具状态记录 | 2026-08-14 | 已新增 URP marker Renderer Feature、固定 1280x720 捕获配置、六个 `RD/*` 书签、RenderDoc readiness 检查和 `.rdc` 归档说明；真实捕获待本机安装 RenderDoc 并激活 Unity 许可证 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
