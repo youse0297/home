@@ -1,0 +1,24 @@
+{
+  "status": "STATIC_BASELINE_VALIDATED",
+  "policyVersion": "1.0.0",
+  "prefab": "Assets/_TA/LOD/PF_LOD_MaterialBall.prefab",
+  "scene": "Assets/_TA/LOD/SCN_LOD_Baseline.unity",
+  "lodBias": 1.0,
+  "crossFadeDuration": 0.15,
+  "levels": [
+    { "name": "High", "screenHeight": 0.60, "vertexCount": 544, "triangleCount": 1024 },
+    { "name": "Medium", "screenHeight": 0.25, "vertexCount": 144, "triangleCount": 256 },
+    { "name": "Low", "screenHeight": 0.05, "vertexCount": 40, "triangleCount": 64 }
+  ],
+  "switches": [
+    { "id": "LOD0", "screenHeight": 0.80, "expectedLevel": 0, "expectedName": "High" },
+    { "id": "LOD1", "screenHeight": 0.40, "expectedLevel": 1, "expectedName": "Medium" },
+    { "id": "LOD2", "screenHeight": 0.10, "expectedLevel": 2, "expectedName": "Low" },
+    { "id": "CULLED", "screenHeight": 0.02, "expectedLevel": 3, "expectedName": "Culled" }
+  ],
+  "notes": [
+    "screenHeight is the renderer height relative to the camera viewport height.",
+    "The Unity Editor menu generates the prefab and comparison scene from the same policy.",
+    "Static baseline is validated without requiring an activated Unity Editor license."
+  ]
+}
