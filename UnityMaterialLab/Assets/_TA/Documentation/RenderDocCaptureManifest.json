@@ -1,0 +1,37 @@
+{
+  "status": "PREPARED",
+  "captureStatus": "PENDING_CAPTURE",
+  "scene": "Assets/_TA/Scenes/SCN_MaterialImportLab.unity",
+  "renderer": "Assets/_TA/Settings/RD_MaterialLab_Forward.asset",
+  "pipeline": "Assets/_TA/Settings/RP_MaterialLab_URP.asset",
+  "width": 1280,
+  "height": 720,
+  "targetFrameRate": 30,
+  "vSyncCount": 0,
+  "renderScale": 1.0,
+  "msaaSamples": 1,
+  "hdr": true,
+  "markers": [
+    { "name": "RD/Frame/Begin", "renderPassEvent": 0 },
+    { "name": "RD/Opaque/Boundary", "renderPassEvent": 250 },
+    { "name": "RD/Lighting/Forward", "renderPassEvent": 300 },
+    { "name": "RD/Transparent/Boundary", "renderPassEvent": 500 },
+    { "name": "RD/PostFX/Boundary", "renderPassEvent": 600 },
+    { "name": "RD/Frame/End", "renderPassEvent": 1000 }
+  ],
+  "bookmarks": [
+    "RD/Frame/Begin",
+    "RD/Opaque/Boundary",
+    "RD/Lighting/Forward",
+    "RD/Transparent/Boundary",
+    "RD/PostFX/Boundary",
+    "RD/Frame/End"
+  ],
+  "captureSteps": [
+    "Open the project with Unity 2022.3.62f3c1 and activate a valid license.",
+    "Run TA/Material Lab/Prepare RenderDoc Capture.",
+    "Launch the scene at 1280x720 with VSync disabled and capture one stable frame.",
+    "Save the capture as Reports/RenderDoc/MaterialLab_Frame_0001.rdc.",
+    "Use the six RD bookmarks to inspect Opaque, Lighting, Transparent and PostFX boundaries."
+  ]
+}
