@@ -4,7 +4,7 @@
 
 项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。发布门禁覆盖 12 组固定验收，并生成具有代表色和整图 checksum 的三材质 PPM 基准图；完整流水线不依赖第三方图形或数学库。
 
-Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、BaseColor/Normal/ORM 输入、三个材质实例、11 组参数边界、Prefab、测试场景、导入 Bootstrap 和静态验收。工程步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)，输入契约见 [Unity 材质输入与实例](docs/UNITY_MATERIAL_INPUTS.md)，边界结论见 [Unity 材质参数边界验证](docs/UNITY_MATERIAL_BOUNDARIES.md)，Custom Function 接入见 [Shader Graph Custom Function 节点](docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md)，函数库见 [Unity 材质函数库](docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md)，压缩策略见 [Unity 贴图压缩](docs/UNITY_TEXTURE_COMPRESSION.md)。
+Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、BaseColor/Normal/ORM 输入、三个材质实例、11 组参数边界、Prefab、测试场景、导入 Bootstrap、三档 LOD 基础场景、RenderDoc 截帧准备和静态验收。工程步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)，输入契约见 [Unity 材质输入与实例](docs/UNITY_MATERIAL_INPUTS.md)，边界结论见 [Unity 材质参数边界验证](docs/UNITY_MATERIAL_BOUNDARIES.md)，Custom Function 接入见 [Shader Graph Custom Function 节点](docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md)，函数库见 [Unity 材质函数库](docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md)，压缩策略见 [Unity 贴图压缩](docs/UNITY_TEXTURE_COMPRESSION.md)，LOD 规则见 [Unity LOD 基础](docs/UNITY_LOD_BASICS.md)，截帧准备见 [Unity RenderDoc 截帧准备](docs/UNITY_RENDERDOC_CAPTURE_PREPARATION.md)。
 
 ## 主要功能
 
