@@ -84,6 +84,18 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - `Tools/GenerateTextureCompressionBoard.ps1` 生成 `Reports/TextureCompressionBoard.png`，包含 BC1 实际往返预览/误差、BC1/BC5/BC7 显存对照和用途选择。
 - 策略、显存公式和失败点见 `../docs/UNITY_TEXTURE_COMPRESSION.md`；固定数据见 `Assets/_TA/Documentation/TextureCompressionMatrix.json`。
 
+## LOD 基础
+
+- `Assets/_TA/Runtime/LodPolicy.cs` 固定 High/Medium/Low 阈值为 `0.60/0.25/0.05`，并记录 544/144/40 顶点与 1024/256/64 三角形基准。
+- 执行菜单 `TA/Material Lab/Build LOD Test Scene` 生成 `Assets/_TA/LOD/PF_LOD_MaterialBall.prefab`、`SCN_LOD_Baseline.unity` 和 `LODValidation.json`；场景包含四个切换样本及 `CrossFade=0.15s`。
+- `Tools/GenerateLodBoard.ps1` 生成 `Reports/LODComparisonBoard.png`；阈值、LOD bias 和固定样本由 `Tools/StaticValidate.ps1` 验证。详细规则见 `../docs/UNITY_LOD_BASICS.md`。
+
+## RenderDoc 截帧准备
+
+- 执行菜单 `TA/Material Lab/Prepare RenderDoc Capture` 固定 `1280x720`、关闭 VSync、`30 FPS`、Render Scale `1.0`、MSAA `1x` 和 HDR。
+- `RenderDocCaptureFeature` 注入 `RD/Frame/Begin`、Opaque、Lighting、Transparent、PostFX、Frame End 六个 GPU 事件书签。
+- 运行 `Tools/RenderDocCaptureCheck.ps1` 检查 RenderDoc/Unity 工具状态；真实文件保存为 `Reports/RenderDoc/MaterialLab_Frame_0001.rdc`。完整步骤见 `../docs/UNITY_RENDERDOC_CAPTURE_PREPARATION.md`。
+
 ## 常见失败点
 
 - 用错误 Editor 打开导致包升级、材质序列化变化或场景重导入。
@@ -94,6 +106,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1，以及 Standalone 贴图压缩策略与对照基准。完整 Shader Graph 主材质属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景，以及 RenderDoc 截帧准备层。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
