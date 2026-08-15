@@ -39,6 +39,8 @@
 | #46 | 缺少按贴图语义选择的 Standalone 压缩格式、显存对照和质量留痕 | 2026-08-13 | 已新增 BaseColor=BC7、Normal=BC5、ORM=BC1 策略、BC1 实际往返误差、显存矩阵和对照截图 |
 | #47 | 缺少可复现的 LOD 屏幕阈值、切换样本和场景记录 | 2026-08-14 | 已新增三档 `LodPolicy`、四个固定切换样本、LODGroup CrossFade 场景生成器、JSON 基准与 1440x900 对比图 |
 | #48 | 缺少可重复的 Unity RenderDoc 截帧入口、GPU 事件书签和工具状态记录 | 2026-08-14 | 已新增 URP marker Renderer Feature、固定 1280x720 捕获配置、六个 `RD/*` 书签、RenderDoc readiness 检查和 `.rdc` 归档说明；真实捕获待本机安装 RenderDoc 并激活 Unity 许可证 |
+| #49 | 缺少 URP Forward BasePass 的表面通道、直接/间接光与阴影衰减拆解视图 | 2026-08-16 | 已新增 10 档调试 Shader、MaterialPropertyBlock 控制器、对照场景生成器、固定 GGX/SH 数值板与加法不变量验收 |
+| #50 | 阶段 1 的 CPU 发布门禁与 Unity 离线/运行门禁分散，缺少统一结论和阻塞证据 | 2026-08-16 | 已新增 `RunStage1Acceptance.ps1`，统一执行构建、CTest、Unity 离线报告与外部工具检查，输出 JSON/Markdown 总报告并区分 PASS、CONDITIONAL_PASS、FAIL |
 
 ## 🔴 待解决 / 待验证 (Open)
 
