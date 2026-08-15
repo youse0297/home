@@ -1,0 +1,39 @@
+{
+  "status": "STATIC_BASELINE_VALIDATED",
+  "version": "1.0.0",
+  "renderPath": "URP Forward / UniversalForward",
+  "shader": "TA/BasePass Lighting Decomposition",
+  "material": "Assets/_TA/Materials/MAT_BasePassLightingDecomposition.mat",
+  "scene": "Assets/_TA/BasePass/SCN_BasePassLightingDecomposition.unity",
+  "colorSpace": "Linear HDR; display transform is applied by URP",
+  "debugViews": [
+    { "id": 0, "name": "FinalLit", "category": "Composite", "output": "DirectDiffuse + DirectSpecular + IndirectDiffuse" },
+    { "id": 1, "name": "BaseColor", "category": "Surface", "output": "Linear BaseColor" },
+    { "id": 2, "name": "WorldNormal", "category": "Surface", "output": "NormalWS * 0.5 + 0.5" },
+    { "id": 3, "name": "AmbientOcclusion", "category": "Surface", "output": "lerp(1, ORM.r, AOStrength)" },
+    { "id": 4, "name": "Roughness", "category": "Surface", "output": "max(ORM.g * RoughnessScale, 0.045)" },
+    { "id": 5, "name": "Metallic", "category": "Surface", "output": "saturate(ORM.b * MetallicScale)" },
+    { "id": 6, "name": "DirectDiffuse", "category": "Lighting", "output": "(1-metallic) * BaseColor / PI * NdotL * radiance" },
+    { "id": 7, "name": "DirectSpecular", "category": "Lighting", "output": "D_GGX * V_Smith * F_Schlick * NdotL * radiance" },
+    { "id": 8, "name": "IndirectDiffuse", "category": "Lighting", "output": "SampleSH(N) * (1-metallic) * BaseColor * AO" },
+    { "id": 9, "name": "ShadowAttenuation", "category": "Lighting", "output": "MainLight.shadowAttenuation" }
+  ],
+  "fixture": {
+    "baseColor": [0.56, 0.13, 0.06],
+    "normalWS": [0.0, 0.0, 1.0],
+    "viewDirectionWS": [0.0, 0.0, 1.0],
+    "lightDirectionWS": [0.3, 0.5, 0.81240384],
+    "lightColor": [3.0, 2.76, 2.46],
+    "ambientSH": [0.08, 0.10, 0.14],
+    "ambientOcclusion": 0.7,
+    "roughness": 0.45,
+    "metallic": 0.35,
+    "shadowAttenuation": 0.8
+  },
+  "invariants": [
+    "FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse",
+    "BaseColor is sampled as sRGB and consumed as linear by Unity",
+    "Normal, AO, roughness and metallic data textures are sampled as linear",
+    "Debug views do not apply fog, exposure or tone mapping in the material pass"
+  ]
+}
