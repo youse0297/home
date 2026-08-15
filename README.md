@@ -4,7 +4,17 @@
 
 项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。发布门禁覆盖 12 组固定验收，并生成具有代表色和整图 checksum 的三材质 PPM 基准图；完整流水线不依赖第三方图形或数学库。
 
-Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、BaseColor/Normal/ORM 输入、三个材质实例、11 组参数边界、Prefab、测试场景、导入 Bootstrap、三档 LOD 基础场景、RenderDoc 截帧准备和静态验收。工程步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)，输入契约见 [Unity 材质输入与实例](docs/UNITY_MATERIAL_INPUTS.md)，边界结论见 [Unity 材质参数边界验证](docs/UNITY_MATERIAL_BOUNDARIES.md)，Custom Function 接入见 [Shader Graph Custom Function 节点](docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md)，函数库见 [Unity 材质函数库](docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md)，压缩策略见 [Unity 贴图压缩](docs/UNITY_TEXTURE_COMPRESSION.md)，LOD 规则见 [Unity LOD 基础](docs/UNITY_LOD_BASICS.md)，截帧准备见 [Unity RenderDoc 截帧准备](docs/UNITY_RENDERDOC_CAPTURE_PREPARATION.md)。
+Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、BaseColor/Normal/ORM 输入、三个材质实例、11 组参数边界、Prefab、测试场景、导入 Bootstrap、三档 LOD 基础场景、RenderDoc 截帧准备、BasePass 光照拆解和静态验收。工程步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)，输入契约见 [Unity 材质输入与实例](docs/UNITY_MATERIAL_INPUTS.md)，边界结论见 [Unity 材质参数边界验证](docs/UNITY_MATERIAL_BOUNDARIES.md)，Custom Function 接入见 [Shader Graph Custom Function 节点](docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md)，函数库见 [Unity 材质函数库](docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md)，压缩策略见 [Unity 贴图压缩](docs/UNITY_TEXTURE_COMPRESSION.md)，LOD 规则见 [Unity LOD 基础](docs/UNITY_LOD_BASICS.md)，截帧准备见 [Unity RenderDoc 截帧准备](docs/UNITY_RENDERDOC_CAPTURE_PREPARATION.md)，拆解视图见 [Unity BasePass 与光照拆解](docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md)。
+
+## 阶段 1 总验收
+
+统一入口会重新配置和构建 CPU 软渲染器、执行 CTest `12/12`、刷新 Unity 的参数/函数/压缩/LOD/BasePass 报告，并汇总 Unity Editor 与 RenderDoc 的外部阻塞状态：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.ps1
+```
+
+结果写入 `output/Stage1AcceptanceReport.json` 与 `output/Stage1AcceptanceSummary.md`。结论规则、门禁清单和补验步骤见 [阶段 1 总验收](docs/STAGE1_ACCEPTANCE.md)。
 
 ## 主要功能
 
@@ -175,6 +185,8 @@ OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、
 在没有 Unity Editor 许可证时可运行 `UnityMaterialLab/Tools/StaticValidate.ps1`，它会完成工程结构、资产内容、输入契约、实例范围、命名和离线 C# 编译检查。当前机器的 Unity Editor 批处理验收仍可能被本地许可证阻塞，证据和解锁步骤见 `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不替代 Editor 场景 PASS。
 
 材质边界验收额外固定 Metallic `0/0.5/1`、Roughness `0/0.25/0.5/0.75/1`、Normal Scale `0/1/2`。静态报告校验所有样例的范围、`smoothness`、GGX `alpha` 和介电权重，并生成可直接查看的对比板。
+
+URP Forward 的 BasePass 调试材质现提供 10 档表面/光照视图，并固定 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse` 的线性 HDR 加法关系。使用 Unity 菜单可生成两行五列对照场景；无许可证时可运行离线公式板和静态门禁。完整模式、捕获检查点与验收命令见 [Unity BasePass 与光照拆解](docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md)。
 
 ## 使用示例
 
