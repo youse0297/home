@@ -1,0 +1,220 @@
+﻿{
+    "status":  "CONDITIONAL_PASS",
+    "phase":  "Stage 1",
+    "offlineAcceptance":  "PASS",
+    "externalRuntimeAcceptance":  "BLOCKED",
+    "requiredGateCount":  10,
+    "passedRequiredGateCount":  10,
+    "blockerCount":  2,
+    "configuration":  "Debug",
+    "buildDirectory":  "E:\\ueProject\\home\\build",
+    "generatedAtUtc":  "2026-08-15T19:55:39.2825677Z",
+    "gates":  [
+                  {
+                      "name":  "CMake Configure",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/CMakeCache.txt",
+                      "detail":  "Command completed with the required acceptance marker.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.22631.",
+                                         "-- Configuring done (0.1s)",
+                                         "-- Generating done (0.5s)",
+                                         "-- Build files have been written to: E:/ueProject/home/build"
+                                     ]
+                  },
+                  {
+                      "name":  "Debug Build",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/Debug/release_acceptance.exe",
+                      "detail":  "Command completed with the required acceptance marker.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(depth_buffer_acceptance.dir\\Debug\\)包含从另一个项目(depth_buffer_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\depth_buffer_acceptance.vcxproj]",
+                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(vertex_stage_acceptance.dir\\Debug\\)包含从另一个项目(vertex_stage_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\vertex_stage_acceptance.vcxproj]",
+                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(triangle_rasterizer_acceptance.dir\\Debug\\)包含从另一个项目(triangle_rasterizer_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\triangle_rasterizer_acceptance.vcxproj]",
+                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(obj_loader_acceptance.dir\\Debug\\)包含从另一个项目(obj_loader_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\obj_loader_acceptance.vcxproj]",
+                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(texture_sampling_acceptance.dir\\Debug\\)包含从另一个项目(texture_sampling_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\texture_sampling_acceptance.vcxproj]",
+                                         "  depth_buffer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\depth_buffer_acceptance.exe",
+                                         "  ggx_brdf_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\ggx_brdf_acceptance.exe",
+                                         "  release_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\release_acceptance.exe",
+                                         "  surface_attributes_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\surface_attributes_acceptance.exe",
+                                         "  vertex_stage_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\vertex_stage_acceptance.exe",
+                                         "  material_workflow_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\material_workflow_acceptance.exe",
+                                         "  triangle_rasterizer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\triangle_rasterizer_acceptance.exe",
+                                         "  soft_renderer.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\soft_renderer.exe",
+                                         "  diffuse_exposure_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\diffuse_exposure_acceptance.exe",
+                                         "  obj_loader_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\obj_loader_acceptance.exe",
+                                         "  texture_sampling_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\texture_sampling_acceptance.exe"
+                                     ]
+                  },
+                  {
+                      "name":  "CTest 12/12",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/Testing/Temporary/LastTest.log",
+                      "detail":  "All 12 CPU renderer acceptance tests passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "      Start  7: texture_sampling_acceptance",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
+                                         "      Start  8: surface_attributes_acceptance",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
+                                         "      Start  9: diffuse_exposure_acceptance",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.03 sec",
+                                         "      Start 10: ggx_brdf_acceptance",
+                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
+                                         "      Start 11: material_workflow_acceptance",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
+                                         "      Start 12: release_acceptance",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.04 sec",
+                                         "",
+                                         "100% tests passed, 0 tests failed out of 12",
+                                         "",
+                                         "Total Test time (real) =   0.35 sec"
+                                     ]
+                  },
+                  {
+                      "name":  "Release PPM Artifact",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/release_acceptance.ppm",
+                      "detail":  "The release acceptance produced a P6 image artifact; its fixed checksum is covered by CTest.",
+                      "exitCode":  0,
+                      "outputTail":  [
+
+                                     ]
+                  },
+                  {
+                      "name":  "Material Boundary Matrix",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/MaterialBoundaryBoard.png",
+                      "detail":  "Command completed with the required acceptance marker.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "Material boundary board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialBoundaryBoard.png"
+                                     ]
+                  },
+                  {
+                      "name":  "Material Function Library",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/MaterialFunctionLibraryValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_MATERIAL_FUNCTION_LIBRARY_V1: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialFunctionLibraryValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Texture Compression",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/TextureCompressionValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_TEXTURE_COMPRESSION_ACCEPTANCE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "LOD Baseline",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/LODValidationReport.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_LOD_ACCEPTANCE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODComparisonBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODValidationReport.json"
+                                     ]
+                  },
+                  {
+                      "name":  "BasePass Lighting Decomposition",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/BasePassLightingValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_BASEPASS_LIGHTING_ACCEPTANCE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingDecompositionBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Unity Static Validation",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/StaticValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_PROJECT_STATIC_ACCEPTANCE: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Reports\\StaticValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "RenderDoc Capture Readiness",
+                      "category":  "External Runtime",
+                      "required":  false,
+                      "status":  "BLOCKED",
+                      "evidence":  "UnityMaterialLab/Reports/RenderDocCaptureReadiness.json",
+                      "detail":  "RenderDoc capture remains blocked because RenderDoc is not installed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "RENDERDOC_CAPTURE_READINESS: BLOCKED_TOOLING",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\RenderDocCaptureReadiness.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Unity Editor Runtime Validation",
+                      "category":  "External Runtime",
+                      "required":  false,
+                      "status":  "BLOCKED",
+                      "evidence":  "UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md",
+                      "detail":  "Unity Editor scene generation and shader import remain blocked by the local license entitlement.",
+                      "exitCode":  0,
+                      "outputTail":  [
+
+                                     ]
+                  }
+              ],
+    "blockers":  [
+                     {
+                         "name":  "RenderDoc Capture Readiness",
+                         "evidence":  "UnityMaterialLab/Reports/RenderDocCaptureReadiness.json",
+                         "detail":  "RenderDoc capture remains blocked because RenderDoc is not installed."
+                     },
+                     {
+                         "name":  "Unity Editor Runtime Validation",
+                         "evidence":  "UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md",
+                         "detail":  "Unity Editor scene generation and shader import remain blocked by the local license entitlement."
+                     }
+                 ],
+    "artifacts":  [
+                      "build/release_acceptance.ppm",
+                      "UnityMaterialLab/Reports/MaterialBoundaryBoard.png",
+                      "UnityMaterialLab/Reports/TextureCompressionBoard.png",
+                      "UnityMaterialLab/Reports/LODComparisonBoard.png",
+                      "UnityMaterialLab/Reports/BasePassLightingDecompositionBoard.png",
+                      "UnityMaterialLab/Reports/StaticValidation.json"
+                  ]
+}
