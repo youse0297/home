@@ -1,0 +1,61 @@
+﻿{
+    "status":  "PASS",
+    "contractStatus":  "STATIC_BASELINE_VALIDATED",
+    "viewCount":  10,
+    "renderPath":  "URP Forward / UniversalForward",
+    "additiveInvariantDelta":  0,
+    "normalDotLight":  0.81240384030597346,
+    "outputs":  {
+                    "FinalLit":  [
+                                     0.34714108,
+                                     0.08404465,
+                                     0.04117733
+                                 ],
+                    "BaseColor":  [
+                                      0.56,
+                                      0.13,
+                                      0.06
+                                  ],
+                    "WorldNormal":  [
+                                        0.5,
+                                        0.5,
+                                        1
+                                    ],
+                    "AmbientOcclusion":  [
+                                             0.7,
+                                             0.7,
+                                             0.7
+                                         ],
+                    "Roughness":  [
+                                      0.45,
+                                      0.45,
+                                      0.45
+                                  ],
+                    "Metallic":  [
+                                     0.35,
+                                     0.35,
+                                     0.35
+                                 ],
+                    "DirectDiffuse":  [
+                                          0.22590962,
+                                          0.04824784,
+                                          0.01984777
+                                      ],
+                    "DirectSpecular":  [
+                                           0.10084746,
+                                           0.02988181,
+                                           0.01750756
+                                       ],
+                    "IndirectDiffuse":  [
+                                            0.020384,
+                                            0.005915,
+                                            0.003822
+                                        ],
+                    "ShadowAttenuation":  [
+                                              0.8,
+                                              0.8,
+                                              0.8
+                                          ]
+                },
+    "generatedAtUtc":  "2026-08-15T19:55:35.8342958Z"
+}
