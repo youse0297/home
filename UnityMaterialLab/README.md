@@ -18,6 +18,8 @@ powershell -ExecutionPolicy Bypass -File .\Tools\BuildAndValidate.ps1
 powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
+从仓库根目录运行 `Tools/RunStage1Acceptance.ps1` 可同时执行 CPU `12/12`、全部 Unity 离线门禁，并把许可证和 RenderDoc 状态汇总到阶段 1 总报告。
+
 生成场景位于 `Assets/_TA/Scenes/SCN_MaterialImportLab.unity`。基线截图和结构化验收报告位于 `Assets/_TA/Documentation/`。
 
 ## 目录与命名
@@ -96,6 +98,13 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - `RenderDocCaptureFeature` 注入 `RD/Frame/Begin`、Opaque、Lighting、Transparent、PostFX、Frame End 六个 GPU 事件书签。
 - 运行 `Tools/RenderDocCaptureCheck.ps1` 检查 RenderDoc/Unity 工具状态；真实文件保存为 `Reports/RenderDoc/MaterialLab_Frame_0001.rdc`。完整步骤见 `../docs/UNITY_RENDERDOC_CAPTURE_PREPARATION.md`。
 
+## BasePass 与光照拆解
+
+- `TA_BasePassLightingDecomposition.shader` 在 URP `UniversalForward` BasePass 中提供 `FinalLit`、BaseColor、WorldNormal、AO、Roughness、Metallic、DirectDiffuse、DirectSpecular、IndirectDiffuse 和 ShadowAttenuation 共 10 档视图。
+- `BasePassLightingDebugController` 使用 `MaterialPropertyBlock` 独立切换 Renderer，不复制共享材质；执行菜单 `TA/Material Lab/Build BasePass Lighting Decomposition` 可生成两行五列对照场景。
+- `Tools/GenerateBasePassLightingBoard.ps1` 用固定输入验证 Lambert、GGX、SH 与 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`，输出 1440×900 对照板和 JSON 报告。
+- 输出保持在线性 HDR 空间，不在材质 pass 内重复应用曝光、色调映射或 sRGB 编码。模式表、RenderDoc 检查点和失败边界见 `../docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md`。
+
 ## 常见失败点
 
 - 用错误 Editor 打开导致包升级、材质序列化变化或场景重导入。
@@ -106,6 +115,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景，以及 RenderDoc 截帧准备层。完整 Shader Graph 主材质属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景、RenderDoc 截帧准备层，以及 URP Forward BasePass 与光照拆解视图。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
