@@ -74,6 +74,16 @@ $renderDocManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\Render
 $renderDocReadinessPath = Join-Path $projectPath 'Reports\RenderDocCaptureReadiness.json'
 $renderDocCheckScriptPath = Join-Path $projectPath 'Tools\RenderDocCaptureCheck.ps1'
 $renderDocDropReadmePath = Join-Path $projectPath 'Reports\RenderDoc\README.md'
+$basePassShaderPath = Join-Path $projectPath 'Assets\_TA\Shaders\TA_BasePassLightingDecomposition.shader'
+$basePassShaderMetaPath = Join-Path $projectPath 'Assets\_TA\Shaders\TA_BasePassLightingDecomposition.shader.meta'
+$basePassControllerPath = Join-Path $projectPath 'Assets\_TA\Runtime\BasePassLightingDebugController.cs'
+$basePassControllerMetaPath = Join-Path $projectPath 'Assets\_TA\Runtime\BasePassLightingDebugController.cs.meta'
+$basePassBootstrapPath = Join-Path $projectPath 'Assets\_TA\Editor\BasePassLightingBootstrap.cs'
+$basePassBootstrapMetaPath = Join-Path $projectPath 'Assets\_TA\Editor\BasePassLightingBootstrap.cs.meta'
+$basePassManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\BasePassLightingDecomposition.json'
+$basePassBoardScriptPath = Join-Path $projectPath 'Tools\GenerateBasePassLightingBoard.ps1'
+$basePassBoardPath = Join-Path $projectPath 'Reports\BasePassLightingDecompositionBoard.png'
+$basePassReportPath = Join-Path $projectPath 'Reports\BasePassLightingValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -91,6 +101,26 @@ Add-Check (Test-Path -LiteralPath $sourcesPath -PathType Leaf) `
     'Asset source ledger exists'
 Add-Check (Test-Path -LiteralPath $inputsDocPath -PathType Leaf) `
     'Material input contract exists'
+Add-Check (Test-Path -LiteralPath $basePassShaderPath -PathType Leaf) `
+    'BasePass lighting decomposition shader exists'
+Add-Check (Test-Path -LiteralPath $basePassShaderMetaPath -PathType Leaf) `
+    'BasePass lighting decomposition shader meta exists'
+Add-Check (Test-Path -LiteralPath $basePassControllerPath -PathType Leaf) `
+    'BasePass debug controller exists'
+Add-Check (Test-Path -LiteralPath $basePassControllerMetaPath -PathType Leaf) `
+    'BasePass debug controller meta exists'
+Add-Check (Test-Path -LiteralPath $basePassBootstrapPath -PathType Leaf) `
+    'BasePass decomposition scene bootstrap exists'
+Add-Check (Test-Path -LiteralPath $basePassBootstrapMetaPath -PathType Leaf) `
+    'BasePass decomposition scene bootstrap meta exists'
+Add-Check (Test-Path -LiteralPath $basePassManifestPath -PathType Leaf) `
+    'BasePass lighting decomposition contract exists'
+Add-Check (Test-Path -LiteralPath $basePassBoardScriptPath -PathType Leaf) `
+    'BasePass lighting board generator exists'
+Add-Check (Test-Path -LiteralPath $basePassBoardPath -PathType Leaf) `
+    'BasePass lighting decomposition board exists'
+Add-Check (Test-Path -LiteralPath $basePassReportPath -PathType Leaf) `
+    'BasePass lighting validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -587,6 +617,103 @@ if (Test-Path -LiteralPath $renderDocReadinessPath) {
         'RenderDoc readiness report matches the six-marker preparation manifest'
 }
 
+if (Test-Path -LiteralPath $basePassShaderPath) {
+    $basePassShader = Get-Content -LiteralPath $basePassShaderPath -Raw
+    Add-Check ($basePassShader -match 'Name "BasePassLightingDecomposition"' -and
+        $basePassShader -match '"LightMode" = "UniversalForward"' -and
+        $basePassShader -match 'GetMainLight\(input\.shadowCoord\)' -and
+        $basePassShader -match 'SampleSH\(normalWS\)') `
+        'BasePass shader uses the URP forward pass, main light shadows and SH ambient light'
+    Add-Check ($basePassShader -match 'DistributionGGX' -and
+        $basePassShader -match 'VisibilitySmithGGXCorrelated' -and
+        $basePassShader -match 'FresnelSchlick' -and
+        $basePassShader -match 'directDiffuse' -and
+        $basePassShader -match 'directSpecular' -and
+        $basePassShader -match 'indirectDiffuse' -and
+        $basePassShader -match 'finalLit = directDiffuse \+ directSpecular \+ indirectDiffuse') `
+        'BasePass shader exposes Lambert, GGX and SH components with an additive final result'
+    Add-Check ($basePassShader -match '_ORMMap' -and
+        $basePassShader -match 'orm\.r' -and $basePassShader -match 'orm\.g' -and
+        $basePassShader -match 'orm\.b' -and
+        $basePassShader -match 'TransformTangentToWorld' -and
+        $basePassShader -match 'NormalizeNormalPerPixel') `
+        'BasePass shader decodes ORM channels and a normalized tangent-space normal'
+    Add-Check ($basePassShader -match 'Direct Diffuse,6' -and
+        $basePassShader -match 'Direct Specular,7' -and
+        $basePassShader -match 'Indirect Diffuse,8' -and
+        $basePassShader -match 'Shadow Attenuation,9' -and
+        $basePassShader -match 'UsePass "Universal Render Pipeline/Lit/ShadowCaster"') `
+        'BasePass shader declares all lighting views and supporting depth/shadow passes'
+}
+
+if (Test-Path -LiteralPath $basePassControllerPath) {
+    $basePassController = Get-Content -LiteralPath $basePassControllerPath -Raw
+    Add-Check ($basePassController -match 'enum BasePassDebugView' -and
+        $basePassController -match 'FinalLit = 0' -and
+        $basePassController -match 'ShadowAttenuation = 9' -and
+        $basePassController -match 'MaterialPropertyBlock' -and
+        $basePassController -match 'SetPropertyBlock' -and
+        $basePassController -notmatch '\.material\b') `
+        'BasePass controller maps ten views through MaterialPropertyBlock without cloning materials'
+}
+
+if (Test-Path -LiteralPath $basePassBootstrapPath) {
+    $basePassBootstrap = Get-Content -LiteralPath $basePassBootstrapPath -Raw
+    Add-Check ($basePassBootstrap -match 'Build BasePass Lighting Decomposition' -and
+        $basePassBootstrap -match 'SCN_BasePassLightingDecomposition' -and
+        $basePassBootstrap -match 'Enum\.GetValues' -and
+        $basePassBootstrap -match 'BasePassLightingDebugController' -and
+        $basePassBootstrap -match 'EDITOR_SCENE_GENERATED') `
+        'BasePass bootstrap creates the ten-view scene, material and Editor report'
+}
+
+if (Test-Path -LiteralPath $basePassManifestPath) {
+    $basePassManifest = Get-Content -LiteralPath $basePassManifestPath -Raw | ConvertFrom-Json
+    $basePassViewIds = @($basePassManifest.debugViews | ForEach-Object { $_.id })
+    $basePassViewNames = @($basePassManifest.debugViews | ForEach-Object { $_.name })
+    Add-Check ($basePassManifest.status -in @('STATIC_BASELINE_VALIDATED', 'EDITOR_SCENE_GENERATED') -and
+        $basePassManifest.version -eq '1.0.0' -and
+        $basePassManifest.renderPath -eq 'URP Forward / UniversalForward' -and
+        @($basePassManifest.debugViews).Count -eq 10) `
+        'BasePass contract fixes the URP forward path and ten debug views'
+    Add-Check ((0..9 | Where-Object { $basePassViewIds -notcontains $_ }).Count -eq 0 -and
+        ($basePassViewNames -contains 'FinalLit') -and
+        ($basePassViewNames -contains 'BaseColor') -and
+        ($basePassViewNames -contains 'WorldNormal') -and
+        ($basePassViewNames -contains 'DirectDiffuse') -and
+        ($basePassViewNames -contains 'DirectSpecular') -and
+        ($basePassViewNames -contains 'IndirectDiffuse') -and
+        ($basePassViewNames -contains 'ShadowAttenuation')) `
+        'BasePass contract assigns unique IDs 0 through 9 to required surface and lighting views'
+    Add-Check (@($basePassManifest.debugViews | Where-Object { $_.category -eq 'Surface' }).Count -eq 5 -and
+        @($basePassManifest.debugViews | Where-Object { $_.category -eq 'Lighting' }).Count -eq 4 -and
+        @($basePassManifest.debugViews | Where-Object { $_.category -eq 'Composite' }).Count -eq 1 -and
+        @($basePassManifest.invariants).Count -eq 4) `
+        'BasePass contract separates surface, lighting and composite outputs with fixed invariants'
+}
+
+if (Test-Path -LiteralPath $basePassReportPath) {
+    $basePassReport = Get-Content -LiteralPath $basePassReportPath -Raw | ConvertFrom-Json
+    Add-Check ($basePassReport.status -eq 'PASS' -and
+        $basePassReport.viewCount -eq 10 -and
+        $basePassReport.additiveInvariantDelta -le 0.000001 -and
+        $null -ne $basePassReport.outputs.FinalLit -and
+        $null -ne $basePassReport.outputs.DirectDiffuse -and
+        $null -ne $basePassReport.outputs.DirectSpecular -and
+        $null -ne $basePassReport.outputs.IndirectDiffuse) `
+        'BasePass analytic report validates all views and the final-light additive invariant'
+}
+
+if (Test-Path -LiteralPath $basePassBoardPath) {
+    $basePassImage = [System.Drawing.Image]::FromFile($basePassBoardPath)
+    try {
+        Add-Check ($basePassImage.Width -eq 1440 -and $basePassImage.Height -eq 900) `
+            'BasePass lighting decomposition board is 1440x900'
+    } finally {
+        $basePassImage.Dispose()
+    }
+}
+
 $dataPath = Join-Path $UnityRoot 'Data'
 $dotnetPath = Join-Path $dataPath 'NetCoreRuntime\dotnet.exe'
 $compilerPath = Join-Path $dataPath 'DotNetSdkRoslyn\csc.dll'
@@ -633,7 +760,9 @@ if ($compilerAvailable -and (Test-Path -LiteralPath $bootstrapPath)) {
         $shaderGraphBootstrapPath `
         $textureCompressionPolicyPath `
         $lodPolicyPath `
-        $lodBootstrapPath
+        $lodBootstrapPath `
+        $basePassControllerPath `
+        $basePassBootstrapPath
     Add-Check ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $compileOutput)) `
         'ProjectBootstrap compiles against installed Unity assemblies'
 }
