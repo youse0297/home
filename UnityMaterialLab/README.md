@@ -105,6 +105,12 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - `Tools/GenerateBasePassLightingBoard.ps1` 用固定输入验证 Lambert、GGX、SH 与 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`，输出 1440×900 对照板和 JSON 报告。
 - 输出保持在线性 HDR 空间，不在材质 pass 内重复应用曝光、色调映射或 sRGB 编码。模式表、RenderDoc 检查点和失败边界见 `../docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md`。
 
+## HLSL 源码库
+
+- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按 Types、Common、BRDF、Lighting、DebugViews 的依赖顺序装配 5 个模块。
+- BasePass 只负责采样材质与获取 URP 光照数据，再通过 `TA_EvaluateLighting` 和 `TA_SelectDebugView` 消费库接口；GGX 与调试选择不再内联重复。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 11 个公共符号、聚合顺序与消费端接线；完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`。
+
 ## 常见失败点
 
 - 用错误 Editor 打开导致包升级、材质序列化变化或场景重导入。
@@ -115,6 +121,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景、RenderDoc 截帧准备层，以及 URP Forward BasePass 与光照拆解视图。完整 Shader Graph 主材质属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景、RenderDoc 截帧准备层、URP Forward BasePass 光照拆解视图，以及 Renderer 侧 HLSL 源码库骨架。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。

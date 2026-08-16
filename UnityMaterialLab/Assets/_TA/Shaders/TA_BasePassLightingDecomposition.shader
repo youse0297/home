@@ -43,6 +43,7 @@ Shader "TA/BasePass Lighting Decomposition"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Library/TA_ShaderLibrary.hlsl"
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
@@ -106,44 +107,12 @@ Shader "TA/BasePass Lighting Decomposition"
                 return output;
             }
 
-            half3 FresnelSchlick(half cosineTheta, half3 reflectanceAtNormal)
-            {
-                half factor = Pow4(1.0h - cosineTheta) * (1.0h - cosineTheta);
-                return reflectanceAtNormal + (1.0h - reflectanceAtNormal) * factor;
-            }
-
-            half DistributionGGX(half normalDotHalf, half roughness)
-            {
-                half alpha = max(roughness * roughness, 0.002h);
-                half alphaSquared = alpha * alpha;
-                half denominator = normalDotHalf * normalDotHalf * (alphaSquared - 1.0h) + 1.0h;
-                return alphaSquared / max(PI * denominator * denominator, 0.0001h);
-            }
-
-            half VisibilitySmithGGXCorrelated(
-                half normalDotView,
-                half normalDotLight,
-                half roughness
-            )
-            {
-                half alpha = max(roughness * roughness, 0.002h);
-                half alphaSquared = alpha * alpha;
-                half viewLambda = normalDotLight * sqrt(
-                    max((-normalDotView * alphaSquared + normalDotView) * normalDotView + alphaSquared, 0.0h)
-                );
-                half lightLambda = normalDotView * sqrt(
-                    max((-normalDotLight * alphaSquared + normalDotLight) * normalDotLight + alphaSquared, 0.0h)
-                );
-                return 0.5h / max(viewLambda + lightLambda, 0.0001h);
-            }
-
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
                 half4 baseSample = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
-                half3 baseColor = saturate(baseSample.rgb * _BaseColor.rgb);
                 half4 normalSample = SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, input.uv);
                 half3 normalTS = UnpackNormalScale(normalSample, _BumpScale);
                 half3 bitangentWS = input.tangentWS.w * cross(input.normalWS, input.tangentWS.xyz);
@@ -151,55 +120,29 @@ Shader "TA/BasePass Lighting Decomposition"
                 half3 normalWS = NormalizeNormalPerPixel(TransformTangentToWorld(normalTS, tangentToWorld));
 
                 half3 orm = saturate(SAMPLE_TEXTURE2D(_ORMMap, sampler_ORMMap, input.uv).rgb);
-                half ambientOcclusion = lerp(1.0h, orm.r, saturate(_AOStrength));
-                half roughness = max(saturate(orm.g * _RoughnessScale), 0.045h);
-                half metallic = saturate(orm.b * _MetallicScale);
-                half3 viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+                TA_SurfaceData surface;
+                surface.baseColor = saturate(baseSample.rgb * _BaseColor.rgb);
+                surface.normalWS = normalWS;
+                surface.ambientOcclusion = lerp(1.0h, orm.r, saturate(_AOStrength));
+                surface.roughness = TA_SanitizePerceptualRoughness(orm.g * _RoughnessScale);
+                surface.metallic = saturate(orm.b * _MetallicScale);
+
                 Light mainLight = GetMainLight(input.shadowCoord);
-                half3 lightDirectionWS = normalize(mainLight.direction);
-                half3 halfDirectionWS = SafeNormalize(lightDirectionWS + viewDirectionWS);
-                half normalDotLight = saturate(dot(normalWS, lightDirectionWS));
-                half normalDotView = saturate(dot(normalWS, viewDirectionWS));
-                half normalDotHalf = saturate(dot(normalWS, halfDirectionWS));
-                half viewDotHalf = saturate(dot(viewDirectionWS, halfDirectionWS));
-                half attenuation = mainLight.distanceAttenuation * mainLight.shadowAttenuation;
-                half3 radiance = mainLight.color * attenuation;
+                TA_LightingInput lightingInput;
+                lightingInput.viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+                lightingInput.lightDirectionWS = mainLight.direction;
+                lightingInput.lightColor = mainLight.color;
+                lightingInput.lightAttenuation = mainLight.distanceAttenuation * mainLight.shadowAttenuation;
+                lightingInput.ambientIrradiance = max(SampleSH(normalWS), 0.0h);
 
-                half3 reflectanceAtNormal = lerp(0.04h.xxx, baseColor, metallic);
-                half3 fresnel = FresnelSchlick(viewDotHalf, reflectanceAtNormal);
-                half distribution = DistributionGGX(normalDotHalf, roughness);
-                half visibility = VisibilitySmithGGXCorrelated(
-                    normalDotView,
-                    normalDotLight,
-                    roughness
+                TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
+                return TA_SelectDebugView(
+                    _DebugView,
+                    surface,
+                    lighting,
+                    mainLight.shadowAttenuation,
+                    baseSample.a * _BaseColor.a
                 );
-                half3 directDiffuse = (1.0h - metallic) * baseColor * INV_PI *
-                    normalDotLight * radiance;
-                half3 directSpecular = distribution * visibility * fresnel *
-                    normalDotLight * radiance;
-                half3 indirectDiffuse = max(SampleSH(normalWS), 0.0h) *
-                    (1.0h - metallic) * baseColor * ambientOcclusion;
-                half3 finalLit = directDiffuse + directSpecular + indirectDiffuse;
-
-                if (_DebugView < 0.5h)
-                    return half4(finalLit, baseSample.a * _BaseColor.a);
-                if (_DebugView < 1.5h)
-                    return half4(baseColor, 1.0h);
-                if (_DebugView < 2.5h)
-                    return half4(normalWS * 0.5h + 0.5h, 1.0h);
-                if (_DebugView < 3.5h)
-                    return ambientOcclusion.xxxx;
-                if (_DebugView < 4.5h)
-                    return roughness.xxxx;
-                if (_DebugView < 5.5h)
-                    return metallic.xxxx;
-                if (_DebugView < 6.5h)
-                    return half4(directDiffuse, 1.0h);
-                if (_DebugView < 7.5h)
-                    return half4(directSpecular, 1.0h);
-                if (_DebugView < 8.5h)
-                    return half4(indirectDiffuse, 1.0h);
-                return mainLight.shadowAttenuation.xxxx;
             }
             ENDHLSL
         }

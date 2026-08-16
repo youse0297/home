@@ -13,6 +13,8 @@
 
 场景生成器会创建两行五列的材质球矩阵、固定 HDR 相机、方向主光和环境光。每个材质球通过 `BasePassLightingDebugController` 写入独立的 `MaterialPropertyBlock`，共享一份材质而不产生运行时材质实例。
 
+BRDF、光照合成和调试输出已由 `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 统一提供，BasePass 只保留贴图采样、TBN 法线转换和 URP 光照数据适配。模块依赖与公共接口见 [Unity HLSL 源码库骨架](UNITY_HLSL_SOURCE_LIBRARY.md)。
+
 ## 调试视图
 
 | ID | 视图 | 类别 | 输出含义 |

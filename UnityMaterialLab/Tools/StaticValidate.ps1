@@ -84,6 +84,16 @@ $basePassManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\BasePas
 $basePassBoardScriptPath = Join-Path $projectPath 'Tools\GenerateBasePassLightingBoard.ps1'
 $basePassBoardPath = Join-Path $projectPath 'Reports\BasePassLightingDecompositionBoard.png'
 $basePassReportPath = Join-Path $projectPath 'Reports\BasePassLightingValidation.json'
+$hlslLibraryRootPath = Join-Path $projectPath 'Assets\_TA\Shaders\Library'
+$hlslLibraryAggregatePath = Join-Path $hlslLibraryRootPath 'TA_ShaderLibrary.hlsl'
+$hlslLibraryTypesPath = Join-Path $hlslLibraryRootPath 'TA_ShaderTypes.hlsl'
+$hlslLibraryCommonPath = Join-Path $hlslLibraryRootPath 'TA_Common.hlsl'
+$hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
+$hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
+$hlslLibraryDebugPath = Join-Path $hlslLibraryRootPath 'TA_DebugViews.hlsl'
+$hlslLibraryManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\HlslSourceLibrary.json'
+$hlslLibraryValidationPath = Join-Path $projectPath 'Tools\ValidateHlslSourceLibrary.ps1'
+$hlslLibraryReportPath = Join-Path $projectPath 'Reports\HlslSourceLibraryValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -121,6 +131,22 @@ Add-Check (Test-Path -LiteralPath $basePassBoardPath -PathType Leaf) `
     'BasePass lighting decomposition board exists'
 Add-Check (Test-Path -LiteralPath $basePassReportPath -PathType Leaf) `
     'BasePass lighting validation report exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryAggregatePath -PathType Leaf) `
+    'HLSL source library aggregate exists'
+Add-Check ((@(
+    $hlslLibraryTypesPath,
+    $hlslLibraryCommonPath,
+    $hlslLibraryBrdfPath,
+    $hlslLibraryLightingPath,
+    $hlslLibraryDebugPath
+) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
+    'HLSL source library contains all five modules'
+Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
+    'HLSL source library contract exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
+    'HLSL source library validator exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryReportPath -PathType Leaf) `
+    'HLSL source library validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -624,14 +650,12 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match 'GetMainLight\(input\.shadowCoord\)' -and
         $basePassShader -match 'SampleSH\(normalWS\)') `
         'BasePass shader uses the URP forward pass, main light shadows and SH ambient light'
-    Add-Check ($basePassShader -match 'DistributionGGX' -and
-        $basePassShader -match 'VisibilitySmithGGXCorrelated' -and
-        $basePassShader -match 'FresnelSchlick' -and
-        $basePassShader -match 'directDiffuse' -and
-        $basePassShader -match 'directSpecular' -and
-        $basePassShader -match 'indirectDiffuse' -and
-        $basePassShader -match 'finalLit = directDiffuse \+ directSpecular \+ indirectDiffuse') `
-        'BasePass shader exposes Lambert, GGX and SH components with an additive final result'
+    Add-Check ($basePassShader -match '#include "Library/TA_ShaderLibrary\.hlsl"' -and
+        $basePassShader -match 'TA_SurfaceData\s+surface' -and
+        $basePassShader -match 'TA_LightingInput\s+lightingInput' -and
+        $basePassShader -match 'TA_EvaluateLighting\(surface, lightingInput\)' -and
+        $basePassShader -match 'TA_SelectDebugView\(') `
+        'BasePass shader consumes the HLSL source library through its aggregate entry point'
     Add-Check ($basePassShader -match '_ORMMap' -and
         $basePassShader -match 'orm\.r' -and $basePassShader -match 'orm\.g' -and
         $basePassShader -match 'orm\.b' -and
@@ -644,6 +668,54 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match 'Shadow Attenuation,9' -and
         $basePassShader -match 'UsePass "Universal Render Pipeline/Lit/ShadowCaster"') `
         'BasePass shader declares all lighting views and supporting depth/shadow passes'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
+    $hlslLibraryAggregate = Get-Content -LiteralPath $hlslLibraryAggregatePath -Raw
+    Add-Check ($hlslLibraryAggregate -match '#include "TA_ShaderTypes\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_Common\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_BRDF\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
+        'HLSL source library aggregate exposes all modules'
+}
+
+if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
+    (Test-Path -LiteralPath $hlslLibraryLightingPath) -and
+    (Test-Path -LiteralPath $hlslLibraryDebugPath)) {
+    $hlslLibraryBrdf = Get-Content -LiteralPath $hlslLibraryBrdfPath -Raw
+    $hlslLibraryLighting = Get-Content -LiteralPath $hlslLibraryLightingPath -Raw
+    $hlslLibraryDebug = Get-Content -LiteralPath $hlslLibraryDebugPath -Raw
+    Add-Check ($hlslLibraryBrdf -match 'TA_FresnelSchlick' -and
+        $hlslLibraryBrdf -match 'TA_DistributionGGX' -and
+        $hlslLibraryBrdf -match 'TA_VisibilitySmithGGXCorrelated') `
+        'HLSL BRDF module exposes Fresnel, GGX distribution and Smith visibility'
+    Add-Check ($hlslLibraryLighting -match 'TA_EvaluateLighting' -and
+        $hlslLibraryLighting -match 'result\.finalLit = result\.directDiffuse \+ result\.directSpecular \+ result\.indirectDiffuse') `
+        'HLSL lighting module preserves the additive lighting invariant'
+    Add-Check ($hlslLibraryDebug -match 'TA_SelectDebugView' -and
+        $hlslLibraryDebug -match 'TA_DEBUG_FINAL_LIT' -and
+        $hlslLibraryDebug -match 'TA_DEBUG_SHADOW_ATTENUATION') `
+        'HLSL debug module fixes the complete debug view range'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
+    $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
+        $hlslLibraryManifest.version -eq '1.0.0' -and
+        $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
+        @($hlslLibraryManifest.modules).Count -eq 5 -and
+        @($hlslLibraryManifest.invariants).Count -eq 4) `
+        'HLSL source library contract fixes version, namespace, modules and invariants'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryReportPath) {
+    $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
+    Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
+        $hlslLibraryReport.moduleCount -eq 5 -and
+        $hlslLibraryReport.publicSymbolCount -eq 11 -and
+        @($hlslLibraryReport.failures).Count -eq 0) `
+        'HLSL source library report validates five modules and eleven public symbols'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {
