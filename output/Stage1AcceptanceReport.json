@@ -8,7 +8,7 @@
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-15T19:55:39.2825677Z",
+    "generatedAtUtc":  "2026-08-16T15:32:37.2459382Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -21,7 +21,7 @@
                       "outputTail":  [
                                          "-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.22631.",
                                          "-- Configuring done (0.1s)",
-                                         "-- Generating done (0.5s)",
+                                         "-- Generating done (1.3s)",
                                          "-- Build files have been written to: E:/ueProject/home/build"
                                      ]
                   },
@@ -34,22 +34,22 @@
                       "detail":  "Command completed with the required acceptance marker.",
                       "exitCode":  0,
                       "outputTail":  [
-                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(depth_buffer_acceptance.dir\\Debug\\)包含从另一个项目(depth_buffer_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\depth_buffer_acceptance.vcxproj]",
-                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(vertex_stage_acceptance.dir\\Debug\\)包含从另一个项目(vertex_stage_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\vertex_stage_acceptance.vcxproj]",
-                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(triangle_rasterizer_acceptance.dir\\Debug\\)包含从另一个项目(triangle_rasterizer_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\triangle_rasterizer_acceptance.vcxproj]",
-                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(obj_loader_acceptance.dir\\Debug\\)包含从另一个项目(obj_loader_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\obj_loader_acceptance.vcxproj]",
-                                         "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(538,5): warning MSB8028: 中间目录(texture_sampling_acceptance.dir\\Debug\\)包含从另一个项目(texture_sampling_acceptance.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。 [E:\\ueProject\\home\\build\\texture_sampling_acceptance.vcxproj]",
-                                         "  depth_buffer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\depth_buffer_acceptance.exe",
-                                         "  ggx_brdf_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\ggx_brdf_acceptance.exe",
-                                         "  release_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\release_acceptance.exe",
-                                         "  surface_attributes_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\surface_attributes_acceptance.exe",
-                                         "  vertex_stage_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\vertex_stage_acceptance.exe",
-                                         "  material_workflow_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\material_workflow_acceptance.exe",
-                                         "  triangle_rasterizer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\triangle_rasterizer_acceptance.exe",
-                                         "  soft_renderer.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\soft_renderer.exe",
-                                         "  diffuse_exposure_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\diffuse_exposure_acceptance.exe",
-                                         "  obj_loader_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\obj_loader_acceptance.exe",
-                                         "  texture_sampling_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\Debug\\texture_sampling_acceptance.exe"
+                                         "  vertex_stage_acceptance.cpp",
+                                         "  diffuse_exposure_acceptance.cpp",
+                                         "  material_workflow_acceptance.cpp",
+                                         "  obj_loader_acceptance.cpp",
+                                         "  depth_buffer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\depth_buffer_acceptance.exe",
+                                         "  obj_loader_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\obj_loader_acceptance.exe",
+                                         "  soft_renderer.vcxproj -\u003e E:\\ueProject\\home\\build\\apps\\Debug\\soft_renderer.exe",
+                                         "  surface_attributes_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\surface_attributes_acceptance.exe",
+                                         "  ggx_brdf_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\ggx_brdf_acceptance.exe",
+                                         "  texture_sampling_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\texture_sampling_acceptance.exe",
+                                         "  triangle_rasterizer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\triangle_rasterizer_acceptance.exe",
+                                         "  vertex_stage_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\vertex_stage_acceptance.exe",
+                                         "  release_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\release_acceptance.exe",
+                                         "  material_workflow_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\material_workflow_acceptance.exe",
+                                         "  diffuse_exposure_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\diffuse_exposure_acceptance.exe",
+                                         "  Building Custom Rule E:/ueProject/home/CMakeLists.txt"
                                      ]
                   },
                   {
@@ -62,21 +62,21 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "      Start  7: texture_sampling_acceptance",
-                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.13 sec",
                                          "      Start  8: surface_attributes_acceptance",
-                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.12 sec",
                                          "      Start  9: diffuse_exposure_acceptance",
-                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.03 sec",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.11 sec",
                                          "      Start 10: ggx_brdf_acceptance",
-                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
+                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.11 sec",
                                          "      Start 11: material_workflow_acceptance",
-                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.11 sec",
                                          "      Start 12: release_acceptance",
-                                         "12/12 Test #12: release_acceptance ......................   Passed    0.04 sec",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.15 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.35 sec"
+                                         "Total Test time (real) =   1.94 sec"
                                      ]
                   },
                   {

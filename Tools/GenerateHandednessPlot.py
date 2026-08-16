@@ -12,7 +12,7 @@ AXIS_LENGTH = 2.4
 X_COLOR = "#e53935"
 Y_COLOR = "#43a047"
 Z_COLOR = "#1e88e5"
-OUTPUT_PATH = Path(__file__).resolve().parent / "output" / "handedness.png"
+OUTPUT_PATH = Path(__file__).resolve().parents[1] / "output" / "handedness.png"
 
 
 def configure_chinese_font():

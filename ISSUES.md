@@ -41,6 +41,7 @@
 | #48 | 缺少可重复的 Unity RenderDoc 截帧入口、GPU 事件书签和工具状态记录 | 2026-08-14 | 已新增 URP marker Renderer Feature、固定 1280x720 捕获配置、六个 `RD/*` 书签、RenderDoc readiness 检查和 `.rdc` 归档说明；真实捕获待本机安装 RenderDoc 并激活 Unity 许可证 |
 | #49 | 缺少 URP Forward BasePass 的表面通道、直接/间接光与阴影衰减拆解视图 | 2026-08-16 | 已新增 10 档调试 Shader、MaterialPropertyBlock 控制器、对照场景生成器、固定 GGX/SH 数值板与加法不变量验收 |
 | #50 | 阶段 1 的 CPU 发布门禁与 Unity 离线/运行门禁分散，缺少统一结论和阻塞证据 | 2026-08-16 | 已新增 `RunStage1Acceptance.ps1`，统一执行构建、CTest、Unity 离线报告与外部工具检查，输出 JSON/Markdown 总报告并区分 PASS、CONDITIONAL_PASS、FAIL |
+| #51 | C++ 库、演示入口、验收程序和工具脚本混放在 `src/`，顶层 CMake 重复维护目标配置 | 2026-08-16 | 已拆分 `src/apps/tests/acceptance/cmake/Tools` 职责，建立分层 CMake、稳定目标别名、统一编译选项和项目结构约定 |
 
 ## 🔴 待解决 / 待验证 (Open)
 

@@ -94,44 +94,12 @@ ctest --test-dir build -C Debug --output-on-failure
 
 ### MinGW-w64
 
-在项目根目录执行：
+仍以 CMake 清单为唯一构建来源，不再维护容易失效的逐文件命令：
 
 ```powershell
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/main.cpp src/Vec2.cpp src/Vec3.cpp src/VectorUtils.cpp src/Mat3.cpp src/Vec4.cpp src/Mat4.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Pipeline.cpp src/TangentSpace.cpp src/Fresnel.cpp -o main.exe
-./main.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/soft_renderer_main.cpp src/Framebuffer.cpp src/SoftwareRenderer.cpp -o soft_renderer.exe
-./soft_renderer.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/obj_loader_main.cpp src/ObjLoader.cpp src/Vec2.cpp src/Vec3.cpp -o obj_loader_acceptance.exe
-./obj_loader_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/vertex_stage_main.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Pipeline.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o vertex_stage_acceptance.exe
-./vertex_stage_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/rasterizer_main.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Pipeline.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o triangle_rasterizer_acceptance.exe
-./triangle_rasterizer_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/depth_buffer_main.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Pipeline.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o depth_buffer_acceptance.exe
-./depth_buffer_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/texture_sampling_main.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Pipeline.cpp src/Transform.cpp src/Camera.cpp src/Projection.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o texture_sampling_acceptance.exe
-./texture_sampling_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/surface_attributes_main.cpp src/VertexStage.cpp src/ObjLoader.cpp src/Rasterizer.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Transform.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o surface_attributes_acceptance.exe
-./surface_attributes_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/diffuse_exposure_main.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o diffuse_exposure_acceptance.exe
-./diffuse_exposure_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/ggx_brdf_main.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o ggx_brdf_acceptance.exe
-./ggx_brdf_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/material_workflow_main.cpp src/Material.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o material_workflow_acceptance.exe
-./material_workflow_acceptance.exe
-
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -g src/release_acceptance_main.cpp src/ImageIO.cpp src/Material.cpp src/Shading.cpp src/Fresnel.cpp src/Texture2D.cpp src/Framebuffer.cpp src/SoftwareRenderer.cpp src/Rasterizer.cpp src/VertexStage.cpp src/ObjLoader.cpp src/TangentSpace.cpp src/Pipeline.cpp src/Mat3.cpp src/Mat4.cpp src/Vec4.cpp src/Vec3.cpp src/Vec2.cpp -o release_acceptance.exe
-./release_acceptance.exe release_acceptance.ppm
+cmake -S . -B build-mingw -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug
+cmake --build build-mingw --parallel
+ctest --test-dir build-mingw --output-on-failure
 ```
 
 ### 中文显示
@@ -412,64 +380,22 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
 
 ```text
 .
+├── apps/                       # 可运行示例入口
+├── cmake/                      # 公共 CMake 目标配置
+├── src/                        # graphics_math / software_renderer 库源码
+├── tests/
+│   ├── acceptance/             # 10 个阶段验收入口
+│   └── data/                   # 固定测试数据
+├── Tools/                      # 跨工程自动化与可视化工具
+├── docs/                       # 范围、验收与结构说明
+├── output/                     # 受版本控制的阶段报告与参考图
+├── UnityMaterialLab/           # 独立 Unity URP 工程
 ├── CMakeLists.txt
 ├── README.md
-├── ISSUES.md
-├── docs/
-│   ├── SOFTWARE_RENDERER_SCOPE.md
-│   ├── RELEASE_ACCEPTANCE.md
-│   ├── UNITY_MATERIAL_BOUNDARIES.md
-│   └── UNITY_MATERIAL_INPUTS.md
-├── UnityMaterialLab/
-│   ├── Assets/_TA/Art/Models/SM_CC0_DisplayCrate.obj
-│   ├── Assets/_TA/Art/Textures/T_CC0_Crate_BaseColor.png
-│   ├── Assets/_TA/Editor/ProjectBootstrap.cs
-│   ├── Packages/manifest.json
-│   ├── ProjectSettings/ProjectVersion.txt
-│   ├── Tools/BuildAndValidate.ps1
-│   └── Tools/StaticValidate.ps1
-├── output/
-│   └── handedness.png
-├── src/
-    ├── main.cpp
-    ├── soft_renderer_main.cpp
-    ├── obj_loader_main.cpp
-    ├── vertex_stage_main.cpp
-    ├── rasterizer_main.cpp
-    ├── depth_buffer_main.cpp
-    ├── texture_sampling_main.cpp
-    ├── surface_attributes_main.cpp
-    ├── diffuse_exposure_main.cpp
-    ├── ggx_brdf_main.cpp
-    ├── material_workflow_main.cpp
-    ├── release_acceptance_main.cpp
-    ├── Framebuffer.hpp / Framebuffer.cpp
-    ├── ImageIO.hpp / ImageIO.cpp
-    ├── Material.hpp / Material.cpp
-    ├── ObjLoader.hpp / ObjLoader.cpp
-    ├── Rasterizer.hpp / Rasterizer.cpp
-    ├── Shading.hpp / Shading.cpp
-    ├── SoftwareRenderer.hpp / SoftwareRenderer.cpp
-    ├── Texture2D.hpp / Texture2D.cpp
-    ├── VertexStage.hpp / VertexStage.cpp
-    ├── Vec2.hpp / Vec2.cpp
-    ├── Vec3.hpp / Vec3.cpp
-    ├── Vec4.hpp / Vec4.cpp
-    ├── Mat3.hpp / Mat3.cpp
-    ├── Mat4.hpp / Mat4.cpp
-    ├── Transform.hpp / Transform.cpp
-    ├── Camera.hpp / Camera.cpp
-    ├── Projection.hpp / Projection.cpp
-    ├── Pipeline.hpp / Pipeline.cpp
-    ├── TangentSpace.hpp / TangentSpace.cpp
-    ├── Fresnel.hpp / Fresnel.cpp
-    ├── VectorUtils.hpp / VectorUtils.cpp
-    └── handedness.py
-└── tests/
-    └── data/
-        ├── checker.ppm
-        └── vertex_data.obj
+└── ISSUES.md
 ```
+
+目录职责、依赖方向和新增文件规则见 [项目结构约定](docs/PROJECT_STRUCTURE.md)。
 
 ## 注意事项
 
@@ -505,5 +431,5 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
 - `ImageIO::encodePpmRgb8` 忽略 Alpha，将有限 RGB 夹到 `[0,1]` 并四舍五入为 8 位；`writePpmRgb8` 以二进制 P6 写出且拒绝空路径。
 - 发布 checksum 覆盖 PPM 头和全部 RGB 字节；修改光照、材质、色调映射、覆盖规则或量化方式时，必须人工确认图像后显式更新基准。
 - `Shading::toDisplayColor` 固定执行曝光 → Reinhard → sRGB 编码；色调映射之前不要截断 HDR，也不要对已经编码的 sRGB 颜色重复编码。
-- `handedness.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
+- `Tools/GenerateHandednessPlot.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。

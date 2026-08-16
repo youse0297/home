@@ -1,5 +1,7 @@
 # 构建目录
-build/
+build*/
+cmake-build-*/
+.vs/
 
 # 编译产物
 *.exe

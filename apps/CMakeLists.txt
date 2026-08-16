@@ -1,0 +1,7 @@
+add_executable(vecmath vecmath_main.cpp)
+target_link_libraries(vecmath PRIVATE SoftwareRendererLab::graphics_math)
+configure_project_target(vecmath)
+
+add_executable(soft_renderer soft_renderer_main.cpp)
+target_link_libraries(soft_renderer PRIVATE SoftwareRendererLab::software_renderer)
+configure_project_target(soft_renderer)
