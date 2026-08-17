@@ -3,7 +3,7 @@
 #define TA_DEBUG_VIEWS_INCLUDED
 
 #include "TA_ShaderTypes.hlsl"
-#include "TA_Common.hlsl"
+#include "TA_Vector.hlsl"
 
 #define TA_DEBUG_FINAL_LIT 0.0h
 #define TA_DEBUG_BASE_COLOR 1.0h

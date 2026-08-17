@@ -4,6 +4,7 @@
 
 #include "TA_ShaderTypes.hlsl"
 #include "TA_Common.hlsl"
+#include "TA_Vector.hlsl"
 #include "TA_BRDF.hlsl"
 
 TA_LightingBreakdown TA_EvaluateLighting(

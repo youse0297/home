@@ -107,9 +107,9 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## HLSL 源码库
 
-- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按 Types、Common、BRDF、Lighting、DebugViews 的依赖顺序装配 5 个模块。
-- BasePass 只负责采样材质与获取 URP 光照数据，再通过 `TA_EvaluateLighting` 和 `TA_SelectDebugView` 消费库接口；GGX 与调试选择不再内联重复。
-- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 11 个公共符号、聚合顺序与消费端接线；完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`。
+- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按 Types、Common、Vector、Sampling、BRDF、Lighting、DebugViews 的依赖顺序装配 7 个模块。
+- BasePass 通过 `TA_TransformUV`、纹理/法线/ORM 采样和 TBN 工具组装表面数据，再调用 `TA_EvaluateLighting` 与 `TA_SelectDebugView`；GGX、采样和调试选择不再内联重复。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 19 个公共符号；向量/采样的数值与 Unity 宏契约由 `Tools/ValidateVectorSamplingUtilities.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md` 和 `../docs/UNITY_VECTOR_SAMPLING_UTILITIES.md`。
 
 ## 常见失败点
 
@@ -121,6 +121,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景、RenderDoc 截帧准备层、URP Forward BasePass 光照拆解视图，以及 Renderer 侧 HLSL 源码库骨架。完整 Shader Graph 主材质属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景、RenderDoc 截帧准备层、URP Forward BasePass 光照拆解视图，以及包含向量与采样工具的 Renderer HLSL 源码库。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。

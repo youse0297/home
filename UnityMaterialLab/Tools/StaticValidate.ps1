@@ -88,12 +88,17 @@ $hlslLibraryRootPath = Join-Path $projectPath 'Assets\_TA\Shaders\Library'
 $hlslLibraryAggregatePath = Join-Path $hlslLibraryRootPath 'TA_ShaderLibrary.hlsl'
 $hlslLibraryTypesPath = Join-Path $hlslLibraryRootPath 'TA_ShaderTypes.hlsl'
 $hlslLibraryCommonPath = Join-Path $hlslLibraryRootPath 'TA_Common.hlsl'
+$hlslLibraryVectorPath = Join-Path $hlslLibraryRootPath 'TA_Vector.hlsl'
+$hlslLibrarySamplingPath = Join-Path $hlslLibraryRootPath 'TA_Sampling.hlsl'
 $hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
 $hlslLibraryDebugPath = Join-Path $hlslLibraryRootPath 'TA_DebugViews.hlsl'
 $hlslLibraryManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\HlslSourceLibrary.json'
 $hlslLibraryValidationPath = Join-Path $projectPath 'Tools\ValidateHlslSourceLibrary.ps1'
 $hlslLibraryReportPath = Join-Path $projectPath 'Reports\HlslSourceLibraryValidation.json'
+$vectorSamplingManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\VectorSamplingUtilities.json'
+$vectorSamplingValidationPath = Join-Path $projectPath 'Tools\ValidateVectorSamplingUtilities.ps1'
+$vectorSamplingReportPath = Join-Path $projectPath 'Reports\VectorSamplingUtilitiesValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -136,17 +141,25 @@ Add-Check (Test-Path -LiteralPath $hlslLibraryAggregatePath -PathType Leaf) `
 Add-Check ((@(
     $hlslLibraryTypesPath,
     $hlslLibraryCommonPath,
+    $hlslLibraryVectorPath,
+    $hlslLibrarySamplingPath,
     $hlslLibraryBrdfPath,
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all five modules'
+    'HLSL source library contains all seven modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
     'HLSL source library validator exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryReportPath -PathType Leaf) `
     'HLSL source library validation report exists'
+Add-Check (Test-Path -LiteralPath $vectorSamplingManifestPath -PathType Leaf) `
+    'Vector and sampling utility contract exists'
+Add-Check (Test-Path -LiteralPath $vectorSamplingValidationPath -PathType Leaf) `
+    'Vector and sampling utility validator exists'
+Add-Check (Test-Path -LiteralPath $vectorSamplingReportPath -PathType Leaf) `
+    'Vector and sampling utility validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -651,6 +664,11 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match 'SampleSH\(normalWS\)') `
         'BasePass shader uses the URP forward pass, main light shadows and SH ambient light'
     Add-Check ($basePassShader -match '#include "Library/TA_ShaderLibrary\.hlsl"' -and
+        $basePassShader -match 'TA_TransformUV\(' -and
+        $basePassShader -match 'TA_SampleTexture2D\(' -and
+        $basePassShader -match 'TA_SampleNormalTS\(' -and
+        $basePassShader -match 'TA_TransformTangentToWorld\(' -and
+        $basePassShader -match 'TA_SampleORM\(' -and
         $basePassShader -match 'TA_SurfaceData\s+surface' -and
         $basePassShader -match 'TA_LightingInput\s+lightingInput' -and
         $basePassShader -match 'TA_EvaluateLighting\(surface, lightingInput\)' -and
@@ -659,9 +677,9 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
     Add-Check ($basePassShader -match '_ORMMap' -and
         $basePassShader -match 'orm\.r' -and $basePassShader -match 'orm\.g' -and
         $basePassShader -match 'orm\.b' -and
-        $basePassShader -match 'TransformTangentToWorld' -and
-        $basePassShader -match 'NormalizeNormalPerPixel') `
-        'BasePass shader decodes ORM channels and a normalized tangent-space normal'
+        $basePassShader -match 'TA_SampleNormalTS' -and
+        $basePassShader -match 'TA_TransformTangentToWorld') `
+        'BasePass shader uses shared ORM, normal sampling and tangent-space transforms'
     Add-Check ($basePassShader -match 'Direct Diffuse,6' -and
         $basePassShader -match 'Direct Specular,7' -and
         $basePassShader -match 'Indirect Diffuse,8' -and
@@ -674,10 +692,31 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
     $hlslLibraryAggregate = Get-Content -LiteralPath $hlslLibraryAggregatePath -Raw
     Add-Check ($hlslLibraryAggregate -match '#include "TA_ShaderTypes\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Common\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_Vector\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_BRDF\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
+}
+
+if ((Test-Path -LiteralPath $hlslLibraryVectorPath) -and
+    (Test-Path -LiteralPath $hlslLibrarySamplingPath)) {
+    $hlslLibraryVector = Get-Content -LiteralPath $hlslLibraryVectorPath -Raw
+    $hlslLibrarySampling = Get-Content -LiteralPath $hlslLibrarySamplingPath -Raw
+    Add-Check ($hlslLibraryVector -match 'TA_SafeNormalize' -and
+        $hlslLibraryVector -match 'TA_BuildBitangentWS' -and
+        $hlslLibraryVector -match 'TA_BuildTangentToWorld' -and
+        $hlslLibraryVector -match 'TA_TransformTangentToWorld') `
+        'HLSL vector module exposes safe normalization and tangent basis transforms'
+    Add-Check ($hlslLibrarySampling -match 'TA_TransformUV' -and
+        $hlslLibrarySampling -match 'TEXTURE2D_PARAM' -and
+        $hlslLibrarySampling -match 'TEXTURE2D_ARGS' -and
+        $hlslLibrarySampling -match 'SAMPLE_TEXTURE2D\(' -and
+        $hlslLibrarySampling -match 'SAMPLE_TEXTURE2D_LOD\(' -and
+        $hlslLibrarySampling -match 'UnpackNormalScale\(packedNormal, normalScale\)' -and
+        $hlslLibrarySampling -match 'TA_SampleORM') `
+        'HLSL sampling module preserves Unity texture macros, normal unpacking and ORM decode'
 }
 
 if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
@@ -702,20 +741,40 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.0.0' -and
+        $hlslLibraryManifest.version -eq '1.1.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 5 -and
-        @($hlslLibraryManifest.invariants).Count -eq 4) `
+        @($hlslLibraryManifest.modules).Count -eq 7 -and
+        @($hlslLibraryManifest.invariants).Count -eq 5) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 5 -and
-        $hlslLibraryReport.publicSymbolCount -eq 11 -and
+        $hlslLibraryReport.moduleCount -eq 7 -and
+        $hlslLibraryReport.publicSymbolCount -eq 19 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-        'HLSL source library report validates five modules and eleven public symbols'
+        'HLSL source library report validates seven modules and nineteen public symbols'
+}
+
+if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
+    $vectorSamplingManifest = Get-Content -LiteralPath $vectorSamplingManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($vectorSamplingManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $vectorSamplingManifest.version -eq '1.0.0' -and
+        $vectorSamplingManifest.sourceLibraryVersion -eq '1.1.0' -and
+        @($vectorSamplingManifest.functions).Count -eq 10 -and
+        @($vectorSamplingManifest.fixtures).Count -eq 9) `
+        'Vector and sampling contract fixes ten functions and nine numeric fixtures'
+}
+
+if (Test-Path -LiteralPath $vectorSamplingReportPath) {
+    $vectorSamplingReport = Get-Content -LiteralPath $vectorSamplingReportPath -Raw | ConvertFrom-Json
+    Add-Check ($vectorSamplingReport.status -eq 'PASS' -and
+        $vectorSamplingReport.functionCount -eq 10 -and
+        $vectorSamplingReport.fixtureCount -eq 9 -and
+        $vectorSamplingReport.maximumError -le 0.000001 -and
+        @($vectorSamplingReport.failures).Count -eq 0) `
+        'Vector and sampling report validates numeric fixtures and Unity macro delegation'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

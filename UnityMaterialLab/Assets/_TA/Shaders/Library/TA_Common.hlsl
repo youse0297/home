@@ -13,15 +13,4 @@ half TA_SanitizePerceptualRoughness(half roughness)
     return max(saturate(roughness), TA_MIN_PERCEPTUAL_ROUGHNESS);
 }
 
-half3 TA_SafeNormalize(half3 value)
-{
-    half lengthSquared = dot(value, value);
-    return value * rsqrt(max(lengthSquared, TA_MIN_DENOMINATOR));
-}
-
-half3 TA_EncodeNormalWS(half3 normalWS)
-{
-    return TA_SafeNormalize(normalWS) * 0.5h + 0.5h;
-}
-
 #endif

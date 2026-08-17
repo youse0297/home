@@ -1,11 +1,11 @@
 ﻿{
     "status":  "PASS",
-    "version":  "1.0.0",
-    "moduleCount":  5,
-    "publicSymbolCount":  11,
+    "version":  "1.1.0",
+    "moduleCount":  7,
+    "publicSymbolCount":  19,
     "aggregate":  "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "consumer":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
-    "generatedAtUtc":  "2026-08-16T15:56:32.7433816Z",
+    "generatedAtUtc":  "2026-08-17T12:40:49.8301772Z",
     "checks":  [
                    {
                        "id":  "MODULE_EXISTS_types",
@@ -65,7 +65,67 @@
                    {
                        "id":  "PUBLIC_SYMBOLS_common",
                        "pass":  true,
-                       "detail":  "TA_SanitizePerceptualRoughness, TA_SafeNormalize, TA_EncodeNormalWS"
+                       "detail":  "TA_SanitizePerceptualRoughness"
+                   },
+                   {
+                       "id":  "MODULE_EXISTS_vector",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Vector.hlsl"
+                   },
+                   {
+                       "id":  "INCLUDE_GUARD_vector",
+                       "pass":  true,
+                       "detail":  "TA_VECTOR_INCLUDED"
+                   },
+                   {
+                       "id":  "NO_PACKAGE_INCLUDE_vector",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Vector.hlsl"
+                   },
+                   {
+                       "id":  "DEPENDENCY_ORDER_vector",
+                       "pass":  true,
+                       "detail":  "common"
+                   },
+                   {
+                       "id":  "DECLARED_INCLUDES_vector",
+                       "pass":  true,
+                       "detail":  "TA_Common.hlsl"
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOLS_vector",
+                       "pass":  true,
+                       "detail":  "TA_SafeNormalize, TA_EncodeNormalWS, TA_BuildBitangentWS, TA_BuildTangentToWorld, TA_TransformTangentToWorld"
+                   },
+                   {
+                       "id":  "MODULE_EXISTS_sampling",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Sampling.hlsl"
+                   },
+                   {
+                       "id":  "INCLUDE_GUARD_sampling",
+                       "pass":  true,
+                       "detail":  "TA_SAMPLING_INCLUDED"
+                   },
+                   {
+                       "id":  "NO_PACKAGE_INCLUDE_sampling",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Sampling.hlsl"
+                   },
+                   {
+                       "id":  "DEPENDENCY_ORDER_sampling",
+                       "pass":  true,
+                       "detail":  ""
+                   },
+                   {
+                       "id":  "DECLARED_INCLUDES_sampling",
+                       "pass":  true,
+                       "detail":  ""
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOLS_sampling",
+                       "pass":  true,
+                       "detail":  "TA_TransformUV, TA_SampleTexture2D, TA_SampleTexture2DLod, TA_SampleNormalTS, TA_SampleORM"
                    },
                    {
                        "id":  "MODULE_EXISTS_brdf",
@@ -115,12 +175,12 @@
                    {
                        "id":  "DEPENDENCY_ORDER_lighting",
                        "pass":  true,
-                       "detail":  "types, common, brdf"
+                       "detail":  "types, common, vector, brdf"
                    },
                    {
                        "id":  "DECLARED_INCLUDES_lighting",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl, TA_Common.hlsl, TA_BRDF.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl, TA_Common.hlsl, TA_Vector.hlsl, TA_BRDF.hlsl"
                    },
                    {
                        "id":  "PUBLIC_SYMBOLS_lighting",
@@ -145,12 +205,12 @@
                    {
                        "id":  "DEPENDENCY_ORDER_debugViews",
                        "pass":  true,
-                       "detail":  "types, common"
+                       "detail":  "types, vector"
                    },
                    {
                        "id":  "DECLARED_INCLUDES_debugViews",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl, TA_Common.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl, TA_Vector.hlsl"
                    },
                    {
                        "id":  "PUBLIC_SYMBOLS_debugViews",
@@ -170,12 +230,12 @@
                    {
                        "id":  "AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
                    },
                    {
                        "id":  "MANIFEST_AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "types -\u003e common -\u003e brdf -\u003e lighting -\u003e debugViews"
+                       "detail":  "types -\u003e common -\u003e vector -\u003e sampling -\u003e brdf -\u003e lighting -\u003e debugViews"
                    },
                    {
                        "id":  "CONSUMER_EXISTS",
@@ -185,7 +245,7 @@
                    {
                        "id":  "CONSUMER_WIRING",
                        "pass":  true,
-                       "detail":  "TA_EvaluateLighting, TA_SelectDebugView"
+                       "detail":  "TA_TransformUV, TA_SampleTexture2D, TA_SampleNormalTS, TA_TransformTangentToWorld, TA_SampleORM, TA_EvaluateLighting, TA_SelectDebugView"
                    },
                    {
                        "id":  "ADDITIVE_LIGHTING_INVARIANT",

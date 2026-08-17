@@ -1,0 +1,87 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.1.0",
+  "modules": {
+    "vector": "Assets/_TA/Shaders/Library/TA_Vector.hlsl",
+    "sampling": "Assets/_TA/Shaders/Library/TA_Sampling.hlsl"
+  },
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "functions": [
+    { "name": "TA_SafeNormalize", "category": "Vector", "validation": "Numeric" },
+    { "name": "TA_EncodeNormalWS", "category": "Vector", "validation": "Numeric" },
+    { "name": "TA_BuildBitangentWS", "category": "Vector", "validation": "Numeric" },
+    { "name": "TA_BuildTangentToWorld", "category": "Vector", "validation": "Numeric" },
+    { "name": "TA_TransformTangentToWorld", "category": "Vector", "validation": "Numeric" },
+    { "name": "TA_TransformUV", "category": "Sampling", "validation": "Numeric" },
+    { "name": "TA_SampleTexture2D", "category": "Sampling", "validation": "UnityMacroDelegation" },
+    { "name": "TA_SampleTexture2DLod", "category": "Sampling", "validation": "UnityMacroDelegation" },
+    { "name": "TA_SampleNormalTS", "category": "Sampling", "validation": "UnityNormalUnpackDelegation" },
+    { "name": "TA_SampleORM", "category": "Sampling", "validation": "NumericAndUnityMacroDelegation" }
+  ],
+  "enginePrerequisites": [
+    "TEXTURE2D_PARAM and TEXTURE2D_ARGS",
+    "SAMPLE_TEXTURE2D and SAMPLE_TEXTURE2D_LOD",
+    "UnpackNormalScale"
+  ],
+  "fixtures": [
+    {
+      "id": "SAFE_NORMALIZE_3_4_5",
+      "function": "TA_SafeNormalize",
+      "input": { "value": [3.0, 0.0, 4.0] },
+      "expected": [0.6, 0.0, 0.8]
+    },
+    {
+      "id": "SAFE_NORMALIZE_ZERO",
+      "function": "TA_SafeNormalize",
+      "input": { "value": [0.0, 0.0, 0.0] },
+      "expected": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "ENCODE_WORLD_NORMAL",
+      "function": "TA_EncodeNormalWS",
+      "input": { "normal": [0.0, 0.0, 1.0] },
+      "expected": [0.5, 0.5, 1.0]
+    },
+    {
+      "id": "BITANGENT_RIGHT_HANDED",
+      "function": "TA_BuildBitangentWS",
+      "input": { "normal": [0.0, 0.0, 1.0], "tangent": [1.0, 0.0, 0.0], "sign": 1.0 },
+      "expected": [0.0, 1.0, 0.0]
+    },
+    {
+      "id": "BITANGENT_MIRRORED",
+      "function": "TA_BuildBitangentWS",
+      "input": { "normal": [0.0, 0.0, 1.0], "tangent": [1.0, 0.0, 0.0], "sign": -1.0 },
+      "expected": [0.0, -1.0, 0.0]
+    },
+    {
+      "id": "TANGENT_BASIS_IDENTITY",
+      "function": "TA_BuildTangentToWorld",
+      "input": { "normal": [0.0, 0.0, 1.0], "tangent": [1.0, 0.0, 0.0, 1.0] },
+      "expected": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    },
+    {
+      "id": "TANGENT_VECTOR_TO_WORLD",
+      "function": "TA_TransformTangentToWorld",
+      "input": {
+        "vector": [0.2, 0.3, 0.9327379053],
+        "normal": [0.0, 0.0, 1.0],
+        "tangent": [1.0, 0.0, 0.0, 1.0]
+      },
+      "expected": [0.2, 0.3, 0.9327379053]
+    },
+    {
+      "id": "UV_SCALE_OFFSET",
+      "function": "TA_TransformUV",
+      "input": { "uv": [0.25, 0.75], "scaleOffset": [2.0, 0.5, 0.1, -0.2] },
+      "expected": [0.6, 0.175]
+    },
+    {
+      "id": "ORM_SATURATE",
+      "function": "TA_SampleORM",
+      "input": { "sample": [-0.2, 0.35, 1.2, 1.0] },
+      "expected": [0.0, 0.35, 1.0]
+    }
+  ]
+}

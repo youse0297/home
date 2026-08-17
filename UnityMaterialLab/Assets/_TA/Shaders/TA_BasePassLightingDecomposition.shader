@@ -102,7 +102,7 @@ Shader "TA/BasePass Lighting Decomposition"
                     normalInputs.tangentWS,
                     input.tangentOS.w * GetOddNegativeScale()
                 );
-                output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
+                output.uv = TA_TransformUV(input.uv, _BaseMap_ST);
                 output.shadowCoord = GetShadowCoord(positionInputs);
                 return output;
             }
@@ -112,14 +112,25 @@ Shader "TA/BasePass Lighting Decomposition"
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                half4 baseSample = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
-                half4 normalSample = SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, input.uv);
-                half3 normalTS = UnpackNormalScale(normalSample, _BumpScale);
-                half3 bitangentWS = input.tangentWS.w * cross(input.normalWS, input.tangentWS.xyz);
-                half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangentWS, input.normalWS);
-                half3 normalWS = NormalizeNormalPerPixel(TransformTangentToWorld(normalTS, tangentToWorld));
+                half4 baseSample = TA_SampleTexture2D(
+                    TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap),
+                    input.uv
+                );
+                half3 normalTS = TA_SampleNormalTS(
+                    TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap),
+                    input.uv,
+                    _BumpScale
+                );
+                half3 normalWS = TA_TransformTangentToWorld(
+                    normalTS,
+                    input.normalWS,
+                    input.tangentWS
+                );
 
-                half3 orm = saturate(SAMPLE_TEXTURE2D(_ORMMap, sampler_ORMMap, input.uv).rgb);
+                half3 orm = TA_SampleORM(
+                    TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
+                    input.uv
+                );
                 TA_SurfaceData surface;
                 surface.baseColor = saturate(baseSample.rgb * _BaseColor.rgb);
                 surface.normalWS = normalWS;

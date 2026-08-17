@@ -1,0 +1,99 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.1.0",
+    "functionCount":  10,
+    "fixtureCount":  9,
+    "tolerance":  1E-06,
+    "maximumError":  7.727041229088627E-12,
+    "generatedAtUtc":  "2026-08-17T12:40:49.8411848Z",
+    "checks":  [
+                   {
+                       "id":  "SAFE_NORMALIZE_3_4_5",
+                       "pass":  true,
+                       "detail":  "actual=0.6, 0, 0.8",
+                       "maximumError":  1.1102230246251565E-16
+                   },
+                   {
+                       "id":  "SAFE_NORMALIZE_ZERO",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ENCODE_WORLD_NORMAL",
+                       "pass":  true,
+                       "detail":  "actual=0.5, 0.5, 1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BITANGENT_RIGHT_HANDED",
+                       "pass":  true,
+                       "detail":  "actual=0, 1, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BITANGENT_MIRRORED",
+                       "pass":  true,
+                       "detail":  "actual=0, -1, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TANGENT_BASIS_IDENTITY",
+                       "pass":  true,
+                       "detail":  "actual=1, 0, 0, 0, 1, 0, 0, 0, 1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TANGENT_VECTOR_TO_WORLD",
+                       "pass":  true,
+                       "detail":  "actual=0.200000000001657, 0.300000000002485, 0.932737905307727",
+                       "maximumError":  7.727041229088627E-12
+                   },
+                   {
+                       "id":  "UV_SCALE_OFFSET",
+                       "pass":  true,
+                       "detail":  "actual=0.6, 0.175",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ORM_SATURATE",
+                       "pass":  true,
+                       "detail":  "actual=0, 0.35, 1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "VECTOR_PUBLIC_SYMBOLS",
+                       "pass":  true,
+                       "detail":  "TA_SafeNormalize, TA_EncodeNormalWS, TA_BuildBitangentWS, TA_BuildTangentToWorld, TA_TransformTangentToWorld",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SAMPLING_PUBLIC_SYMBOLS",
+                       "pass":  true,
+                       "detail":  "TA_TransformUV, TA_SampleTexture2D, TA_SampleTexture2DLod, TA_SampleNormalTS, TA_SampleORM",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "UNITY_TEXTURE_MACRO_DELEGATION",
+                       "pass":  true,
+                       "detail":  "Unity texture declaration, argument and sample macros",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "UNITY_NORMAL_UNPACK_DELEGATION",
+                       "pass":  true,
+                       "detail":  "Unity platform normal unpacking remains authoritative",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BASEPASS_VECTOR_SAMPLING_WIRING",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}
