@@ -90,6 +90,7 @@ $hlslLibraryTypesPath = Join-Path $hlslLibraryRootPath 'TA_ShaderTypes.hlsl'
 $hlslLibraryCommonPath = Join-Path $hlslLibraryRootPath 'TA_Common.hlsl'
 $hlslLibraryVectorPath = Join-Path $hlslLibraryRootPath 'TA_Vector.hlsl'
 $hlslLibrarySamplingPath = Join-Path $hlslLibraryRootPath 'TA_Sampling.hlsl'
+$hlslLibraryPbrInputPath = Join-Path $hlslLibraryRootPath 'TA_PBRInput.hlsl'
 $hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
 $hlslLibraryDebugPath = Join-Path $hlslLibraryRootPath 'TA_DebugViews.hlsl'
@@ -99,6 +100,9 @@ $hlslLibraryReportPath = Join-Path $projectPath 'Reports\HlslSourceLibraryValida
 $vectorSamplingManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\VectorSamplingUtilities.json'
 $vectorSamplingValidationPath = Join-Path $projectPath 'Tools\ValidateVectorSamplingUtilities.ps1'
 $vectorSamplingReportPath = Join-Path $projectPath 'Reports\VectorSamplingUtilitiesValidation.json'
+$pbrInputManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\PbrInputLayer.json'
+$pbrInputValidationPath = Join-Path $projectPath 'Tools\ValidatePbrInputLayer.ps1'
+$pbrInputReportPath = Join-Path $projectPath 'Reports\PbrInputLayerValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -143,6 +147,7 @@ Add-Check ((@(
     $hlslLibraryCommonPath,
     $hlslLibraryVectorPath,
     $hlslLibrarySamplingPath,
+    $hlslLibraryPbrInputPath,
     $hlslLibraryBrdfPath,
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
@@ -160,6 +165,12 @@ Add-Check (Test-Path -LiteralPath $vectorSamplingValidationPath -PathType Leaf) 
     'Vector and sampling utility validator exists'
 Add-Check (Test-Path -LiteralPath $vectorSamplingReportPath -PathType Leaf) `
     'Vector and sampling utility validation report exists'
+Add-Check (Test-Path -LiteralPath $pbrInputManifestPath -PathType Leaf) `
+    'Simplified PBR input contract exists'
+Add-Check (Test-Path -LiteralPath $pbrInputValidationPath -PathType Leaf) `
+    'Simplified PBR input validator exists'
+Add-Check (Test-Path -LiteralPath $pbrInputReportPath -PathType Leaf) `
+    'Simplified PBR input validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -661,25 +672,29 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
     Add-Check ($basePassShader -match 'Name "BasePassLightingDecomposition"' -and
         $basePassShader -match '"LightMode" = "UniversalForward"' -and
         $basePassShader -match 'GetMainLight\(input\.shadowCoord\)' -and
-        $basePassShader -match 'SampleSH\(normalWS\)') `
+        $basePassShader -match 'SampleSH\(surface\.normalWS\)') `
         'BasePass shader uses the URP forward pass, main light shadows and SH ambient light'
     Add-Check ($basePassShader -match '#include "Library/TA_ShaderLibrary\.hlsl"' -and
         $basePassShader -match 'TA_TransformUV\(' -and
-        $basePassShader -match 'TA_SampleTexture2D\(' -and
-        $basePassShader -match 'TA_SampleNormalTS\(' -and
         $basePassShader -match 'TA_TransformTangentToWorld\(' -and
-        $basePassShader -match 'TA_SampleORM\(' -and
+        $basePassShader -match 'TA_PBRInputConfig\s+pbrConfig' -and
+        $basePassShader -match 'TA_SamplePBRInput\(' -and
+        $basePassShader -match 'TA_BuildSurfaceData\(' -and
         $basePassShader -match 'TA_SurfaceData\s+surface' -and
         $basePassShader -match 'TA_LightingInput\s+lightingInput' -and
         $basePassShader -match 'TA_EvaluateLighting\(surface, lightingInput\)' -and
         $basePassShader -match 'TA_SelectDebugView\(') `
         'BasePass shader consumes the HLSL source library through its aggregate entry point'
-    Add-Check ($basePassShader -match '_ORMMap' -and
-        $basePassShader -match 'orm\.r' -and $basePassShader -match 'orm\.g' -and
-        $basePassShader -match 'orm\.b' -and
-        $basePassShader -match 'TA_SampleNormalTS' -and
-        $basePassShader -match 'TA_TransformTangentToWorld') `
-        'BasePass shader uses shared ORM, normal sampling and tangent-space transforms'
+    Add-Check ($basePassShader -match '_BaseMap' -and
+        $basePassShader -match '_BumpMap' -and
+        $basePassShader -match '_ORMMap' -and
+        $basePassShader -match 'pbrConfig\.baseColorTint' -and
+        $basePassShader -match 'pbrConfig\.normalScale' -and
+        $basePassShader -match 'pbrConfig\.ambientOcclusionStrength' -and
+        $basePassShader -match 'pbrConfig\.roughnessScale' -and
+        $basePassShader -match 'pbrConfig\.metallicScale' -and
+        $basePassShader -match 'pbrInput\.alpha') `
+        'BasePass binds the three PBR maps through the simplified input configuration'
     Add-Check ($basePassShader -match 'Direct Diffuse,6' -and
         $basePassShader -match 'Direct Specular,7' -and
         $basePassShader -match 'Indirect Diffuse,8' -and
@@ -694,10 +709,25 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Common\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Vector\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_PBRInput\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_BRDF\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryPbrInputPath) {
+    $hlslLibraryPbrInput = Get-Content -LiteralPath $hlslLibraryPbrInputPath -Raw
+    Add-Check ($hlslLibraryPbrInput -match 'TA_PBRInputConfig' -and
+        $hlslLibraryPbrInput -match 'TA_PBRInputData' -and
+        $hlslLibraryPbrInput -match 'TA_SamplePBRInput' -and
+        $hlslLibraryPbrInput -match 'TA_BuildSurfaceData') `
+        'HLSL PBR input module exposes configuration, sampled data and surface assembly'
+    Add-Check ($hlslLibraryPbrInput -match 'TA_SampleTexture2D' -and
+        $hlslLibraryPbrInput -match 'TA_SampleNormalTS' -and
+        $hlslLibraryPbrInput -match 'TA_SampleORM' -and
+        $hlslLibraryPbrInput -match 'TA_SanitizePerceptualRoughness') `
+        'HLSL PBR input module composes the shared sampling and scalar policies'
 }
 
 if ((Test-Path -LiteralPath $hlslLibraryVectorPath) -and
@@ -741,18 +771,18 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.1.0' -and
+        $hlslLibraryManifest.version -eq '1.2.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 7 -and
-        @($hlslLibraryManifest.invariants).Count -eq 5) `
+        @($hlslLibraryManifest.modules).Count -eq 8 -and
+        @($hlslLibraryManifest.invariants).Count -eq 6) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 7 -and
-        $hlslLibraryReport.publicSymbolCount -eq 19 -and
+        $hlslLibraryReport.moduleCount -eq 8 -and
+        $hlslLibraryReport.publicSymbolCount -eq 23 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
         'HLSL source library report validates seven modules and nineteen public symbols'
 }
@@ -760,8 +790,8 @@ if (Test-Path -LiteralPath $hlslLibraryReportPath) {
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
     $vectorSamplingManifest = Get-Content -LiteralPath $vectorSamplingManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
-        $vectorSamplingManifest.version -eq '1.0.0' -and
-        $vectorSamplingManifest.sourceLibraryVersion -eq '1.1.0' -and
+        $vectorSamplingManifest.version -eq '1.1.0' -and
+        $vectorSamplingManifest.sourceLibraryVersion -eq '1.2.0' -and
         @($vectorSamplingManifest.functions).Count -eq 10 -and
         @($vectorSamplingManifest.fixtures).Count -eq 9) `
         'Vector and sampling contract fixes ten functions and nine numeric fixtures'
@@ -770,11 +800,33 @@ if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
 if (Test-Path -LiteralPath $vectorSamplingReportPath) {
     $vectorSamplingReport = Get-Content -LiteralPath $vectorSamplingReportPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingReport.status -eq 'PASS' -and
+        $vectorSamplingReport.sourceLibraryVersion -eq '1.2.0' -and
         $vectorSamplingReport.functionCount -eq 10 -and
         $vectorSamplingReport.fixtureCount -eq 9 -and
         $vectorSamplingReport.maximumError -le 0.000001 -and
         @($vectorSamplingReport.failures).Count -eq 0) `
         'Vector and sampling report validates numeric fixtures and Unity macro delegation'
+}
+
+if (Test-Path -LiteralPath $pbrInputManifestPath) {
+    $pbrInputManifest = Get-Content -LiteralPath $pbrInputManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($pbrInputManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $pbrInputManifest.version -eq '1.0.0' -and
+        $pbrInputManifest.sourceLibraryVersion -eq '1.2.0' -and
+        @($pbrInputManifest.publicSymbols).Count -eq 4 -and
+        @($pbrInputManifest.fixtures).Count -eq 3) `
+        'Simplified PBR input contract fixes four public symbols and three boundary fixtures'
+}
+
+if (Test-Path -LiteralPath $pbrInputReportPath) {
+    $pbrInputReport = Get-Content -LiteralPath $pbrInputReportPath -Raw | ConvertFrom-Json
+    Add-Check ($pbrInputReport.status -eq 'PASS' -and
+        $pbrInputReport.sourceLibraryVersion -eq '1.2.0' -and
+        $pbrInputReport.functionCount -eq 4 -and
+        $pbrInputReport.fixtureCount -eq 3 -and
+        $pbrInputReport.maximumError -le 0.000001 -and
+        @($pbrInputReport.failures).Count -eq 0) `
+        'Simplified PBR input report validates parameter policies and surface assembly'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

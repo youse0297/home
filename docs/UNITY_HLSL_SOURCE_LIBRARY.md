@@ -12,6 +12,7 @@
 | `TA_Common.hlsl` | 数值常量、粗糙度与标量清理策略 | 无 |
 | `TA_Vector.hlsl` | 安全归一化、法线编码、TBN 与空间变换 | Common |
 | `TA_Sampling.hlsl` | UV、普通/LOD 采样、法线解包与 ORM 解码 | Unity Core 前置宏 |
+| `TA_PBRInput.hlsl` | BaseColor、Normal、ORM 与材质缩放的简化输入组装 | Types、Common、Vector、Sampling |
 | `TA_BRDF.hlsl` | Schlick Fresnel、GGX NDF、Smith 可见性 | Common |
 | `TA_Lighting.hlsl` | 直接漫反射、直接高光、间接漫反射及最终合成 | Types、Common、Vector、BRDF |
 | `TA_DebugViews.hlsl` | 固定 0–9 调试 ID 与输出选择 | Types、Vector |
@@ -21,12 +22,13 @@
 
 ## 公共接口
 
-v1.1 固定 19 个公共符号，全部使用 `TA_` 前缀：
+v1.2 固定 23 个公共符号，全部使用 `TA_` 前缀：
 
 - 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
 - 向量：`TA_SafeNormalize`、`TA_EncodeNormalWS`、`TA_BuildBitangentWS`、`TA_BuildTangentToWorld`、`TA_TransformTangentToWorld`
 - 采样：`TA_TransformUV`、`TA_SampleTexture2D`、`TA_SampleTexture2DLod`、`TA_SampleNormalTS`、`TA_SampleORM`
+- PBR 输入：`TA_PBRInputConfig`、`TA_PBRInputData`、`TA_SamplePBRInput`、`TA_BuildSurfaceData`
 - BRDF：`TA_FresnelSchlick`、`TA_DistributionGGX`、`TA_VisibilitySmithGGXCorrelated`
 - 流程入口：`TA_EvaluateLighting`、`TA_SelectDebugView`
 
@@ -36,12 +38,18 @@ Renderer Shader 应只包含聚合头：
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Library/TA_ShaderLibrary.hlsl"
 
-half3 normalTS = TA_SampleNormalTS(TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), uv, normalScale);
+TA_PBRInputData pbrInput = TA_SamplePBRInput(
+    TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap),
+    TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap),
+    TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
+    uv,
+    pbrConfig);
+TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
 TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
 return TA_SelectDebugView(debugView, surface, lighting, shadowAttenuation, alpha);
 ```
 
-`TA_EvaluateLighting` 保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码与空间变换；具体纹理绑定、材质缩放参数和引擎光照数据获取仍由消费 Shader 负责。向量与采样接口详见 [Unity 向量与采样工具函数](UNITY_VECTOR_SAMPLING_UTILITIES.md)。
+`TA_EvaluateLighting` 保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码、PBR 输入组装与空间变换；具体纹理绑定、材质配置和引擎光照数据获取仍由消费 Shader 负责。向量与采样接口详见 [Unity 向量与采样工具函数](UNITY_VECTOR_SAMPLING_UTILITIES.md)，输入层详见 [Unity 简化 PBR 输入层](UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)。
 
 ## 与 Shader Graph 函数库的边界
 
@@ -54,6 +62,7 @@ return TA_SelectDebugView(debugView, surface, lighting, shadowAttenuation, alpha
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateHlslSourceLibrary.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVectorSamplingUtilities.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidatePbrInputLayer.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 

@@ -112,31 +112,26 @@ Shader "TA/BasePass Lighting Decomposition"
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                half4 baseSample = TA_SampleTexture2D(
+                TA_PBRInputConfig pbrConfig;
+                pbrConfig.baseColorTint = _BaseColor;
+                pbrConfig.normalScale = _BumpScale;
+                pbrConfig.ambientOcclusionStrength = _AOStrength;
+                pbrConfig.roughnessScale = _RoughnessScale;
+                pbrConfig.metallicScale = _MetallicScale;
+
+                TA_PBRInputData pbrInput = TA_SamplePBRInput(
                     TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap),
-                    input.uv
-                );
-                half3 normalTS = TA_SampleNormalTS(
                     TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap),
+                    TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
                     input.uv,
-                    _BumpScale
+                    pbrConfig
                 );
                 half3 normalWS = TA_TransformTangentToWorld(
-                    normalTS,
+                    pbrInput.normalTS,
                     input.normalWS,
                     input.tangentWS
                 );
-
-                half3 orm = TA_SampleORM(
-                    TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
-                    input.uv
-                );
-                TA_SurfaceData surface;
-                surface.baseColor = saturate(baseSample.rgb * _BaseColor.rgb);
-                surface.normalWS = normalWS;
-                surface.ambientOcclusion = lerp(1.0h, orm.r, saturate(_AOStrength));
-                surface.roughness = TA_SanitizePerceptualRoughness(orm.g * _RoughnessScale);
-                surface.metallic = saturate(orm.b * _MetallicScale);
+                TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
 
                 Light mainLight = GetMainLight(input.shadowCoord);
                 TA_LightingInput lightingInput;
@@ -144,7 +139,7 @@ Shader "TA/BasePass Lighting Decomposition"
                 lightingInput.lightDirectionWS = mainLight.direction;
                 lightingInput.lightColor = mainLight.color;
                 lightingInput.lightAttenuation = mainLight.distanceAttenuation * mainLight.shadowAttenuation;
-                lightingInput.ambientIrradiance = max(SampleSH(normalWS), 0.0h);
+                lightingInput.ambientIrradiance = max(SampleSH(surface.normalWS), 0.0h);
 
                 TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
                 return TA_SelectDebugView(
@@ -152,7 +147,7 @@ Shader "TA/BasePass Lighting Decomposition"
                     surface,
                     lighting,
                     mainLight.shadowAttenuation,
-                    baseSample.a * _BaseColor.a
+                    pbrInput.alpha
                 );
             }
             ENDHLSL

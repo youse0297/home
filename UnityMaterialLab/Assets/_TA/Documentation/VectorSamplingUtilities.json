@@ -1,12 +1,13 @@
 {
   "status": "STATIC_NUMERIC_VALIDATED",
-  "version": "1.0.0",
-  "sourceLibraryVersion": "1.1.0",
+  "version": "1.1.0",
+  "sourceLibraryVersion": "1.2.0",
   "modules": {
     "vector": "Assets/_TA/Shaders/Library/TA_Vector.hlsl",
     "sampling": "Assets/_TA/Shaders/Library/TA_Sampling.hlsl"
   },
-  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "consumer": "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
+  "integrationConsumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
   "functions": [
     { "name": "TA_SafeNormalize", "category": "Vector", "validation": "Numeric" },
     { "name": "TA_EncodeNormalWS", "category": "Vector", "validation": "Numeric" },

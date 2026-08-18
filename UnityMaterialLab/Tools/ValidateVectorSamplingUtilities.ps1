@@ -147,9 +147,11 @@ foreach ($fixture in @($manifest.fixtures)) {
 $vectorPath = Join-Path $projectPath ($manifest.modules.vector -replace '/', '\')
 $samplingPath = Join-Path $projectPath ($manifest.modules.sampling -replace '/', '\')
 $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
+$integrationConsumerPath = Join-Path $projectPath ($manifest.integrationConsumer -replace '/', '\')
 $vectorSource = Get-Content -LiteralPath $vectorPath -Raw
 $samplingSource = Get-Content -LiteralPath $samplingPath -Raw
 $consumerSource = Get-Content -LiteralPath $consumerPath -Raw
+$integrationConsumerSource = Get-Content -LiteralPath $integrationConsumerPath -Raw
 
 $vectorSymbols = @($manifest.functions | Where-Object category -eq 'Vector' | ForEach-Object name)
 $samplingSymbols = @($manifest.functions | Where-Object category -eq 'Sampling' | ForEach-Object name)
@@ -168,13 +170,16 @@ Add-Check -Id 'UNITY_TEXTURE_MACRO_DELEGATION' `
 Add-Check -Id 'UNITY_NORMAL_UNPACK_DELEGATION' `
     -Pass ($samplingSource -match 'UnpackNormalScale\(packedNormal, normalScale\)') `
     -Detail 'Unity platform normal unpacking remains authoritative'
-Add-Check -Id 'BASEPASS_VECTOR_SAMPLING_WIRING' `
-    -Pass ($consumerSource -match 'TA_TransformUV\(' -and
-        $consumerSource -match 'TA_SampleTexture2D\(' -and
+Add-Check -Id 'PBR_INPUT_SAMPLING_WIRING' `
+    -Pass ($consumerSource -match 'TA_SampleTexture2D\(' -and
         $consumerSource -match 'TA_SampleNormalTS\(' -and
-        $consumerSource -match 'TA_TransformTangentToWorld\(' -and
         $consumerSource -match 'TA_SampleORM\(') `
     -Detail $manifest.consumer
+Add-Check -Id 'BASEPASS_VECTOR_INTEGRATION' `
+    -Pass ($integrationConsumerSource -match 'TA_TransformUV\(' -and
+        $integrationConsumerSource -match 'TA_TransformTangentToWorld\(' -and
+        $integrationConsumerSource -match 'TA_SamplePBRInput\(') `
+    -Detail $manifest.integrationConsumer
 
 $failed = @($checks | Where-Object { -not $_.pass })
 $maximumError = 0.0

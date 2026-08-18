@@ -1,23 +1,22 @@
 {
   "status": "STATIC_LIBRARY_VALIDATED",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "root": "Assets/_TA/Shaders/Library",
   "namespacePrefix": "TA_",
   "precisionPolicy": "Renderer-facing calculations use half precision unless Unity requires float inputs",
   "aggregate": {
     "file": "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "includeGuard": "TA_SHADER_LIBRARY_INCLUDED",
-    "modules": ["types", "common", "vector", "sampling", "brdf", "lighting", "debugViews"]
+    "modules": ["types", "common", "vector", "sampling", "pbrInput", "brdf", "lighting", "debugViews"]
   },
   "consumer": {
     "file": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
     "include": "Library/TA_ShaderLibrary.hlsl",
     "entryPoints": [
       "TA_TransformUV",
-      "TA_SampleTexture2D",
-      "TA_SampleNormalTS",
+      "TA_SamplePBRInput",
       "TA_TransformTangentToWorld",
-      "TA_SampleORM",
+      "TA_BuildSurfaceData",
       "TA_EvaluateLighting",
       "TA_SelectDebugView"
     ]
@@ -68,6 +67,19 @@
       ]
     },
     {
+      "id": "pbrInput",
+      "file": "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
+      "role": "Simplified BaseColor, Normal and ORM material input assembly",
+      "includeGuard": "TA_PBR_INPUT_INCLUDED",
+      "dependencies": ["types", "common", "vector", "sampling"],
+      "publicSymbols": [
+        "TA_PBRInputConfig",
+        "TA_PBRInputData",
+        "TA_SamplePBRInput",
+        "TA_BuildSurfaceData"
+      ]
+    },
+    {
       "id": "brdf",
       "file": "Assets/_TA/Shaders/Library/TA_BRDF.hlsl",
       "role": "Fresnel, GGX distribution and correlated Smith visibility",
@@ -97,6 +109,7 @@
     "Every public symbol starts with TA_ and is declared once",
     "Aggregate includes modules in dependency order",
     "FinalLit equals DirectDiffuse plus DirectSpecular plus IndirectDiffuse",
-    "Sampling utilities use Unity texture parameter macros and preserve platform normal unpacking"
+    "Sampling utilities use Unity texture parameter macros and preserve platform normal unpacking",
+    "PBR input assembly preserves BaseColor, Alpha, Normal, AO, Roughness and Metallic policies"
   ]
 }

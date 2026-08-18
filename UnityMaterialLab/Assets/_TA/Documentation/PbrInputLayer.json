@@ -1,0 +1,89 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.2.0",
+  "source": "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "publicSymbols": [
+    "TA_PBRInputConfig",
+    "TA_PBRInputData",
+    "TA_SamplePBRInput",
+    "TA_BuildSurfaceData"
+  ],
+  "policies": {
+    "baseColor": "saturate(sample.rgb * baseColorTint.rgb)",
+    "alpha": "sample.a * baseColorTint.a",
+    "normal": "Unity UnpackNormalScale followed by tangent-to-world normalization",
+    "ambientOcclusion": "lerp(1, saturate(ORM.R), saturate(aoStrength))",
+    "roughness": "max(saturate(ORM.G * roughnessScale), 0.045)",
+    "metallic": "saturate(ORM.B * metallicScale)"
+  },
+  "fixtures": [
+    {
+      "id": "PBR_INPUT_NOMINAL",
+      "function": "TA_SamplePBRInput",
+      "input": {
+        "baseSample": [0.8, 0.4, 0.2, 0.75],
+        "normalTS": [0.0, 0.6, 0.8],
+        "orm": [0.7, 0.5, 0.3, 1.0],
+        "config": {
+          "baseColorTint": [0.5, 1.2, 1.0, 0.8],
+          "normalScale": 1.0,
+          "ambientOcclusionStrength": 0.5,
+          "roughnessScale": 0.8,
+          "metallicScale": 0.75
+        }
+      },
+      "expected": {
+        "baseColor": [0.4, 0.48, 0.2],
+        "alpha": 0.6,
+        "normalTS": [0.0, 0.6, 0.8],
+        "ambientOcclusion": 0.85,
+        "roughness": 0.4,
+        "metallic": 0.225
+      }
+    },
+    {
+      "id": "PBR_INPUT_CLAMPED",
+      "function": "TA_SamplePBRInput",
+      "input": {
+        "baseSample": [-0.5, 1.5, 2.0, 0.25],
+        "normalTS": [1.0, 0.0, 0.0],
+        "orm": [-0.2, 1.5, 2.0, 1.0],
+        "config": {
+          "baseColorTint": [2.0, -1.0, 0.5, 2.0],
+          "normalScale": 2.0,
+          "ambientOcclusionStrength": 2.0,
+          "roughnessScale": 1.0,
+          "metallicScale": 1.0
+        }
+      },
+      "expected": {
+        "baseColor": [0.0, 0.0, 1.0],
+        "alpha": 0.5,
+        "normalTS": [1.0, 0.0, 0.0],
+        "ambientOcclusion": 0.0,
+        "roughness": 1.0,
+        "metallic": 1.0
+      }
+    },
+    {
+      "id": "PBR_SURFACE_ZERO_SCALES",
+      "function": "TA_BuildSurfaceData",
+      "input": {
+        "baseColor": [0.1, 0.2, 0.3],
+        "normalWS": [0.0, 0.0, 2.0],
+        "ambientOcclusion": 1.0,
+        "roughness": 0.045,
+        "metallic": 0.0
+      },
+      "expected": {
+        "baseColor": [0.1, 0.2, 0.3],
+        "normalWS": [0.0, 0.0, 1.0],
+        "ambientOcclusion": 1.0,
+        "roughness": 0.045,
+        "metallic": 0.0
+      }
+    }
+  ]
+}
