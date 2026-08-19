@@ -109,7 +109,13 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 - `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按 Types、Common、Vector、Sampling、PBRInput、BRDF、Lighting、DebugViews 的依赖顺序装配 8 个模块。
 - BasePass 通过 `TA_PBRInputConfig`、`TA_SamplePBRInput` 和 `TA_BuildSurfaceData` 组装表面数据，再调用 `TA_EvaluateLighting` 与 `TA_SelectDebugView`；采样、材质边界、GGX 和调试选择不再内联重复。
-- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 23 个公共符号；向量/采样与 PBR 输入边界分别由 `Tools/ValidateVectorSamplingUtilities.ps1`、`Tools/ValidatePbrInputLayer.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_VECTOR_SAMPLING_UTILITIES.md` 和 `../docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md`。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 25 个公共符号；向量/采样、PBR 输入和 GGX NDF 边界分别由 `Tools/ValidateVectorSamplingUtilities.ps1`、`Tools/ValidatePbrInputLayer.ps1`、`Tools/ValidateGgxNormalDistribution.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_VECTOR_SAMPLING_UTILITIES.md`、`../docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md` 和 `../docs/UNITY_GGX_NORMAL_DISTRIBUTION.md`。
+
+## GGX 法线分布
+
+- `TA_GGXAlphaFromRoughness` 统一执行感知粗糙度清理和 `alpha` 映射；`TA_DistributionGGXFromAlpha` 提供可复用的 Trowbridge-Reitz NDF，`TA_DistributionGGX` 保留粗糙度入口。
+- `Assets/_TA/Documentation/GgxNormalDistribution.json` 固定零/中/最大粗糙度、正视/掠射余弦、alpha 下限和入口委托基准；运行 `Tools/ValidateGgxNormalDistribution.ps1` 生成 `Reports/GgxNormalDistributionValidation.json`。
+- NDF 使用 `max(saturate(roughness), 0.045)`、`max(alpha, 0.002)` 和 `max(π·denominator², 0.0001)`，避免半精度路径在零粗糙度和正视方向产生奇异值。
 
 ## 常见失败点
 

@@ -22,14 +22,14 @@
 
 ## 公共接口
 
-v1.2 固定 23 个公共符号，全部使用 `TA_` 前缀：
+v1.3 固定 25 个公共符号，全部使用 `TA_` 前缀：
 
 - 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
 - 向量：`TA_SafeNormalize`、`TA_EncodeNormalWS`、`TA_BuildBitangentWS`、`TA_BuildTangentToWorld`、`TA_TransformTangentToWorld`
 - 采样：`TA_TransformUV`、`TA_SampleTexture2D`、`TA_SampleTexture2DLod`、`TA_SampleNormalTS`、`TA_SampleORM`
 - PBR 输入：`TA_PBRInputConfig`、`TA_PBRInputData`、`TA_SamplePBRInput`、`TA_BuildSurfaceData`
-- BRDF：`TA_FresnelSchlick`、`TA_DistributionGGX`、`TA_VisibilitySmithGGXCorrelated`
+- BRDF：`TA_FresnelSchlick`、`TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、`TA_DistributionGGX`、`TA_VisibilitySmithGGXCorrelated`
 - 流程入口：`TA_EvaluateLighting`、`TA_SelectDebugView`
 
 Renderer Shader 应只包含聚合头：
@@ -49,7 +49,7 @@ TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
 return TA_SelectDebugView(debugView, surface, lighting, shadowAttenuation, alpha);
 ```
 
-`TA_EvaluateLighting` 保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码、PBR 输入组装与空间变换；具体纹理绑定、材质配置和引擎光照数据获取仍由消费 Shader 负责。向量与采样接口详见 [Unity 向量与采样工具函数](UNITY_VECTOR_SAMPLING_UTILITIES.md)，输入层详见 [Unity 简化 PBR 输入层](UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)。
+`TA_EvaluateLighting` 保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码、PBR 输入组装与空间变换；具体纹理绑定、材质配置和引擎光照数据获取仍由消费 Shader 负责。GGX NDF 先通过 `TA_GGXAlphaFromRoughness` 生成 alpha，再委托给 `TA_DistributionGGXFromAlpha`；固定数值、余弦饱和和分母下限见 [Unity GGX 法线分布](UNITY_GGX_NORMAL_DISTRIBUTION.md)。向量与采样接口详见 [Unity 向量与采样工具函数](UNITY_VECTOR_SAMPLING_UTILITIES.md)，输入层详见 [Unity 简化 PBR 输入层](UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)。
 
 ## 与 Shader Graph 函数库的边界
 
@@ -63,6 +63,7 @@ return TA_SelectDebugView(debugView, surface, lighting, shadowAttenuation, alpha
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateHlslSourceLibrary.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVectorSamplingUtilities.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidatePbrInputLayer.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateGgxNormalDistribution.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 

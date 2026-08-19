@@ -1,12 +1,12 @@
 ﻿{
     "status":  "PASS",
     "version":  "1.1.0",
-    "sourceLibraryVersion":  "1.2.0",
+    "sourceLibraryVersion":  "1.3.0",
     "functionCount":  10,
     "fixtureCount":  9,
     "tolerance":  1E-06,
     "maximumError":  7.727041229088627E-12,
-    "generatedAtUtc":  "2026-08-18T15:04:45.1713845Z",
+    "generatedAtUtc":  "2026-08-19T14:12:35.9820272Z",
     "checks":  [
                    {
                        "id":  "SAFE_NORMALIZE_3_4_5",

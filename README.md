@@ -156,7 +156,7 @@ OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、
 
 URP Forward 的 BasePass 调试材质现提供 10 档表面/光照视图，并固定 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse` 的线性 HDR 加法关系。使用 Unity 菜单可生成两行五列对照场景；无许可证时可运行离线公式板和静态门禁。完整模式、捕获检查点与验收命令见 [Unity BasePass 与光照拆解](docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md)。
 
-Renderer 侧共享 HLSL 已拆分为 Types、Common、Vector、Sampling、PBRInput、BRDF、Lighting、DebugViews 八个模块，并由 `TA_ShaderLibrary.hlsl` 稳定聚合。BasePass 已改为通过统一 PBR 输入、TBN 和结构化光照接口调用源码库；模块边界见 [Unity HLSL 源码库骨架](docs/UNITY_HLSL_SOURCE_LIBRARY.md)，输入策略见 [Unity 简化 PBR 输入层](docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)。
+Renderer 侧共享 HLSL 已拆分为 Types、Common、Vector、Sampling、PBRInput、BRDF、Lighting、DebugViews 八个模块，并由 `TA_ShaderLibrary.hlsl` 稳定聚合。BRDF 模块现在明确分离感知粗糙度到 GGX alpha 的映射和 Trowbridge-Reitz NDF 计算；模块边界见 [Unity HLSL 源码库骨架](docs/UNITY_HLSL_SOURCE_LIBRARY.md)，输入策略见 [Unity 简化 PBR 输入层](docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)，NDF 契约见 [Unity GGX 法线分布](docs/UNITY_GGX_NORMAL_DISTRIBUTION.md)。
 
 ## 使用示例
 

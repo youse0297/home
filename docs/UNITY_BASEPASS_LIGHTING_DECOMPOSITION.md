@@ -56,5 +56,5 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - 把 ORM 当作 sRGB 采样，导致 AO、粗糙度和金属度失真。
 - 在各光照分量内部做曝光或色调映射，导致分量相加无法还原 `FinalLit`。
 - 法线贴图转换后没有归一化，导致 `N·L` 与 GGX 高光随插值长度变化。
-- 将粗糙度直接当作 GGX 的 alpha；本实现使用 `alpha = roughness²` 并设置数值下限。
+- 将粗糙度直接当作 GGX 的 alpha；本实现通过 `TA_GGXAlphaFromRoughness` 使用清理后的 `alpha = roughness²`，并在 NDF 分母设置数值下限。
 - 用 `renderer.material` 切换视图，意外克隆材质；控制器应使用 `MaterialPropertyBlock`。

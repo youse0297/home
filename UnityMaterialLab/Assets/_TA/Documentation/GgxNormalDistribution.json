@@ -1,0 +1,72 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.3.0",
+  "source": "Assets/_TA/Shaders/Library/TA_BRDF.hlsl",
+  "consumer": "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+  "publicSymbols": [
+    "TA_GGXAlphaFromRoughness",
+    "TA_DistributionGGXFromAlpha",
+    "TA_DistributionGGX"
+  ],
+  "constants": {
+    "minimumPerceptualRoughness": 0.045,
+    "minimumGgxAlpha": 0.002,
+    "minimumDenominator": 0.0001
+  },
+  "policies": {
+    "alpha": "max(max(saturate(roughness), 0.045)^2, 0.002)",
+    "distribution": "alpha^2 / max(pi * ((saturate(NdotH)^2 * (alpha^2 - 1)) + 1)^2, 0.0001)",
+    "directEntryPoint": "TA_DistributionGGX(NdotH, roughness) delegates to TA_DistributionGGXFromAlpha"
+  },
+  "fixtures": [
+    {
+      "id": "GGX_ALPHA_ZERO_ROUGHNESS",
+      "function": "TA_GGXAlphaFromRoughness",
+      "input": { "roughness": 0.0 },
+      "expected": 0.002025
+    },
+    {
+      "id": "GGX_ALPHA_NOMINAL_ROUGHNESS",
+      "function": "TA_GGXAlphaFromRoughness",
+      "input": { "roughness": 0.5 },
+      "expected": 0.25
+    },
+    {
+      "id": "GGX_ALPHA_MAX_ROUGHNESS",
+      "function": "TA_GGXAlphaFromRoughness",
+      "input": { "roughness": 1.0 },
+      "expected": 1.0
+    },
+    {
+      "id": "GGX_DISTRIBUTION_ALIGNED",
+      "function": "TA_DistributionGGXFromAlpha",
+      "input": { "normalDotHalf": 1.0, "alpha": 0.25 },
+      "expected": 5.09295817894065
+    },
+    {
+      "id": "GGX_DISTRIBUTION_GRAZING",
+      "function": "TA_DistributionGGXFromAlpha",
+      "input": { "normalDotHalf": 0.0, "alpha": 0.25 },
+      "expected": 0.0198943678864869
+    },
+    {
+      "id": "GGX_DISTRIBUTION_COSINE_SATURATION",
+      "function": "TA_DistributionGGXFromAlpha",
+      "input": { "normalDotHalf": -1.0, "alpha": 0.25 },
+      "expected": 0.0198943678864869
+    },
+    {
+      "id": "GGX_DISTRIBUTION_ALPHA_FLOOR",
+      "function": "TA_DistributionGGXFromAlpha",
+      "input": { "normalDotHalf": 0.0, "alpha": 0.0 },
+      "expected": 0.00000127323954473516
+    },
+    {
+      "id": "GGX_DISTRIBUTION_ROUGHNESS_DELEGATION",
+      "function": "TA_DistributionGGX",
+      "input": { "normalDotHalf": 0.5, "roughness": 0.5 },
+      "expected": 0.0339389133123905
+    }
+  ]
+}

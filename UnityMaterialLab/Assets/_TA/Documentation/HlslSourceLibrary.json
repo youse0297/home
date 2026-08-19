@@ -1,6 +1,6 @@
 {
   "status": "STATIC_LIBRARY_VALIDATED",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "root": "Assets/_TA/Shaders/Library",
   "namespacePrefix": "TA_",
   "precisionPolicy": "Renderer-facing calculations use half precision unless Unity requires float inputs",
@@ -82,10 +82,16 @@
     {
       "id": "brdf",
       "file": "Assets/_TA/Shaders/Library/TA_BRDF.hlsl",
-      "role": "Fresnel, GGX distribution and correlated Smith visibility",
+      "role": "Fresnel, GGX alpha mapping, distribution and correlated Smith visibility",
       "includeGuard": "TA_BRDF_INCLUDED",
       "dependencies": ["common"],
-      "publicSymbols": ["TA_FresnelSchlick", "TA_DistributionGGX", "TA_VisibilitySmithGGXCorrelated"]
+      "publicSymbols": [
+        "TA_FresnelSchlick",
+        "TA_GGXAlphaFromRoughness",
+        "TA_DistributionGGXFromAlpha",
+        "TA_DistributionGGX",
+        "TA_VisibilitySmithGGXCorrelated"
+      ]
     },
     {
       "id": "lighting",
@@ -110,6 +116,7 @@
     "Aggregate includes modules in dependency order",
     "FinalLit equals DirectDiffuse plus DirectSpecular plus IndirectDiffuse",
     "Sampling utilities use Unity texture parameter macros and preserve platform normal unpacking",
-    "PBR input assembly preserves BaseColor, Alpha, Normal, AO, Roughness and Metallic policies"
+    "PBR input assembly preserves BaseColor, Alpha, Normal, AO, Roughness and Metallic policies",
+    "GGX NDF derives alpha from sanitized perceptual roughness and clamps the distribution denominator"
   ]
 }

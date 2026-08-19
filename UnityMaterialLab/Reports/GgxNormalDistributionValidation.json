@@ -1,0 +1,99 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.3.0",
+    "functionCount":  3,
+    "fixtureCount":  8,
+    "tolerance":  1E-06,
+    "maximumError":  8.8817841970012523E-16,
+    "generatedAtUtc":  "2026-08-19T14:17:35.8036389Z",
+    "checks":  [
+                   {
+                       "id":  "GGX_ALPHA_ZERO_ROUGHNESS",
+                       "pass":  true,
+                       "detail":  "actual=0.002025 expected=0.002025",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "GGX_ALPHA_NOMINAL_ROUGHNESS",
+                       "pass":  true,
+                       "detail":  "actual=0.25 expected=0.25",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "GGX_ALPHA_MAX_ROUGHNESS",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "GGX_DISTRIBUTION_ALIGNED",
+                       "pass":  true,
+                       "detail":  "actual=5.09295817894065 expected=5.09295817894065",
+                       "maximumError":  8.8817841970012523E-16
+                   },
+                   {
+                       "id":  "GGX_DISTRIBUTION_GRAZING",
+                       "pass":  true,
+                       "detail":  "actual=0.0198943678864869 expected=0.0198943678864869",
+                       "maximumError":  1.7347234759768071E-17
+                   },
+                   {
+                       "id":  "GGX_DISTRIBUTION_COSINE_SATURATION",
+                       "pass":  true,
+                       "detail":  "actual=0.0198943678864869 expected=0.0198943678864869",
+                       "maximumError":  1.7347234759768071E-17
+                   },
+                   {
+                       "id":  "GGX_DISTRIBUTION_ALPHA_FLOOR",
+                       "pass":  true,
+                       "detail":  "actual=1.27323954473516E-06 expected=1.27323954473516E-06",
+                       "maximumError":  2.541098841762901E-21
+                   },
+                   {
+                       "id":  "GGX_DISTRIBUTION_ROUGHNESS_DELEGATION",
+                       "pass":  true,
+                       "detail":  "actual=0.0339389133123908 expected=0.0339389133123905",
+                       "maximumError":  3.4000580129145419E-16
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_GGXAlphaFromRoughness",
+                       "pass":  true,
+                       "detail":  "TA_GGXAlphaFromRoughness",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_DistributionGGXFromAlpha",
+                       "pass":  true,
+                       "detail":  "TA_DistributionGGXFromAlpha",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_DistributionGGX",
+                       "pass":  true,
+                       "detail":  "TA_DistributionGGX",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ALPHA_POLICY",
+                       "pass":  true,
+                       "detail":  "Perceptual roughness is sanitized before alpha conversion",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NDF_FORMULA",
+                       "pass":  true,
+                       "detail":  "Trowbridge-Reitz distribution clamps cosine and denominator",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "LIGHTING_CONSUMER_WIRING",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

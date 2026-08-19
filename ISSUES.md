@@ -45,6 +45,7 @@
 | #52 | BasePass 的 BRDF、光照合成和调试视图内联在单个 Shader，缺少 Renderer 侧 HLSL 模块边界与稳定聚合入口 | 2026-08-16 | 已建立 Types/Common/BRDF/Lighting/DebugViews 五层源码库、`TA_` 公共接口、聚合头、机器可读契约和专项静态验收 |
 | #53 | Renderer Shader 仍直接调用 UV、纹理宏、法线解包、叉积与 TBN 变换，缺少统一的向量和采样接口 | 2026-08-17 | 已新增 Vector/Sampling 模块、跨平台纹理参数宏封装、平台法线解包、镜像手性 TBN、9 组数值基准和 BasePass 实际接入 |
 | #54 | BasePass 仍在消费端直接组装 BaseColor、Normal、ORM、AO、粗糙度和金属度，缺少统一的简化 PBR 输入层 | 2026-08-18 | 已新增 `TA_PBRInputConfig`/`TA_PBRInputData`、采样与材质边界组装、`TA_BuildSurfaceData`、3 组固定边界样例和 BasePass 委托验收 |
+| #55 | Renderer BRDF 的 GGX 法线分布缺少独立 alpha 映射、数值下限和专项验收契约 | 2026-08-19 | 已新增 `TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、GGX NDF manifest/validator/report，并让 Smith 可见性复用同一 alpha 策略 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
@@ -100,7 +101,7 @@
 - 片元法线与切线需透视插值后重新归一化、正交化，不能直接插值并使用顶点 TBN 矩阵。
 - 颜色纹理参与光照前需从 sRGB 解码到线性空间；Lambert 结果保持 HDR，显示前再按 EV 曝光、Reinhard 色调映射并编码回 sRGB。
 - 方向光接口使用“表面指向光源”的方向，观察方向使用“表面指向相机”；简化 GGX 已采用感知粗糙度、Schlick-GGX Smith 和金属度 F0 混合。
-- GGX 的零粗糙度通过 `alpha = max(roughness², 1e-4)` 保持数值稳定；当前仅覆盖单方向光，不包含阴影或 IBL。
+- CPU `Shading` 的 GGX 零粗糙度通过 `alpha = max(roughness², 1e-4)` 保持稳定；Unity Renderer BRDF 通过清理后的 `alpha = max(roughness², 0.002)` 与 NDF 分母下限保持半精度稳定；当前仅覆盖单方向光，不包含阴影或 IBL。
 - `Material` 使用非持有纹理指针；基础色纹理执行 sRGB 解码，金属粗糙度贴图保持线性并采用 G=粗糙度、B=金属度约定。
 - 基础色与金属粗糙度纹理可使用独立采样状态；当前保留打包贴图 R/A 通道，不执行 Alpha 裁剪或混合。
 - v1.0 发布图固定为 `96×32` 三材质法线梯度场景，覆盖 `1872` 像素，完整 PPM FNV-1a64 为 `0x6e50ef105c6d04c`。
@@ -116,4 +117,4 @@
 
 ---
 
-*最后更新：2026-08-08*
+*最后更新：2026-08-19*

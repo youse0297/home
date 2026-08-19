@@ -12,12 +12,33 @@ half3 TA_FresnelSchlick(half cosineTheta, half3 reflectanceAtNormal)
     return reflectanceAtNormal + (1.0h - reflectanceAtNormal) * factor;
 }
 
+half TA_GGXAlphaFromRoughness(half roughness)
+{
+    half perceptualRoughness = TA_SanitizePerceptualRoughness(roughness);
+    return max(
+        perceptualRoughness * perceptualRoughness,
+        TA_MIN_GGX_ALPHA
+    );
+}
+
+half TA_DistributionGGXFromAlpha(half normalDotHalf, half alpha)
+{
+    half cosine = saturate(normalDotHalf);
+    half sanitizedAlpha = max(saturate(alpha), TA_MIN_GGX_ALPHA);
+    half alphaSquared = sanitizedAlpha * sanitizedAlpha;
+    half denominator = cosine * cosine * (alphaSquared - 1.0h) + 1.0h;
+    return alphaSquared / max(
+        TA_PI * denominator * denominator,
+        TA_MIN_DENOMINATOR
+    );
+}
+
 half TA_DistributionGGX(half normalDotHalf, half roughness)
 {
-    half alpha = max(roughness * roughness, TA_MIN_GGX_ALPHA);
-    half alphaSquared = alpha * alpha;
-    half denominator = normalDotHalf * normalDotHalf * (alphaSquared - 1.0h) + 1.0h;
-    return alphaSquared / max(TA_PI * denominator * denominator, TA_MIN_DENOMINATOR);
+    return TA_DistributionGGXFromAlpha(
+        normalDotHalf,
+        TA_GGXAlphaFromRoughness(roughness)
+    );
 }
 
 half TA_VisibilitySmithGGXCorrelated(
@@ -25,7 +46,7 @@ half TA_VisibilitySmithGGXCorrelated(
     half normalDotLight,
     half roughness)
 {
-    half alpha = max(roughness * roughness, TA_MIN_GGX_ALPHA);
+    half alpha = TA_GGXAlphaFromRoughness(roughness);
     half alphaSquared = alpha * alpha;
     half viewLambda = normalDotLight * sqrt(
         max((-normalDotView * alphaSquared + normalDotView) * normalDotView + alphaSquared, 0.0h)
