@@ -4,12 +4,22 @@
 
 #include "TA_Common.hlsl"
 
-half3 TA_FresnelSchlick(half cosineTheta, half3 reflectanceAtNormal)
+half TA_FresnelSchlickScalar(half cosineTheta, half reflectanceAtNormal)
 {
     half oneMinusCosine = 1.0h - saturate(cosineTheta);
+    half reflectance = saturate(reflectanceAtNormal);
     half factorSquared = oneMinusCosine * oneMinusCosine;
     half factor = factorSquared * factorSquared * oneMinusCosine;
-    return reflectanceAtNormal + (1.0h - reflectanceAtNormal) * factor;
+    return reflectance + (1.0h - reflectance) * factor;
+}
+
+half3 TA_FresnelSchlick(half cosineTheta, half3 reflectanceAtNormal)
+{
+    return half3(
+        TA_FresnelSchlickScalar(cosineTheta, reflectanceAtNormal.r),
+        TA_FresnelSchlickScalar(cosineTheta, reflectanceAtNormal.g),
+        TA_FresnelSchlickScalar(cosineTheta, reflectanceAtNormal.b)
+    );
 }
 
 half TA_GGXAlphaFromRoughness(half roughness)
@@ -41,18 +51,35 @@ half TA_DistributionGGX(half normalDotHalf, half roughness)
     );
 }
 
+half TA_SmithGGXLambdaTerm(
+    half normalDotDirection,
+    half otherDotDirection,
+    half alpha)
+{
+    half cosine = saturate(normalDotDirection);
+    half otherCosine = saturate(otherDotDirection);
+    half sanitizedAlpha = max(saturate(alpha), TA_MIN_GGX_ALPHA);
+    half alphaSquared = sanitizedAlpha * sanitizedAlpha;
+    half radicand = (-cosine * alphaSquared + cosine) * cosine +
+        alphaSquared;
+    return otherCosine * sqrt(max(radicand, 0.0h));
+}
+
 half TA_VisibilitySmithGGXCorrelated(
     half normalDotView,
     half normalDotLight,
     half roughness)
 {
     half alpha = TA_GGXAlphaFromRoughness(roughness);
-    half alphaSquared = alpha * alpha;
-    half viewLambda = normalDotLight * sqrt(
-        max((-normalDotView * alphaSquared + normalDotView) * normalDotView + alphaSquared, 0.0h)
+    half viewLambda = TA_SmithGGXLambdaTerm(
+        normalDotView,
+        normalDotLight,
+        alpha
     );
-    half lightLambda = normalDotView * sqrt(
-        max((-normalDotLight * alphaSquared + normalDotLight) * normalDotLight + alphaSquared, 0.0h)
+    half lightLambda = TA_SmithGGXLambdaTerm(
+        normalDotLight,
+        normalDotView,
+        alpha
     );
     return 0.5h / max(viewLambda + lightLambda, TA_MIN_DENOMINATOR);
 }

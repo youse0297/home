@@ -4,7 +4,7 @@
 
 项目当前以控制台程序演示完整的 MVP 顶点路径、非均匀缩放下的逆转置法线变换和 TBN 映射，以及基础 Fresnel/Schlick 反射率。发布门禁覆盖 12 组固定验收，并生成具有代表色和整图 checksum 的三材质 PPM 基准图；完整流水线不依赖第三方图形或数学库。
 
-Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、BaseColor/Normal/ORM 输入、三个材质实例、11 组参数边界、Prefab、测试场景、导入 Bootstrap、三档 LOD 基础场景、RenderDoc 截帧准备、BasePass 光照拆解、Renderer 侧 HLSL 源码库和静态验收。工程步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)，输入契约见 [Unity 材质输入与实例](docs/UNITY_MATERIAL_INPUTS.md)，边界结论见 [Unity 材质参数边界验证](docs/UNITY_MATERIAL_BOUNDARIES.md)，Custom Function 接入见 [Shader Graph Custom Function 节点](docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md)，函数库见 [Unity 材质函数库](docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md)，源码库见 [Unity HLSL 源码库骨架](docs/UNITY_HLSL_SOURCE_LIBRARY.md)，向量与采样接口见 [Unity 向量与采样工具函数](docs/UNITY_VECTOR_SAMPLING_UTILITIES.md)，简化 PBR 输入见 [Unity 简化 PBR 输入层](docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)，压缩策略见 [Unity 贴图压缩](docs/UNITY_TEXTURE_COMPRESSION.md)，LOD 规则见 [Unity LOD 基础](docs/UNITY_LOD_BASICS.md)，截帧准备见 [Unity RenderDoc 截帧准备](docs/UNITY_RENDERDOC_CAPTURE_PREPARATION.md)，拆解视图见 [Unity BasePass 与光照拆解](docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md)。
+Unity 资产导入阶段位于 `UnityMaterialLab/`，固定 Unity `2022.3.62f3c1`、URP `14.0.12`，包含 CC0 OBJ/PNG、统一命名/目录、URP Lit 材质球、BaseColor/Normal/ORM 输入、三个材质实例、11 组参数边界、Prefab、测试场景、导入 Bootstrap、三档 LOD 基础场景、RenderDoc 截帧准备、BasePass 光照拆解、Renderer 侧 HLSL 源码库和静态验收。工程步骤见 [Unity 工程与资产导入](UnityMaterialLab/README.md)，输入契约见 [Unity 材质输入与实例](docs/UNITY_MATERIAL_INPUTS.md)，边界结论见 [Unity 材质参数边界验证](docs/UNITY_MATERIAL_BOUNDARIES.md)，Custom Function 接入见 [Shader Graph Custom Function 节点](docs/UNITY_SHADER_GRAPH_CUSTOM_FUNCTION.md)，函数库见 [Unity 材质函数库](docs/UNITY_MATERIAL_FUNCTION_LIBRARY.md)，源码库见 [Unity HLSL 源码库骨架](docs/UNITY_HLSL_SOURCE_LIBRARY.md)，向量与采样接口见 [Unity 向量与采样工具函数](docs/UNITY_VECTOR_SAMPLING_UTILITIES.md)，简化 PBR 输入见 [Unity 简化 PBR 输入层](docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)，GGX NDF 见 [Unity GGX 法线分布](docs/UNITY_GGX_NORMAL_DISTRIBUTION.md)，几何遮蔽与 Fresnel 见 [Unity 几何遮蔽与 Fresnel](docs/UNITY_GGX_GEOMETRY_FRESNEL.md)，压缩策略见 [Unity 贴图压缩](docs/UNITY_TEXTURE_COMPRESSION.md)，LOD 规则见 [Unity LOD 基础](docs/UNITY_LOD_BASICS.md)，截帧准备见 [Unity RenderDoc 截帧准备](docs/UNITY_RENDERDOC_CAPTURE_PREPARATION.md)，拆解视图见 [Unity BasePass 与光照拆解](docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md)。
 
 ## 阶段 1 总验收
 
@@ -156,7 +156,7 @@ OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、
 
 URP Forward 的 BasePass 调试材质现提供 10 档表面/光照视图，并固定 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse` 的线性 HDR 加法关系。使用 Unity 菜单可生成两行五列对照场景；无许可证时可运行离线公式板和静态门禁。完整模式、捕获检查点与验收命令见 [Unity BasePass 与光照拆解](docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md)。
 
-Renderer 侧共享 HLSL 已拆分为 Types、Common、Vector、Sampling、PBRInput、BRDF、Lighting、DebugViews 八个模块，并由 `TA_ShaderLibrary.hlsl` 稳定聚合。BRDF 模块现在明确分离感知粗糙度到 GGX alpha 的映射和 Trowbridge-Reitz NDF 计算；模块边界见 [Unity HLSL 源码库骨架](docs/UNITY_HLSL_SOURCE_LIBRARY.md)，输入策略见 [Unity 简化 PBR 输入层](docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)，NDF 契约见 [Unity GGX 法线分布](docs/UNITY_GGX_NORMAL_DISTRIBUTION.md)。
+Renderer 侧共享 HLSL 已拆分为 Types、Common、Vector、Sampling、PBRInput、BRDF、Lighting、DebugViews 八个模块，并由 `TA_ShaderLibrary.hlsl` 稳定聚合。BRDF 模块现在明确分离 GGX alpha/NDF、Smith lambda/相关遮蔽和标量/向量 Fresnel；模块边界见 [Unity HLSL 源码库骨架](docs/UNITY_HLSL_SOURCE_LIBRARY.md)，输入策略见 [Unity 简化 PBR 输入层](docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)，NDF 契约见 [Unity GGX 法线分布](docs/UNITY_GGX_NORMAL_DISTRIBUTION.md)，几何与 Fresnel 契约见 [Unity 几何遮蔽与 Fresnel](docs/UNITY_GGX_GEOMETRY_FRESNEL.md)。
 
 ## 使用示例
 

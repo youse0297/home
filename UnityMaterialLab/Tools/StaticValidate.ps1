@@ -107,6 +107,9 @@ $ggxNdfSourcePath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $ggxNdfManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\GgxNormalDistribution.json'
 $ggxNdfValidationPath = Join-Path $projectPath 'Tools\ValidateGgxNormalDistribution.ps1'
 $ggxNdfReportPath = Join-Path $projectPath 'Reports\GgxNormalDistributionValidation.json'
+$ggxGeometryFresnelManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\GgxGeometryFresnel.json'
+$ggxGeometryFresnelValidationPath = Join-Path $projectPath 'Tools\ValidateGgxGeometryFresnel.ps1'
+$ggxGeometryFresnelReportPath = Join-Path $projectPath 'Reports\GgxGeometryFresnelValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -181,6 +184,12 @@ Add-Check (Test-Path -LiteralPath $ggxNdfValidationPath -PathType Leaf) `
     'GGX normal distribution validator exists'
 Add-Check (Test-Path -LiteralPath $ggxNdfReportPath -PathType Leaf) `
     'GGX normal distribution validation report exists'
+Add-Check (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath -PathType Leaf) `
+    'GGX geometry and Fresnel contract exists'
+Add-Check (Test-Path -LiteralPath $ggxGeometryFresnelValidationPath -PathType Leaf) `
+    'GGX geometry and Fresnel validator exists'
+Add-Check (Test-Path -LiteralPath $ggxGeometryFresnelReportPath -PathType Leaf) `
+    'GGX geometry and Fresnel validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -765,10 +774,12 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
     $hlslLibraryBrdf = Get-Content -LiteralPath $hlslLibraryBrdfPath -Raw
     $hlslLibraryLighting = Get-Content -LiteralPath $hlslLibraryLightingPath -Raw
     $hlslLibraryDebug = Get-Content -LiteralPath $hlslLibraryDebugPath -Raw
-    Add-Check ($hlslLibraryBrdf -match 'TA_FresnelSchlick' -and
+    Add-Check ($hlslLibraryBrdf -match 'TA_FresnelSchlickScalar' -and
+        $hlslLibraryBrdf -match 'TA_FresnelSchlick' -and
         $hlslLibraryBrdf -match 'TA_DistributionGGX' -and
+        $hlslLibraryBrdf -match 'TA_SmithGGXLambdaTerm' -and
         $hlslLibraryBrdf -match 'TA_VisibilitySmithGGXCorrelated') `
-        'HLSL BRDF module exposes Fresnel, GGX distribution and Smith visibility'
+        'HLSL BRDF module exposes Fresnel, GGX distribution, Smith lambda and visibility'
     Add-Check ($hlslLibraryLighting -match 'TA_EvaluateLighting' -and
         $hlslLibraryLighting -match 'result\.finalLit = result\.directDiffuse \+ result\.directSpecular \+ result\.indirectDiffuse') `
         'HLSL lighting module preserves the additive lighting invariant'
@@ -781,10 +792,10 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.3.0' -and
+        $hlslLibraryManifest.version -eq '1.4.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
         @($hlslLibraryManifest.modules).Count -eq 8 -and
-        @($hlslLibraryManifest.invariants).Count -eq 7) `
+        @($hlslLibraryManifest.invariants).Count -eq 8) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
@@ -792,16 +803,16 @@ if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
         $hlslLibraryReport.moduleCount -eq 8 -and
-        $hlslLibraryReport.publicSymbolCount -eq 25 -and
+        $hlslLibraryReport.publicSymbolCount -eq 27 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-        'HLSL source library report validates eight modules and twenty-five public symbols'
+        'HLSL source library report validates eight modules and twenty-seven public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
     $vectorSamplingManifest = Get-Content -LiteralPath $vectorSamplingManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $vectorSamplingManifest.version -eq '1.1.0' -and
-        $vectorSamplingManifest.sourceLibraryVersion -eq '1.3.0' -and
+        $vectorSamplingManifest.sourceLibraryVersion -eq '1.4.0' -and
         @($vectorSamplingManifest.functions).Count -eq 10 -and
         @($vectorSamplingManifest.fixtures).Count -eq 9) `
         'Vector and sampling contract fixes ten functions and nine numeric fixtures'
@@ -810,7 +821,7 @@ if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
 if (Test-Path -LiteralPath $vectorSamplingReportPath) {
     $vectorSamplingReport = Get-Content -LiteralPath $vectorSamplingReportPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingReport.status -eq 'PASS' -and
-        $vectorSamplingReport.sourceLibraryVersion -eq '1.3.0' -and
+        $vectorSamplingReport.sourceLibraryVersion -eq '1.4.0' -and
         $vectorSamplingReport.functionCount -eq 10 -and
         $vectorSamplingReport.fixtureCount -eq 9 -and
         $vectorSamplingReport.maximumError -le 0.000001 -and
@@ -822,7 +833,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
     $pbrInputManifest = Get-Content -LiteralPath $pbrInputManifestPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $pbrInputManifest.version -eq '1.0.0' -and
-        $pbrInputManifest.sourceLibraryVersion -eq '1.3.0' -and
+        $pbrInputManifest.sourceLibraryVersion -eq '1.4.0' -and
         @($pbrInputManifest.publicSymbols).Count -eq 4 -and
         @($pbrInputManifest.fixtures).Count -eq 3) `
         'Simplified PBR input contract fixes four public symbols and three boundary fixtures'
@@ -831,7 +842,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
 if (Test-Path -LiteralPath $pbrInputReportPath) {
     $pbrInputReport = Get-Content -LiteralPath $pbrInputReportPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputReport.status -eq 'PASS' -and
-        $pbrInputReport.sourceLibraryVersion -eq '1.3.0' -and
+        $pbrInputReport.sourceLibraryVersion -eq '1.4.0' -and
         $pbrInputReport.functionCount -eq 4 -and
         $pbrInputReport.fixtureCount -eq 3 -and
         $pbrInputReport.maximumError -le 0.000001 -and
@@ -852,7 +863,7 @@ if (Test-Path -LiteralPath $ggxNdfManifestPath) {
     $ggxNdfManifest = Get-Content -LiteralPath $ggxNdfManifestPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $ggxNdfManifest.version -eq '1.0.0' -and
-        $ggxNdfManifest.sourceLibraryVersion -eq '1.3.0' -and
+        $ggxNdfManifest.sourceLibraryVersion -eq '1.4.0' -and
         @($ggxNdfManifest.publicSymbols).Count -eq 3 -and
         @($ggxNdfManifest.fixtures).Count -eq 8) `
         'GGX NDF contract fixes the alpha policy, three entry points and eight fixtures'
@@ -866,12 +877,33 @@ if (Test-Path -LiteralPath $ggxNdfValidationPath) {
 if (Test-Path -LiteralPath $ggxNdfReportPath) {
     $ggxNdfReport = Get-Content -LiteralPath $ggxNdfReportPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfReport.status -eq 'PASS' -and
-        $ggxNdfReport.sourceLibraryVersion -eq '1.3.0' -and
+        $ggxNdfReport.sourceLibraryVersion -eq '1.4.0' -and
         $ggxNdfReport.functionCount -eq 3 -and
         $ggxNdfReport.fixtureCount -eq 8 -and
         $ggxNdfReport.maximumError -le 0.000001 -and
         @($ggxNdfReport.failures).Count -eq 0) `
         'GGX NDF report validates alpha conversion, endpoint values and delegation'
+}
+
+if (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath) {
+    $ggxGeometryFresnelManifest = Get-Content -LiteralPath $ggxGeometryFresnelManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($ggxGeometryFresnelManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $ggxGeometryFresnelManifest.version -eq '1.0.0' -and
+        $ggxGeometryFresnelManifest.sourceLibraryVersion -eq '1.4.0' -and
+        @($ggxGeometryFresnelManifest.publicSymbols).Count -eq 4 -and
+        @($ggxGeometryFresnelManifest.fixtures).Count -eq 10) `
+        'GGX geometry and Fresnel contract fixes four entry points and ten fixtures'
+}
+
+if (Test-Path -LiteralPath $ggxGeometryFresnelReportPath) {
+    $ggxGeometryFresnelReport = Get-Content -LiteralPath $ggxGeometryFresnelReportPath -Raw | ConvertFrom-Json
+    Add-Check ($ggxGeometryFresnelReport.status -eq 'PASS' -and
+        $ggxGeometryFresnelReport.sourceLibraryVersion -eq '1.4.0' -and
+        $ggxGeometryFresnelReport.functionCount -eq 4 -and
+        $ggxGeometryFresnelReport.fixtureCount -eq 10 -and
+        $ggxGeometryFresnelReport.maximumError -le 0.000001 -and
+        @($ggxGeometryFresnelReport.failures).Count -eq 0) `
+        'GGX geometry and Fresnel report validates Schlick and correlated Smith baselines'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

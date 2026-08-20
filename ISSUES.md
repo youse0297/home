@@ -46,6 +46,7 @@
 | #53 | Renderer Shader 仍直接调用 UV、纹理宏、法线解包、叉积与 TBN 变换，缺少统一的向量和采样接口 | 2026-08-17 | 已新增 Vector/Sampling 模块、跨平台纹理参数宏封装、平台法线解包、镜像手性 TBN、9 组数值基准和 BasePass 实际接入 |
 | #54 | BasePass 仍在消费端直接组装 BaseColor、Normal、ORM、AO、粗糙度和金属度，缺少统一的简化 PBR 输入层 | 2026-08-18 | 已新增 `TA_PBRInputConfig`/`TA_PBRInputData`、采样与材质边界组装、`TA_BuildSurfaceData`、3 组固定边界样例和 BasePass 委托验收 |
 | #55 | Renderer BRDF 的 GGX 法线分布缺少独立 alpha 映射、数值下限和专项验收契约 | 2026-08-19 | 已新增 `TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、GGX NDF manifest/validator/report，并让 Smith 可见性复用同一 alpha 策略 |
+| #56 | Renderer BRDF 的几何遮蔽与 Fresnel 缺少可复用子项、统一夹取策略和专项验收契约 | 2026-08-20 | 已新增 `TA_SmithGGXLambdaTerm`、标量/向量 Schlick Fresnel、GGX 几何/Fresnel manifest、validator/report，并接入项目静态门禁 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
@@ -117,4 +118,4 @@
 
 ---
 
-*最后更新：2026-08-19*
+*最后更新：2026-08-20*

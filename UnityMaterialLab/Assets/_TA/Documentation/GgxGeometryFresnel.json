@@ -1,0 +1,86 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.4.0",
+  "source": "Assets/_TA/Shaders/Library/TA_BRDF.hlsl",
+  "consumer": "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+  "publicSymbols": [
+    "TA_FresnelSchlickScalar",
+    "TA_FresnelSchlick",
+    "TA_SmithGGXLambdaTerm",
+    "TA_VisibilitySmithGGXCorrelated"
+  ],
+  "constants": {
+    "minimumPerceptualRoughness": 0.045,
+    "minimumGgxAlpha": 0.002,
+    "minimumDenominator": 0.0001,
+    "dielectricF0": 0.04
+  },
+  "policies": {
+    "fresnel": "F0 and cosine are saturated before Schlick's fifth-power approximation",
+    "lambda": "otherCosine * sqrt(max(((-cosine * alpha^2) + cosine) * cosine + alpha^2, 0))",
+    "visibility": "0.5 / max(lambdaView + lambdaLight, 0.0001)"
+  },
+  "fixtures": [
+    {
+      "id": "FRESNEL_FACING_DIELECTRIC",
+      "function": "TA_FresnelSchlickScalar",
+      "input": { "cosineTheta": 1.0, "reflectanceAtNormal": 0.04 },
+      "expected": 0.04
+    },
+    {
+      "id": "FRESNEL_SIXTY_DEGREES_DIELECTRIC",
+      "function": "TA_FresnelSchlickScalar",
+      "input": { "cosineTheta": 0.5, "reflectanceAtNormal": 0.04 },
+      "expected": 0.07
+    },
+    {
+      "id": "FRESNEL_GRAZING_DIELECTRIC",
+      "function": "TA_FresnelSchlickScalar",
+      "input": { "cosineTheta": 0.0, "reflectanceAtNormal": 0.04 },
+      "expected": 1.0
+    },
+    {
+      "id": "FRESNEL_F0_SATURATION",
+      "function": "TA_FresnelSchlickScalar",
+      "input": { "cosineTheta": 0.5, "reflectanceAtNormal": 1.5 },
+      "expected": 1.0
+    },
+    {
+      "id": "FRESNEL_RGB_METAL",
+      "function": "TA_FresnelSchlick",
+      "input": { "cosineTheta": 0.5, "reflectanceAtNormal": [0.04, 0.5, 1.0] },
+      "expected": [0.07, 0.515625, 1.0]
+    },
+    {
+      "id": "SMITH_LAMBDA_ALIGNED",
+      "function": "TA_SmithGGXLambdaTerm",
+      "input": { "normalDotDirection": 1.0, "otherDotDirection": 1.0, "alpha": 0.25 },
+      "expected": 1.0
+    },
+    {
+      "id": "SMITH_LAMBDA_ANGLED",
+      "function": "TA_SmithGGXLambdaTerm",
+      "input": { "normalDotDirection": 0.5, "otherDotDirection": 0.5, "alpha": 0.25 },
+      "expected": 0.272431183971292
+    },
+    {
+      "id": "SMITH_VISIBILITY_ALIGNED",
+      "function": "TA_VisibilitySmithGGXCorrelated",
+      "input": { "normalDotView": 1.0, "normalDotLight": 1.0, "roughness": 0.5 },
+      "expected": 0.25
+    },
+    {
+      "id": "SMITH_VISIBILITY_ANGLED",
+      "function": "TA_VisibilitySmithGGXCorrelated",
+      "input": { "normalDotView": 0.5, "normalDotLight": 0.5, "roughness": 0.5 },
+      "expected": 0.917662935482247
+    },
+    {
+      "id": "SMITH_VISIBILITY_ZERO_ROUGHNESS",
+      "function": "TA_VisibilitySmithGGXCorrelated",
+      "input": { "normalDotView": 1.0, "normalDotLight": 1.0, "roughness": 0.0 },
+      "expected": 0.25
+    }
+  ]
+}

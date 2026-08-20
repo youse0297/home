@@ -109,7 +109,13 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 - `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按 Types、Common、Vector、Sampling、PBRInput、BRDF、Lighting、DebugViews 的依赖顺序装配 8 个模块。
 - BasePass 通过 `TA_PBRInputConfig`、`TA_SamplePBRInput` 和 `TA_BuildSurfaceData` 组装表面数据，再调用 `TA_EvaluateLighting` 与 `TA_SelectDebugView`；采样、材质边界、GGX 和调试选择不再内联重复。
-- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 25 个公共符号；向量/采样、PBR 输入和 GGX NDF 边界分别由 `Tools/ValidateVectorSamplingUtilities.ps1`、`Tools/ValidatePbrInputLayer.ps1`、`Tools/ValidateGgxNormalDistribution.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_VECTOR_SAMPLING_UTILITIES.md`、`../docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md` 和 `../docs/UNITY_GGX_NORMAL_DISTRIBUTION.md`。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 27 个公共符号；向量/采样、PBR 输入、GGX NDF 和几何遮蔽/Fresnel 边界分别由 `Tools/ValidateVectorSamplingUtilities.ps1`、`Tools/ValidatePbrInputLayer.ps1`、`Tools/ValidateGgxNormalDistribution.ps1`、`Tools/ValidateGgxGeometryFresnel.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_VECTOR_SAMPLING_UTILITIES.md`、`../docs/UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md`、`../docs/UNITY_GGX_NORMAL_DISTRIBUTION.md` 和 `../docs/UNITY_GGX_GEOMETRY_FRESNEL.md`。
+
+## 几何遮蔽与 Fresnel
+
+- `TA_SmithGGXLambdaTerm` 抽出相关 Smith 可见性所需的单项 lambda；`TA_VisibilitySmithGGXCorrelated` 以两个 lambda 和分母下限组成最终遮蔽项。
+- `TA_FresnelSchlickScalar` 与 `TA_FresnelSchlick` 共享 Schlick 五次方近似，并统一夹取余弦和 `F0`，覆盖介电与有色金属反射率。
+- `Assets/_TA/Documentation/GgxGeometryFresnel.json` 固定正视/60°/掠射 Fresnel、F0 夹取、RGB 反射率及 Smith 对齐/斜视/零粗糙度基准；运行 `Tools/ValidateGgxGeometryFresnel.ps1` 生成 `Reports/GgxGeometryFresnelValidation.json`。
 
 ## GGX 法线分布
 

@@ -104,7 +104,7 @@ Add-Check -Id 'ALPHA_POLICY' `
     -Detail 'Perceptual roughness is sanitized before alpha conversion'
 Add-Check -Id 'NDF_FORMULA' `
     -Pass ($source -match 'saturate\(normalDotHalf\)' -and
-        $source -match 'alphaSquared.*alphaSquared' -and
+        $source -match 'alphaSquared\s*=\s*sanitizedAlpha\s*\*\s*sanitizedAlpha' -and
         $source -match 'TA_MIN_DENOMINATOR') `
     -Detail 'Trowbridge-Reitz distribution clamps cosine and denominator'
 Add-Check -Id 'LIGHTING_CONSUMER_WIRING' `

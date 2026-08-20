@@ -1,0 +1,117 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.4.0",
+    "functionCount":  4,
+    "fixtureCount":  10,
+    "tolerance":  1E-06,
+    "maximumError":  1.1102230246251565E-16,
+    "generatedAtUtc":  "2026-08-20T13:39:44.8961575Z",
+    "checks":  [
+                   {
+                       "id":  "FRESNEL_FACING_DIELECTRIC",
+                       "pass":  true,
+                       "detail":  "actual=0.04 expected=0.04",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FRESNEL_SIXTY_DEGREES_DIELECTRIC",
+                       "pass":  true,
+                       "detail":  "actual=0.07 expected=0.07",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FRESNEL_GRAZING_DIELECTRIC",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FRESNEL_F0_SATURATION",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FRESNEL_RGB_METAL",
+                       "pass":  true,
+                       "detail":  "actual=0.07, 0.515625, 1 expected=0.07, 0.515625, 1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SMITH_LAMBDA_ALIGNED",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SMITH_LAMBDA_ANGLED",
+                       "pass":  true,
+                       "detail":  "actual=0.272431183971292 expected=0.272431183971292",
+                       "maximumError":  1.1102230246251565E-16
+                   },
+                   {
+                       "id":  "SMITH_VISIBILITY_ALIGNED",
+                       "pass":  true,
+                       "detail":  "actual=0.25 expected=0.25",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SMITH_VISIBILITY_ANGLED",
+                       "pass":  true,
+                       "detail":  "actual=0.917662935482247 expected=0.917662935482247",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SMITH_VISIBILITY_ZERO_ROUGHNESS",
+                       "pass":  true,
+                       "detail":  "actual=0.25 expected=0.25",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_FresnelSchlickScalar",
+                       "pass":  true,
+                       "detail":  "TA_FresnelSchlickScalar",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_FresnelSchlick",
+                       "pass":  true,
+                       "detail":  "TA_FresnelSchlick",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_SmithGGXLambdaTerm",
+                       "pass":  true,
+                       "detail":  "TA_SmithGGXLambdaTerm",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_VisibilitySmithGGXCorrelated",
+                       "pass":  true,
+                       "detail":  "TA_VisibilitySmithGGXCorrelated",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FRESNEL_POLICY",
+                       "pass":  true,
+                       "detail":  "Schlick Fresnel clamps cosine and normal-incidence reflectance",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "GEOMETRY_POLICY",
+                       "pass":  true,
+                       "detail":  "Correlated Smith visibility uses explicit lambda terms and denominator floor",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "LIGHTING_CONSUMER_WIRING",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}
