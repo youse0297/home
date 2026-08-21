@@ -21,6 +21,8 @@
 3. **Normal Scale**：`0` 保留几何法线，`1` 使用美术原始强度，`2` 是压力测试上限；更高值会放大切线空间误差并产生不稳定的掠射角高光。
 4. 所有 11 个固定样例均落在公开 Profile 范围内，公式结果有限，没有负平滑度、超范围金属度或零分母风险。
 
+这 11 组样例负责参数范围与派生值；直接光组合后的线性 HDR 输出由 [Unity PBR 参数回归](UNITY_PBR_PARAMETER_REGRESSION.md) 的 12 个 fixture 继续锁定，避免仅凭范围检查漏掉 Metallic/Roughness/法线组合回归。
+
 ## 验收命令
 
 ```powershell

@@ -139,3 +139,7 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ## Direct-light PBR integration
 
 The renderer-facing HLSL source library is v1.5.0. BasePass direct light is evaluated through `TA_EvaluateDirectLighting`, with `(1-F_Schlick) * (1-metallic)` diffuse energy weighting and GGX/Smith/Fresnel specular composition. Run `powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateDirectLightPbrIntegration.ps1` for the dedicated two-fixture check.
+
+## PBR parameter regression
+
+`Tools/ValidatePbrParameterRegression.ps1` locks 12 direct-light fixtures across Metallic, Roughness, out-of-range input sanitization and a tilted normal. It complements the 11-case `MaterialBoundaryMatrix` by comparing linear HDR `DirectDiffuse`/`DirectSpecular` outputs and is included in the Stage 1 required gates.

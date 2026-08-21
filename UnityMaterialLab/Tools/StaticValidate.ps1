@@ -103,6 +103,9 @@ $vectorSamplingReportPath = Join-Path $projectPath 'Reports\VectorSamplingUtilit
 $pbrInputManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\PbrInputLayer.json'
 $pbrInputValidationPath = Join-Path $projectPath 'Tools\ValidatePbrInputLayer.ps1'
 $pbrInputReportPath = Join-Path $projectPath 'Reports\PbrInputLayerValidation.json'
+$pbrParameterRegressionManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\PbrParameterRegression.json'
+$pbrParameterRegressionValidationPath = Join-Path $projectPath 'Tools\ValidatePbrParameterRegression.ps1'
+$pbrParameterRegressionReportPath = Join-Path $projectPath 'Reports\PbrParameterRegressionValidation.json'
 $ggxNdfSourcePath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $ggxNdfManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\GgxNormalDistribution.json'
 $ggxNdfValidationPath = Join-Path $projectPath 'Tools\ValidateGgxNormalDistribution.ps1'
@@ -181,6 +184,12 @@ Add-Check (Test-Path -LiteralPath $pbrInputValidationPath -PathType Leaf) `
     'Simplified PBR input validator exists'
 Add-Check (Test-Path -LiteralPath $pbrInputReportPath -PathType Leaf) `
     'Simplified PBR input validation report exists'
+Add-Check (Test-Path -LiteralPath $pbrParameterRegressionManifestPath -PathType Leaf) `
+    'PBR parameter regression contract exists'
+Add-Check (Test-Path -LiteralPath $pbrParameterRegressionValidationPath -PathType Leaf) `
+    'PBR parameter regression validator exists'
+Add-Check (Test-Path -LiteralPath $pbrParameterRegressionReportPath -PathType Leaf) `
+    'PBR parameter regression validation report exists'
 Add-Check (Test-Path -LiteralPath $ggxNdfManifestPath -PathType Leaf) `
     'GGX normal distribution contract exists'
 Add-Check (Test-Path -LiteralPath $ggxNdfValidationPath -PathType Leaf) `
@@ -859,6 +868,28 @@ if (Test-Path -LiteralPath $pbrInputReportPath) {
         $pbrInputReport.maximumError -le 0.000001 -and
         @($pbrInputReport.failures).Count -eq 0) `
         'Simplified PBR input report validates parameter policies and surface assembly'
+}
+
+if (Test-Path -LiteralPath $pbrParameterRegressionManifestPath) {
+    $pbrParameterRegressionManifest = Get-Content -LiteralPath $pbrParameterRegressionManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($pbrParameterRegressionManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $pbrParameterRegressionManifest.version -eq '1.0.0' -and
+        $pbrParameterRegressionManifest.sourceLibraryVersion -eq '1.5.0' -and
+        @($pbrParameterRegressionManifest.publicSymbols).Count -eq 4 -and
+        @($pbrParameterRegressionManifest.fixtures).Count -eq 12 -and
+        @($pbrParameterRegressionManifest.invariants).Count -eq 5) `
+        'PBR parameter regression contract fixes four entry points, twelve fixtures and five invariants'
+}
+
+if (Test-Path -LiteralPath $pbrParameterRegressionReportPath) {
+    $pbrParameterRegressionReport = Get-Content -LiteralPath $pbrParameterRegressionReportPath -Raw | ConvertFrom-Json
+    Add-Check ($pbrParameterRegressionReport.status -eq 'PASS' -and
+        $pbrParameterRegressionReport.sourceLibraryVersion -eq '1.5.0' -and
+        $pbrParameterRegressionReport.parameterCount -eq 4 -and
+        $pbrParameterRegressionReport.fixtureCount -eq 12 -and
+        $pbrParameterRegressionReport.maximumError -le 0.000001 -and
+        @($pbrParameterRegressionReport.failures).Count -eq 0) `
+        'PBR parameter regression report validates all fixed parameter outputs and invariants'
 }
 
 if (Test-Path -LiteralPath $ggxNdfSourcePath) {

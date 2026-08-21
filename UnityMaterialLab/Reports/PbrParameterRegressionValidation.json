@@ -1,0 +1,401 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.5.0",
+    "parameterCount":  4,
+    "fixtureCount":  12,
+    "tolerance":  1E-06,
+    "maximumError":  4.9711866220714107E-09,
+    "outputs":  {
+                    "METALLIC_00":  {
+                                        "parameter":  "Metallic",
+                                        "alpha":  0.2025,
+                                        "directDiffuse":  [
+                                                              0.33365104,
+                                                              0.07125833,
+                                                              0.02931363
+                                                          ],
+                                        "directSpecular":  [
+                                                               0.01817081,
+                                                               0.01671714,
+                                                               0.01490006
+                                                           ]
+                                    },
+                    "METALLIC_35":  {
+                                        "parameter":  "Metallic",
+                                        "alpha":  0.2025,
+                                        "directDiffuse":  [
+                                                              0.17575764,
+                                                              0.04479811,
+                                                              0.01891492
+                                                          ],
+                                        "directSpecular":  [
+                                                               0.10084746,
+                                                               0.02988181,
+                                                               0.01750756
+                                                           ]
+                                    },
+                    "METALLIC_50":  {
+                                        "parameter":  "Metallic",
+                                        "alpha":  0.2025,
+                                        "directDiffuse":  [
+                                                              0.12164361,
+                                                              0.03395905,
+                                                              0.01450414
+                                                          ],
+                                        "directSpecular":  [
+                                                               0.13628032,
+                                                               0.03552381,
+                                                               0.01862506
+                                                           ]
+                                    },
+                    "METALLIC_10":  {
+                                        "parameter":  "Metallic",
+                                        "alpha":  0.2025,
+                                        "directDiffuse":  [
+                                                              0,
+                                                              0,
+                                                              0
+                                                          ],
+                                        "directSpecular":  [
+                                                               0.25438982,
+                                                               0.05433048,
+                                                               0.02235005
+                                                           ]
+                                    },
+                    "ROUGHNESS_00":  {
+                                         "parameter":  "Roughness",
+                                         "alpha":  0.002025,
+                                         "directDiffuse":  [
+                                                               0.17575764,
+                                                               0.04479811,
+                                                               0.01891492
+                                                           ],
+                                         "directSpecular":  [
+                                                                1.976E-05,
+                                                                5.85E-06,
+                                                                3.43E-06
+                                                            ]
+                                     },
+                    "ROUGHNESS_25":  {
+                                         "parameter":  "Roughness",
+                                         "alpha":  0.0625,
+                                         "directDiffuse":  [
+                                                               0.17575764,
+                                                               0.04479811,
+                                                               0.01891492
+                                                           ],
+                                         "directSpecular":  [
+                                                                0.01747158,
+                                                                0.00517695,
+                                                                0.00303314
+                                                            ]
+                                     },
+                    "ROUGHNESS_50":  {
+                                         "parameter":  "Roughness",
+                                         "alpha":  0.25,
+                                         "directDiffuse":  [
+                                                               0.17575764,
+                                                               0.04479811,
+                                                               0.01891492
+                                                           ],
+                                         "directSpecular":  [
+                                                                0.1161659,
+                                                                0.03442077,
+                                                                0.02016691
+                                                            ]
+                                     },
+                    "ROUGHNESS_75":  {
+                                         "parameter":  "Roughness",
+                                         "alpha":  0.5625,
+                                         "directDiffuse":  [
+                                                               0.17575764,
+                                                               0.04479811,
+                                                               0.01891492
+                                                           ],
+                                         "directSpecular":  [
+                                                                0.08915116,
+                                                                0.02641612,
+                                                                0.01547703
+                                                            ]
+                                     },
+                    "ROUGHNESS_10":  {
+                                         "parameter":  "Roughness",
+                                         "alpha":  1,
+                                         "directDiffuse":  [
+                                                               0.17575764,
+                                                               0.04479811,
+                                                               0.01891492
+                                                           ],
+                                         "directSpecular":  [
+                                                                0.03801034,
+                                                                0.01126273,
+                                                                0.00659876
+                                                            ]
+                                     },
+                    "BASECOLOR_CLAMP":  {
+                                            "parameter":  "BaseColor",
+                                            "alpha":  1,
+                                            "directDiffuse":  [
+                                                                  0,
+                                                                  0,
+                                                                  0
+                                                              ],
+                                            "directSpecular":  [
+                                                                   0.17121759,
+                                                                   4E-08,
+                                                                   0.07019923
+                                                               ]
+                                        },
+                    "ROUGHNESS_CLAMP":  {
+                                            "parameter":  "Roughness",
+                                            "alpha":  0.002025,
+                                            "directDiffuse":  [
+                                                                  0.17575764,
+                                                                  0.04479811,
+                                                                  0.01891492
+                                                              ],
+                                            "directSpecular":  [
+                                                                   1.976E-05,
+                                                                   5.85E-06,
+                                                                   3.43E-06
+                                                               ]
+                                        },
+                    "NORMAL_TILT":  {
+                                        "parameter":  "Normal",
+                                        "alpha":  0.2025,
+                                        "directDiffuse":  [
+                                                              0.19199166,
+                                                              0.04893593,
+                                                              0.02066202
+                                                          ],
+                                        "directSpecular":  [
+                                                               0.01651183,
+                                                               0.00489257,
+                                                               0.00286653
+                                                           ]
+                                    }
+                },
+    "generatedAtUtc":  "2026-08-21T15:34:57.9786959Z",
+    "checks":  [
+                   {
+                       "id":  "METALLIC_00_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.33365104197681, 0.0712583296793329, 0.0293136272593911 expected=0.33365104, 0.07125833, 0.02931363",
+                       "maximumError":  2.74060885790961E-09
+                   },
+                   {
+                       "id":  "METALLIC_00_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0181708097512898, 0.0167171449711866, 0.0149000639960576 expected=0.01817081, 0.01671714, 0.01490006",
+                       "maximumError":  4.9711866220714107E-09
+                   },
+                   {
+                       "id":  "METALLIC_35_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "METALLIC_35_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.100847464513126, 0.0298818123063406, 0.0175075584923925 expected=0.10084746, 0.02988181, 0.01750756",
+                       "maximumError":  4.5131263171072078E-09
+                   },
+                   {
+                       "id":  "METALLIC_50_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.121643609054045, 0.0339590477378071, 0.0145041384877196 expected=0.12164361, 0.03395905, 0.01450414",
+                       "maximumError":  2.2621928913446609E-09
+                   },
+                   {
+                       "id":  "METALLIC_50_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.136280316553913, 0.0355238125928351, 0.0186250561336788 expected=0.13628032, 0.03552381, 0.01862506",
+                       "maximumError":  3.8663211521239305E-09
+                   },
+                   {
+                       "id":  "METALLIC_10_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0, 0, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "METALLIC_10_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.254389823356537, 0.0543304802144837, 0.0223500482713001 expected=0.25438982, 0.05433048, 0.02235005",
+                       "maximumError":  3.3565370483046308E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_00_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_00_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=1.97597871339607E-05, 5.85496376335176E-06, 3.43038499495456E-06 expected=1.976E-05, 5.85E-06, 3.43E-06",
+                       "maximumError":  4.9637633517582821E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_25_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_25_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0174715821816119, 0.00517695255866128, 0.00303314266229667 expected=0.01747158, 0.00517695, 0.00303314",
+                       "maximumError":  2.6622966717466945E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_50_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_50_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.116165900680235, 0.0344207725725417, 0.0201669056411027 expected=0.1161659, 0.03442077, 0.02016691",
+                       "maximumError":  4.3588972813146665E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_75_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_75_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0891511629036303, 0.0264161159592815, 0.0154770296579639 expected=0.08915116, 0.02641612, 0.01547703",
+                       "maximumError":  4.040718454279002E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_10_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_10_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0380103380200734, 0.0112627302223206, 0.00659876001260724 expected=0.03801034, 0.01126273, 0.00659876",
+                       "maximumError":  1.9799265699171897E-09
+                   },
+                   {
+                       "id":  "BASECOLOR_CLAMP_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0, 0, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BASECOLOR_CLAMP_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.171217585082635, 4.03614269216803E-08, 0.0701992278710381 expected=0.17121759, 4E-08, 0.07019923",
+                       "maximumError":  4.917364820888892E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_CLAMP_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_CLAMP_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=1.97597871339607E-05, 5.85496376335176E-06, 3.43038499495456E-06 expected=1.976E-05, 5.85E-06, 3.43E-06",
+                       "maximumError":  4.9637633517582821E-09
+                   },
+                   {
+                       "id":  "NORMAL_TILT_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.191991661070603, 0.0489359281435111, 0.0206620184713872 expected=0.19199166, 0.04893593, 0.02066202",
+                       "maximumError":  1.8564889001093654E-09
+                   },
+                   {
+                       "id":  "NORMAL_TILT_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0165118333660663, 0.00489257224125989, 0.00286652609332995 expected=0.01651183, 0.00489257, 0.00286653",
+                       "maximumError":  3.9066700486568851E-09
+                   },
+                   {
+                       "id":  "METALLIC_DIFFUSE_MONOTONIC",
+                       "pass":  true,
+                       "detail":  "Diffuse energy does not increase as metallic rises",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PURE_METAL_DIFFUSE_ZERO",
+                       "pass":  true,
+                       "detail":  "Metallic 1 produces no direct diffuse",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ROUGHNESS_ALPHA_MONOTONIC",
+                       "pass":  true,
+                       "detail":  "Sanitized GGX alpha is monotonic with perceptual roughness",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ROUGHNESS_CLAMP_EQUALS_ZERO",
+                       "pass":  true,
+                       "detail":  "actual=1.97597871339607E-05, 5.85496376335176E-06, 3.43038499495456E-06 expected=1.97597871339607E-05, 5.85496376335176E-06, 3.43038499495456E-06",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FINITE_NON_NEGATIVE_OUTPUTS",
+                       "pass":  true,
+                       "detail":  "All direct diffuse and specular channels are finite and non-negative",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_SamplePBRInput",
+                       "pass":  true,
+                       "detail":  "TA_SamplePBRInput",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_BuildSurfaceData",
+                       "pass":  true,
+                       "detail":  "TA_BuildSurfaceData",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateDirectLighting",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateDirectLighting",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateLighting",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateLighting",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "INPUT_POLICY_WIRING",
+                       "pass":  true,
+                       "detail":  "PBR input layer exposes sampling, surface assembly and roughness policy",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "LIGHTING_POLICY_WIRING",
+                       "pass":  true,
+                       "detail":  "Lighting layer consumes the integrated direct-light PBR components",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BASEPASS_PARAMETER_WIRING",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

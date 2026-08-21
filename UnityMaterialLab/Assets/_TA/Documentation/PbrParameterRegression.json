@@ -1,0 +1,58 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.5.0",
+  "inputSource": "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
+  "lightingSource": "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "publicSymbols": [
+    "TA_SamplePBRInput",
+    "TA_BuildSurfaceData",
+    "TA_EvaluateDirectLighting",
+    "TA_EvaluateLighting"
+  ],
+  "parameterRanges": {
+    "baseColor": [0.0, 1.0],
+    "metallic": [0.0, 1.0],
+    "roughness": [0.0, 1.0],
+    "normalScale": [0.0, 2.0]
+  },
+  "policies": {
+    "baseColor": "saturate(BaseColor * BaseColorTint)",
+    "metallic": "saturate(ORM.B * MetallicScale)",
+    "roughness": "max(saturate(ORM.G * RoughnessScale), 0.045)",
+    "normal": "TA_SafeNormalize(TBN * UnpackNormalScale(NormalTS, NormalScale))",
+    "directLight": "TA_EvaluateDirectLighting(surface, lightingInput)"
+  },
+  "defaults": {
+    "baseColor": [0.56, 0.13, 0.06],
+    "normalWS": [0.0, 0.0, 1.0],
+    "viewDirectionWS": [0.0, 0.0, 1.0],
+    "lightDirectionWS": [0.3, 0.5, 0.81240384],
+    "lightColor": [3.0, 2.76, 2.46],
+    "lightAttenuation": 0.8,
+    "roughness": 0.45,
+    "metallic": 0.35
+  },
+  "fixtures": [
+    { "id": "METALLIC_00", "parameter": "Metallic", "inputs": { "metallic": 0.0 }, "expected": { "directDiffuse": [0.33365104, 0.07125833, 0.02931363], "directSpecular": [0.01817081, 0.01671714, 0.01490006] } },
+    { "id": "METALLIC_35", "parameter": "Metallic", "inputs": { "metallic": 0.35 }, "expected": { "directDiffuse": [0.17575764, 0.04479811, 0.01891492], "directSpecular": [0.10084746, 0.02988181, 0.01750756] } },
+    { "id": "METALLIC_50", "parameter": "Metallic", "inputs": { "metallic": 0.5 }, "expected": { "directDiffuse": [0.12164361, 0.03395905, 0.01450414], "directSpecular": [0.13628032, 0.03552381, 0.01862506] } },
+    { "id": "METALLIC_10", "parameter": "Metallic", "inputs": { "metallic": 1.0 }, "expected": { "directDiffuse": [0.0, 0.0, 0.0], "directSpecular": [0.25438982, 0.05433048, 0.02235005] } },
+    { "id": "ROUGHNESS_00", "parameter": "Roughness", "inputs": { "roughness": 0.0 }, "expected": { "directDiffuse": [0.17575764, 0.04479811, 0.01891492], "directSpecular": [0.00001976, 0.00000585, 0.00000343] } },
+    { "id": "ROUGHNESS_25", "parameter": "Roughness", "inputs": { "roughness": 0.25 }, "expected": { "directDiffuse": [0.17575764, 0.04479811, 0.01891492], "directSpecular": [0.01747158, 0.00517695, 0.00303314] } },
+    { "id": "ROUGHNESS_50", "parameter": "Roughness", "inputs": { "roughness": 0.5 }, "expected": { "directDiffuse": [0.17575764, 0.04479811, 0.01891492], "directSpecular": [0.11616590, 0.03442077, 0.02016691] } },
+    { "id": "ROUGHNESS_75", "parameter": "Roughness", "inputs": { "roughness": 0.75 }, "expected": { "directDiffuse": [0.17575764, 0.04479811, 0.01891492], "directSpecular": [0.08915116, 0.02641612, 0.01547703] } },
+    { "id": "ROUGHNESS_10", "parameter": "Roughness", "inputs": { "roughness": 1.0 }, "expected": { "directDiffuse": [0.17575764, 0.04479811, 0.01891492], "directSpecular": [0.03801034, 0.01126273, 0.00659876] } },
+    { "id": "BASECOLOR_CLAMP", "parameter": "BaseColor", "inputs": { "baseColor": [1.2, -0.2, 0.5], "metallic": 1.2, "roughness": 1.2 }, "expected": { "directDiffuse": [0.0, 0.0, 0.0], "directSpecular": [0.17121759, 0.00000004, 0.07019923] } },
+    { "id": "ROUGHNESS_CLAMP", "parameter": "Roughness", "inputs": { "roughness": -1.0 }, "expected": { "directDiffuse": [0.17575764, 0.04479811, 0.01891492], "directSpecular": [0.00001976, 0.00000585, 0.00000343] } },
+    { "id": "NORMAL_TILT", "parameter": "Normal", "inputs": { "normalWS": [0.0, 0.8, 0.6], "metallic": 0.35, "roughness": 0.45 }, "expected": { "directDiffuse": [0.19199166, 0.04893593, 0.02066202], "directSpecular": [0.01651183, 0.00489257, 0.00286653] } }
+  ],
+  "invariants": [
+    "All direct-light outputs are finite and non-negative",
+    "Metallic 1 has zero direct diffuse",
+    "Roughness 0 uses the sanitized 0.045 perceptual roughness",
+    "Out-of-range BaseColor, Metallic and Roughness inputs are clamped before lighting",
+    "BasePass consumes the shared PBR input and direct-light entry points"
+  ]
+}

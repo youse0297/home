@@ -1,9 +1,9 @@
 ﻿# Stage 1 Acceptance
 
 - Overall status: `CONDITIONAL_PASS`
-- Required offline gates: `11/11`
+- Required offline gates: `12/12`
 - External runtime acceptance: `BLOCKED`
-- Generated at (UTC): `2026-08-21T15:17:14.4325246Z`
+- Generated at (UTC): `2026-08-21T15:35:03.5432723Z`
 
 ## Gate Results
 
@@ -19,6 +19,7 @@
 | LOD Baseline | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/LODValidationReport.json` |
 | BasePass Lighting Decomposition | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/BasePassLightingValidation.json` |
 | Direct-light PBR Integration | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json` |
+| PBR Parameter Regression | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/PbrParameterRegressionValidation.json` |
 | Unity Static Validation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/StaticValidation.json` |
 | RenderDoc Capture Readiness | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/RenderDocCaptureReadiness.json` |
 | Unity Editor Runtime Validation | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md` |

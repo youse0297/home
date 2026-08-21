@@ -249,6 +249,11 @@ Add-ScriptGate -Name 'Direct-light PBR Integration' `
     -ExpectedPattern 'UNITY_DIRECT_LIGHT_PBR_INTEGRATION: PASS' `
     -Evidence 'UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json' `
     -ReportName 'DirectLightPbrIntegrationValidation.json'
+Add-ScriptGate -Name 'PBR Parameter Regression' `
+    -ScriptName 'ValidatePbrParameterRegression.ps1' `
+    -ExpectedPattern 'UNITY_PBR_PARAMETER_REGRESSION: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/PbrParameterRegressionValidation.json' `
+    -ReportName 'PbrParameterRegressionValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -320,6 +325,7 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/LODComparisonBoard.png',
         'UnityMaterialLab/Reports/BasePassLightingDecompositionBoard.png',
         'UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json',
+        'UnityMaterialLab/Reports/PbrParameterRegressionValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

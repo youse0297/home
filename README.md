@@ -438,3 +438,7 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
 ## Direct-light PBR integration
 
 The Unity BasePass now uses a reusable direct-light PBR entry point with energy-conserving `(1-F)` diffuse weighting, GGX/Smith/Fresnel specular integration and a back-face zero guard. See [Unity Direct-Light PBR Integration](docs/UNITY_DIRECT_LIGHT_PBR_INTEGRATION.md) for the contract, fixed outputs and offline acceptance commands.
+
+## PBR parameter regression
+
+Unity now has a 12-fixture direct-light parameter regression covering Metallic/Roughness sweeps, input clamping and tilted normals. See [Unity PBR 参数回归](docs/UNITY_PBR_PARAMETER_REGRESSION.md) and `UnityMaterialLab/Reports/PbrParameterRegressionValidation.json`.

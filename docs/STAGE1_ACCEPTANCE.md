@@ -23,6 +23,7 @@
 | Unity | Texture Compression | BC1/BC5/BC7 策略、显存和 BC1 往返基线通过 |
 | Unity | LOD Baseline | 三档阈值、四个切换样本与对照板通过 |
 | Unity | BasePass Decomposition | 10 档视图与最终光照加法不变量通过 |
+| Unity | PBR Parameter Regression | 12 组 Metallic/Roughness/夹取/法线直接光 fixture 通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁

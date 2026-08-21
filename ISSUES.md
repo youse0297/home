@@ -48,6 +48,7 @@
 | #55 | Renderer BRDF 的 GGX 法线分布缺少独立 alpha 映射、数值下限和专项验收契约 | 2026-08-19 | 已新增 `TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、GGX NDF manifest/validator/report，并让 Smith 可见性复用同一 alpha 策略 |
 | #56 | Renderer BRDF 的几何遮蔽与 Fresnel 缺少可复用子项、统一夹取策略和专项验收契约 | 2026-08-20 | 已新增 `TA_SmithGGXLambdaTerm`、标量/向量 Schlick Fresnel、GGX 几何/Fresnel manifest、validator/report，并接入项目静态门禁 |
 | #57 | Unity BasePass 直接光仍把 diffuse/specular 内联在总光照函数中，且 diffuse 未使用 Fresnel 能量权重 | 2026-08-21 | 已新增 `TA_DirectLightingBreakdown`/`TA_EvaluateDirectLighting`，统一 `(1-F)*(1-metallic)` diffuse、GGX/Smith/Fresnel specular、背面归零契约，并补齐数值 validator、离线基准板和静态门禁 |
+| #58 | PBR 参数边界已有范围矩阵，但缺少 Metallic/Roughness/夹取/法线组合后的直接光数值回归 | 2026-08-21 | 已新增 12 组 PBR parameter regression fixture、线性 HDR 输出报告、单调性/有限性不变量，并接入 Stage 1 必选门禁 |
 
 ## 🔴 待解决 / 待验证 (Open)
 
