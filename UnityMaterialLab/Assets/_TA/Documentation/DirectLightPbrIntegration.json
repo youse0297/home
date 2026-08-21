@@ -1,0 +1,55 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.5.0",
+  "source": "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "publicSymbols": [
+    "TA_DirectLightingBreakdown",
+    "TA_EvaluateDirectLighting"
+  ],
+  "policies": {
+    "diffuse": "(1-F_Schlick) * (1-metallic) * BaseColor / PI",
+    "specular": "D_GGX * V_SmithGGXCorrelated * F_Schlick",
+    "radiance": "max(lightColor, 0) * max(lightAttenuation, 0)",
+    "backface": "NdotV <= 0 or NdotL <= 0 returns zero direct components"
+  },
+  "fixtures": [
+    {
+      "id": "DIRECT_LIGHT_BASEPASS_FIXTURE",
+      "function": "TA_EvaluateDirectLighting",
+      "input": {
+        "baseColor": [0.56, 0.13, 0.06],
+        "normalWS": [0.0, 0.0, 1.0],
+        "viewDirectionWS": [0.0, 0.0, 1.0],
+        "lightDirectionWS": [0.3, 0.5, 0.81240384],
+        "lightColor": [3.0, 2.76, 2.46],
+        "lightAttenuation": 0.8,
+        "roughness": 0.45,
+        "metallic": 0.35
+      },
+      "expected": {
+        "directDiffuse": [0.17575764, 0.04479811, 0.01891492],
+        "directSpecular": [0.10084746, 0.02988181, 0.01750756]
+      }
+    },
+    {
+      "id": "DIRECT_LIGHT_BACKFACE_GUARD",
+      "function": "TA_EvaluateDirectLighting",
+      "input": {
+        "baseColor": [0.56, 0.13, 0.06],
+        "normalWS": [0.0, 0.0, 1.0],
+        "viewDirectionWS": [0.0, 0.0, -1.0],
+        "lightDirectionWS": [0.3, 0.5, 0.81240384],
+        "lightColor": [3.0, 2.76, 2.46],
+        "lightAttenuation": 0.8,
+        "roughness": 0.45,
+        "metallic": 0.35
+      },
+      "expected": {
+        "directDiffuse": [0.0, 0.0, 0.0],
+        "directSpecular": [0.0, 0.0, 0.0]
+      }
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 ﻿{
     "status":  "PASS",
-    "version":  "1.4.0",
+    "version":  "1.5.0",
     "moduleCount":  8,
-    "publicSymbolCount":  27,
+    "publicSymbolCount":  29,
     "aggregate":  "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "consumer":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
-    "generatedAtUtc":  "2026-08-20T13:39:45.7704206Z",
+    "generatedAtUtc":  "2026-08-21T15:12:23.8144095Z",
     "checks":  [
                    {
                        "id":  "MODULE_EXISTS_types",
@@ -35,7 +35,7 @@
                    {
                        "id":  "PUBLIC_SYMBOLS_types",
                        "pass":  true,
-                       "detail":  "TA_SurfaceData, TA_LightingInput, TA_LightingBreakdown"
+                       "detail":  "TA_SurfaceData, TA_LightingInput, TA_DirectLightingBreakdown, TA_LightingBreakdown"
                    },
                    {
                        "id":  "MODULE_EXISTS_common",
@@ -215,7 +215,7 @@
                    {
                        "id":  "PUBLIC_SYMBOLS_lighting",
                        "pass":  true,
-                       "detail":  "TA_EvaluateLighting"
+                       "detail":  "TA_EvaluateDirectLighting, TA_EvaluateLighting"
                    },
                    {
                        "id":  "MODULE_EXISTS_debugViews",

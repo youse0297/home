@@ -1,0 +1,81 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.5.0",
+    "functionCount":  2,
+    "fixtureCount":  2,
+    "tolerance":  1E-06,
+    "maximumError":  4.5131263171072078E-09,
+    "generatedAtUtc":  "2026-08-21T15:17:08.7409940Z",
+    "checks":  [
+                   {
+                       "id":  "DIRECT_LIGHT_BASEPASS_FIXTURE_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060815206128E-09
+                   },
+                   {
+                       "id":  "DIRECT_LIGHT_BASEPASS_FIXTURE_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.100847464513126, 0.0298818123063406, 0.0175075584923925 expected=0.10084746, 0.02988181, 0.01750756",
+                       "maximumError":  4.5131263171072078E-09
+                   },
+                   {
+                       "id":  "DIRECT_LIGHT_BACKFACE_GUARD_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0, 0, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DIRECT_LIGHT_BACKFACE_GUARD_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0, 0, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_DirectLightingBreakdown",
+                       "pass":  true,
+                       "detail":  "TA_DirectLightingBreakdown",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateDirectLighting",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateDirectLighting",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DIRECT_ENTRY_POINT",
+                       "pass":  true,
+                       "detail":  "Direct light evaluation is a reusable lighting-layer entry point",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ENERGY_CONSERVING_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "(1-F_Schlick) * (1-metallic) * BaseColor / PI",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BRDF_COMPONENT_INTEGRATION",
+                       "pass":  true,
+                       "detail":  "Direct specular composes GGX distribution, correlated Smith visibility and Schlick Fresnel",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BACKFACE_GUARD",
+                       "pass":  true,
+                       "detail":  "Back-facing view or light returns zero direct components",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BASEPASS_CONSUMER_WIRING",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

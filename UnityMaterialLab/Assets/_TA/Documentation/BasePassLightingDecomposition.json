@@ -13,7 +13,7 @@
     { "id": 3, "name": "AmbientOcclusion", "category": "Surface", "output": "lerp(1, ORM.r, AOStrength)" },
     { "id": 4, "name": "Roughness", "category": "Surface", "output": "max(ORM.g * RoughnessScale, 0.045)" },
     { "id": 5, "name": "Metallic", "category": "Surface", "output": "saturate(ORM.b * MetallicScale)" },
-    { "id": 6, "name": "DirectDiffuse", "category": "Lighting", "output": "(1-metallic) * BaseColor / PI * NdotL * radiance" },
+    { "id": 6, "name": "DirectDiffuse", "category": "Lighting", "output": "(1-metallic) * (1-F_Schlick) * BaseColor / PI * NdotL * radiance" },
     { "id": 7, "name": "DirectSpecular", "category": "Lighting", "output": "D_GGX * V_Smith * F_Schlick * NdotL * radiance" },
     { "id": 8, "name": "IndirectDiffuse", "category": "Lighting", "output": "SampleSH(N) * (1-metallic) * BaseColor * AO" },
     { "id": 9, "name": "ShadowAttenuation", "category": "Lighting", "output": "MainLight.shadowAttenuation" }
@@ -32,6 +32,7 @@
   },
   "invariants": [
     "FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse",
+    "DirectDiffuse uses the energy-conserving (1-F_Schlick) diffuse weight",
     "BaseColor is sampled as sRGB and consumed as linear by Unity",
     "Normal, AO, roughness and metallic data textures are sampled as linear",
     "Debug views do not apply fog, exposure or tone mapping in the material pass"

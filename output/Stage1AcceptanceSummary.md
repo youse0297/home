@@ -1,16 +1,16 @@
 ﻿# Stage 1 Acceptance
 
 - Overall status: `CONDITIONAL_PASS`
-- Required offline gates: `10/10`
+- Required offline gates: `11/11`
 - External runtime acceptance: `BLOCKED`
-- Generated at (UTC): `2026-08-16T15:32:37.2459382Z`
+- Generated at (UTC): `2026-08-21T15:17:14.4325246Z`
 
 ## Gate Results
 
 | Gate | Category | Required | Status | Evidence |
 | --- | --- | --- | --- | --- |
 | CMake Configure | CPU Renderer | Yes | `PASS` | `build/CMakeCache.txt` |
-| Debug Build | CPU Renderer | Yes | `PASS` | `build/Debug/release_acceptance.exe` |
+| Debug Build | CPU Renderer | Yes | `PASS` | `build/Debug` |
 | CTest 12/12 | CPU Renderer | Yes | `PASS` | `build/Testing/Temporary/LastTest.log` |
 | Release PPM Artifact | CPU Renderer | Yes | `PASS` | `build/release_acceptance.ppm` |
 | Material Boundary Matrix | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/MaterialBoundaryBoard.png` |
@@ -18,6 +18,7 @@
 | Texture Compression | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/TextureCompressionValidation.json` |
 | LOD Baseline | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/LODValidationReport.json` |
 | BasePass Lighting Decomposition | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/BasePassLightingValidation.json` |
+| Direct-light PBR Integration | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json` |
 | Unity Static Validation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/StaticValidation.json` |
 | RenderDoc Capture Readiness | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/RenderDocCaptureReadiness.json` |
 | Unity Editor Runtime Validation | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md` |

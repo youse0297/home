@@ -435,3 +435,6 @@ Vec3 hdr = SoftRenderer::Shading::ggxDirectLighting(
 - `Shading::toDisplayColor` 固定执行曝光 → Reinhard → sRGB 编码；色调映射之前不要截断 HDR，也不要对已经编码的 sRGB 颜色重复编码。
 - `Tools/GenerateHandednessPlot.py` 用于生成左右手坐标系示意图，输出位于 `output/handedness.png`。
 - 已知问题和后续计划记录在 [ISSUES.md](ISSUES.md) 中。
+## Direct-light PBR integration
+
+The Unity BasePass now uses a reusable direct-light PBR entry point with energy-conserving `(1-F)` diffuse weighting, GGX/Smith/Fresnel specular integration and a back-face zero guard. See [Unity Direct-Light PBR Integration](docs/UNITY_DIRECT_LIGHT_PBR_INTEGRATION.md) for the contract, fixed outputs and offline acceptance commands.

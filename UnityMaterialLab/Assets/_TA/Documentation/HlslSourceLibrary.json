@@ -1,6 +1,6 @@
 {
   "status": "STATIC_LIBRARY_VALIDATED",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "root": "Assets/_TA/Shaders/Library",
   "namespacePrefix": "TA_",
   "precisionPolicy": "Renderer-facing calculations use half precision unless Unity requires float inputs",
@@ -25,10 +25,10 @@
     {
       "id": "types",
       "file": "Assets/_TA/Shaders/Library/TA_ShaderTypes.hlsl",
-      "role": "Shared surface, lighting input and lighting output structures",
+      "role": "Shared surface, lighting input, direct-light and lighting output structures",
       "includeGuard": "TA_SHADER_TYPES_INCLUDED",
       "dependencies": [],
-      "publicSymbols": ["TA_SurfaceData", "TA_LightingInput", "TA_LightingBreakdown"]
+      "publicSymbols": ["TA_SurfaceData", "TA_LightingInput", "TA_DirectLightingBreakdown", "TA_LightingBreakdown"]
     },
     {
       "id": "common",
@@ -98,10 +98,10 @@
     {
       "id": "lighting",
       "file": "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
-      "role": "Direct and indirect lighting decomposition",
+      "role": "Direct PBR integration and indirect lighting decomposition",
       "includeGuard": "TA_LIGHTING_INCLUDED",
       "dependencies": ["types", "common", "vector", "brdf"],
-      "publicSymbols": ["TA_EvaluateLighting"]
+      "publicSymbols": ["TA_EvaluateDirectLighting", "TA_EvaluateLighting"]
     },
     {
       "id": "debugViews",
@@ -120,6 +120,7 @@
     "Sampling utilities use Unity texture parameter macros and preserve platform normal unpacking",
     "PBR input assembly preserves BaseColor, Alpha, Normal, AO, Roughness and Metallic policies",
     "GGX NDF derives alpha from sanitized perceptual roughness and clamps the distribution denominator",
-    "Fresnel clamps cosine and F0, while correlated Smith visibility reuses the explicit lambda term"
+    "Fresnel clamps cosine and F0, while correlated Smith visibility reuses the explicit lambda term",
+    "Direct light uses energy-conserving (1-F) diffuse weighting with GGX specular components"
   ]
 }

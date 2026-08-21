@@ -20,6 +20,12 @@ struct TA_LightingInput
     half3 ambientIrradiance;
 };
 
+struct TA_DirectLightingBreakdown
+{
+    half3 directDiffuse;
+    half3 directSpecular;
+};
+
 struct TA_LightingBreakdown
 {
     half3 directDiffuse;

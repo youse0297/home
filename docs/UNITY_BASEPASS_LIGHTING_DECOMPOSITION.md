@@ -25,7 +25,7 @@ UV、纹理采样、法线解包、PBR 输入、TBN、BRDF、光照合成和调�
 | 3 | `AmbientOcclusion` | Surface | ORM.R 与 AO 强度混合后的标量 |
 | 4 | `Roughness` | Surface | ORM.G 乘缩放并应用 `0.045` 数值下限 |
 | 5 | `Metallic` | Surface | ORM.B 乘缩放并限制到 `[0, 1]` |
-| 6 | `DirectDiffuse` | Lighting | Lambert 漫反射、主光颜色、衰减、`N·L` |
+| 6 | `DirectDiffuse` | Lighting | `(1-F_Schlick) * (1-metallic)` Lambert 漫反射、主光颜色、衰减、`N·L` |
 | 7 | `DirectSpecular` | Lighting | GGX NDF、Smith 可见性、Schlick Fresnel 与主光 |
 | 8 | `IndirectDiffuse` | Lighting | `SampleSH` 环境光、AO、非金属漫反射权重 |
 | 9 | `ShadowAttenuation` | Lighting | URP 主光阴影衰减，白为完全受光，黑为完全遮挡 |
@@ -47,7 +47,7 @@ powershell -ExecutionPolicy Bypass -File .\Tools\GenerateBasePassLightingBoard.p
 powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
-第一条命令用固定输入解析与 shader 相同的 Lambert/GGX/SH 公式，生成 `Reports/BasePassLightingDecompositionBoard.png` 和数值报告；第二条检查 shader 通道、视图 ID、场景生成入口、控制器、数据契约、加法不变量和报告尺寸。
+第一条命令用固定输入解析与 shader 相同的能量守恒 Lambert/GGX/SH 公式，生成 `Reports/BasePassLightingDecompositionBoard.png` 和数值报告；第二条检查 shader 通道、视图 ID、场景生成入口、控制器、数据契约、加法不变量和报告尺寸。
 
 当前机器若仍被 Unity 许可证阻挡，静态 `PASS` 只能证明源代码、契约与离线公式一致，不能替代 Editor 内的 shader 编译、场景截图或真实 RenderDoc 截帧。不得用对照板冒充运行时截图或 `.rdc`。
 
@@ -58,3 +58,6 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - 法线贴图转换后没有归一化，导致 `N·L` 与 GGX 高光随插值长度变化。
 - 将粗糙度直接当作 GGX 的 alpha；本实现通过 `TA_GGXAlphaFromRoughness` 使用清理后的 `alpha = roughness²`，并在 NDF 分母设置数值下限。
 - 用 `renderer.material` 切换视图，意外克隆材质；控制器应使用 `MaterialPropertyBlock`。
+## Direct-light PBR integration
+
+`DirectDiffuse` is the energy-conserving `(1-F_Schlick) * (1-metallic)` Lambert component. `DirectSpecular` is the GGX NDF, correlated Smith visibility and Schlick Fresnel product. Both components are evaluated by `TA_EvaluateDirectLighting`; the BasePass continues to expose them independently and reconstructs `FinalLit` additively. The dedicated contract and numeric fixtures live in `Assets/_TA/Documentation/DirectLightPbrIntegration.json` and are checked by `Tools/ValidateDirectLightPbrIntegration.ps1`.

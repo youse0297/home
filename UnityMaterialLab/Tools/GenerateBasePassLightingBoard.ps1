@@ -109,7 +109,12 @@ $distribution = $alphaSquared / ([Math]::PI * $distributionDenominator * $distri
 $viewLambda = $normalDotLight * [Math]::Sqrt([Math]::Max((-$normalDotView * $alphaSquared + $normalDotView) * $normalDotView + $alphaSquared, 0.0))
 $lightLambda = $normalDotView * [Math]::Sqrt([Math]::Max((-$normalDotLight * $alphaSquared + $normalDotLight) * $normalDotLight + $alphaSquared, 0.0))
 $visibility = 0.5 / [Math]::Max($viewLambda + $lightLambda, 0.0001)
-$directDiffuse = Scale-Vector (Multiply-Vector $baseColor $radiance) ((1.0 - $metallic) * $normalDotLight / [Math]::PI)
+$diffuseWeight = @(
+    ((1.0 - $metallic) * (1.0 - $fresnel[0])),
+    ((1.0 - $metallic) * (1.0 - $fresnel[1])),
+    ((1.0 - $metallic) * (1.0 - $fresnel[2]))
+)
+$directDiffuse = Scale-Vector (Multiply-Vector (Multiply-Vector $baseColor $diffuseWeight) $radiance) ($normalDotLight / [Math]::PI)
 $directSpecular = Scale-Vector (Multiply-Vector $fresnel $radiance) ($distribution * $visibility * $normalDotLight)
 $indirectDiffuse = Scale-Vector (Multiply-Vector $ambient $baseColor) ((1.0 - $metallic) * $ao)
 $finalLit = Add-Vector (Add-Vector $directDiffuse $directSpecular) $indirectDiffuse

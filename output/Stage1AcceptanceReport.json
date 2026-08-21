@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  10,
-    "passedRequiredGateCount":  10,
+    "requiredGateCount":  11,
+    "passedRequiredGateCount":  11,
     "blockerCount":  2,
     "configuration":  "Debug",
-    "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-16T15:32:37.2459382Z",
+    "buildDirectory":  "E:\\TaProject\\home\\build",
+    "generatedAtUtc":  "2026-08-21T15:17:14.4325246Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -16,13 +16,10 @@
                       "required":  true,
                       "status":  "PASS",
                       "evidence":  "build/CMakeCache.txt",
-                      "detail":  "Command completed with the required acceptance marker.",
+                      "detail":  "Skipped by request; the existing CMake cache is used.",
                       "exitCode":  0,
                       "outputTail":  [
-                                         "-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.22631.",
-                                         "-- Configuring done (0.1s)",
-                                         "-- Generating done (1.3s)",
-                                         "-- Build files have been written to: E:/ueProject/home/build"
+
                                      ]
                   },
                   {
@@ -30,26 +27,11 @@
                       "category":  "CPU Renderer",
                       "required":  true,
                       "status":  "PASS",
-                      "evidence":  "build/Debug/release_acceptance.exe",
-                      "detail":  "Command completed with the required acceptance marker.",
+                      "evidence":  "build/Debug",
+                      "detail":  "Skipped by request; existing Debug binaries are used.",
                       "exitCode":  0,
                       "outputTail":  [
-                                         "  vertex_stage_acceptance.cpp",
-                                         "  diffuse_exposure_acceptance.cpp",
-                                         "  material_workflow_acceptance.cpp",
-                                         "  obj_loader_acceptance.cpp",
-                                         "  depth_buffer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\depth_buffer_acceptance.exe",
-                                         "  obj_loader_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\obj_loader_acceptance.exe",
-                                         "  soft_renderer.vcxproj -\u003e E:\\ueProject\\home\\build\\apps\\Debug\\soft_renderer.exe",
-                                         "  surface_attributes_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\surface_attributes_acceptance.exe",
-                                         "  ggx_brdf_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\ggx_brdf_acceptance.exe",
-                                         "  texture_sampling_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\texture_sampling_acceptance.exe",
-                                         "  triangle_rasterizer_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\triangle_rasterizer_acceptance.exe",
-                                         "  vertex_stage_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\vertex_stage_acceptance.exe",
-                                         "  release_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\release_acceptance.exe",
-                                         "  material_workflow_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\material_workflow_acceptance.exe",
-                                         "  diffuse_exposure_acceptance.vcxproj -\u003e E:\\ueProject\\home\\build\\tests\\Debug\\diffuse_exposure_acceptance.exe",
-                                         "  Building Custom Rule E:/ueProject/home/CMakeLists.txt"
+
                                      ]
                   },
                   {
@@ -62,21 +44,21 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "      Start  7: texture_sampling_acceptance",
-                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.13 sec",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
                                          "      Start  8: surface_attributes_acceptance",
-                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.12 sec",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
                                          "      Start  9: diffuse_exposure_acceptance",
-                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.11 sec",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.03 sec",
                                          "      Start 10: ggx_brdf_acceptance",
-                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.11 sec",
+                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
                                          "      Start 11: material_workflow_acceptance",
-                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.11 sec",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
                                          "      Start 12: release_acceptance",
-                                         "12/12 Test #12: release_acceptance ......................   Passed    0.15 sec",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.03 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   1.94 sec"
+                                         "Total Test time (real) =   0.33 sec"
                                      ]
                   },
                   {
@@ -100,7 +82,7 @@
                       "detail":  "Command completed with the required acceptance marker.",
                       "exitCode":  0,
                       "outputTail":  [
-                                         "Material boundary board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialBoundaryBoard.png"
+                                         "Material boundary board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialBoundaryBoard.png"
                                      ]
                   },
                   {
@@ -113,7 +95,7 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_MATERIAL_FUNCTION_LIBRARY_V1: PASS",
-                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialFunctionLibraryValidation.json"
+                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialFunctionLibraryValidation.json"
                                      ]
                   },
                   {
@@ -126,8 +108,8 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_TEXTURE_COMPRESSION_ACCEPTANCE: PASS",
-                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionBoard.png",
-                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionValidation.json"
+                                         "Board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionBoard.png",
+                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionValidation.json"
                                      ]
                   },
                   {
@@ -140,8 +122,8 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_LOD_ACCEPTANCE: PASS",
-                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODComparisonBoard.png",
-                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODValidationReport.json"
+                                         "Board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODComparisonBoard.png",
+                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODValidationReport.json"
                                      ]
                   },
                   {
@@ -154,8 +136,21 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_BASEPASS_LIGHTING_ACCEPTANCE: PASS",
-                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingDecompositionBoard.png",
-                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingValidation.json"
+                                         "Board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingDecompositionBoard.png",
+                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Direct-light PBR Integration",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_DIRECT_LIGHT_PBR_INTEGRATION: PASS",
+                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\DirectLightPbrIntegrationValidation.json"
                                      ]
                   },
                   {
@@ -168,7 +163,7 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_PROJECT_STATIC_ACCEPTANCE: PASS",
-                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Reports\\StaticValidation.json"
+                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Reports\\StaticValidation.json"
                                      ]
                   },
                   {
@@ -181,7 +176,7 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "RENDERDOC_CAPTURE_READINESS: BLOCKED_TOOLING",
-                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\RenderDocCaptureReadiness.json"
+                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\RenderDocCaptureReadiness.json"
                                      ]
                   },
                   {
@@ -215,6 +210,7 @@
                       "UnityMaterialLab/Reports/TextureCompressionBoard.png",
                       "UnityMaterialLab/Reports/LODComparisonBoard.png",
                       "UnityMaterialLab/Reports/BasePassLightingDecompositionBoard.png",
+                      "UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

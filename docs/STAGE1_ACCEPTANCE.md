@@ -56,3 +56,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 3. 安装 RenderDoc，运行 `UnityMaterialLab/Tools/RenderDocCaptureCheck.ps1`，要求状态变为 `READY_TO_CAPTURE`。
 4. 捕获稳定帧并保存为 `UnityMaterialLab/Reports/RenderDoc/MaterialLab_Frame_0001.rdc`。
 5. 重新运行阶段 1 总验收，并人工确认外部运行证据。
+The Stage 1 offline gate set now includes the dedicated `Direct-light PBR Integration` validator. It checks the energy-conserving direct diffuse path, GGX/Smith/Fresnel specular composition, back-face guard and BasePass wiring before the aggregate static gate.

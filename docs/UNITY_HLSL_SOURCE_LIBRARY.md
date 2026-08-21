@@ -22,15 +22,15 @@
 
 ## 公共接口
 
-v1.4 固定 27 个公共符号，全部使用 `TA_` 前缀：
+v1.5 固定 29 个公共符号，全部使用 `TA_` 前缀：
 
-- 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_LightingBreakdown`
+- 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_DirectLightingBreakdown`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
 - 向量：`TA_SafeNormalize`、`TA_EncodeNormalWS`、`TA_BuildBitangentWS`、`TA_BuildTangentToWorld`、`TA_TransformTangentToWorld`
 - 采样：`TA_TransformUV`、`TA_SampleTexture2D`、`TA_SampleTexture2DLod`、`TA_SampleNormalTS`、`TA_SampleORM`
 - PBR 输入：`TA_PBRInputConfig`、`TA_PBRInputData`、`TA_SamplePBRInput`、`TA_BuildSurfaceData`
 - BRDF：`TA_FresnelSchlickScalar`、`TA_FresnelSchlick`、`TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、`TA_DistributionGGX`、`TA_SmithGGXLambdaTerm`、`TA_VisibilitySmithGGXCorrelated`
-- 流程入口：`TA_EvaluateLighting`、`TA_SelectDebugView`
+- 流程入口：`TA_EvaluateDirectLighting`、`TA_EvaluateLighting`、`TA_SelectDebugView`
 
 Renderer Shader 应只包含聚合头：
 
@@ -71,3 +71,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 专项脚本读取 `Assets/_TA/Documentation/HlslSourceLibrary.json`，检查文件存在性、include guard、包依赖隔离、模块依赖顺序、公共前缀和唯一性、聚合顺序、BasePass 接线及最终光照加法不变量，输出 `Reports/HlslSourceLibraryValidation.json`。项目级静态验收会再次检查关键源码和专项报告。
 
 当前机器若被 Unity 许可证阻塞，离线 `PASS` 不等于 Editor shader 编译成功。最终运行验收仍需在 Unity `2022.3.62f3c1` 中打开 BasePass 对照场景，确认 Shader 无编译错误且 10 档视图可切换。
+## Direct-light integration update
+
+The current source-library contract is v1.5.0 with 29 public symbols. `TA_ShaderTypes.hlsl` now publishes `TA_DirectLightingBreakdown`, and `TA_Lighting.hlsl` publishes `TA_EvaluateDirectLighting` in addition to `TA_EvaluateLighting`. The direct entry point composes the GGX NDF, correlated Smith visibility and Schlick Fresnel helpers, applies the `(1-F) * (1-metallic)` diffuse energy weight, and returns zero for back-facing view/light directions. See [Unity Direct-Light PBR Integration](UNITY_DIRECT_LIGHT_PBR_INTEGRATION.md) and `Assets/_TA/Documentation/DirectLightPbrIntegration.json`.
