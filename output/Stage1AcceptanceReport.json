@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  12,
-    "passedRequiredGateCount":  12,
+    "requiredGateCount":  13,
+    "passedRequiredGateCount":  13,
     "blockerCount":  2,
     "configuration":  "Debug",
-    "buildDirectory":  "E:\\TaProject\\home\\build",
-    "generatedAtUtc":  "2026-08-21T15:35:03.5432723Z",
+    "buildDirectory":  "E:\\ueProject\\home\\build",
+    "generatedAtUtc":  "2026-08-26T14:18:15.8466543Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -44,21 +44,21 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "      Start  7: texture_sampling_acceptance",
-                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.02 sec",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
                                          "      Start  8: surface_attributes_acceptance",
-                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.02 sec",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
                                          "      Start  9: diffuse_exposure_acceptance",
-                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.02 sec",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.04 sec",
                                          "      Start 10: ggx_brdf_acceptance",
                                          "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
                                          "      Start 11: material_workflow_acceptance",
-                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.02 sec",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
                                          "      Start 12: release_acceptance",
                                          "12/12 Test #12: release_acceptance ......................   Passed    0.04 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.28 sec"
+                                         "Total Test time (real) =   0.36 sec"
                                      ]
                   },
                   {
@@ -82,7 +82,7 @@
                       "detail":  "Command completed with the required acceptance marker.",
                       "exitCode":  0,
                       "outputTail":  [
-                                         "Material boundary board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialBoundaryBoard.png"
+                                         "Material boundary board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialBoundaryBoard.png"
                                      ]
                   },
                   {
@@ -95,7 +95,7 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_MATERIAL_FUNCTION_LIBRARY_V1: PASS",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialFunctionLibraryValidation.json"
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialFunctionLibraryValidation.json"
                                      ]
                   },
                   {
@@ -108,8 +108,8 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_TEXTURE_COMPRESSION_ACCEPTANCE: PASS",
-                                         "Board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionBoard.png",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionValidation.json"
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionValidation.json"
                                      ]
                   },
                   {
@@ -122,8 +122,8 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_LOD_ACCEPTANCE: PASS",
-                                         "Board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODComparisonBoard.png",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODValidationReport.json"
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODComparisonBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODValidationReport.json"
                                      ]
                   },
                   {
@@ -136,8 +136,8 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_BASEPASS_LIGHTING_ACCEPTANCE: PASS",
-                                         "Board: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingDecompositionBoard.png",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingValidation.json"
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingDecompositionBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingValidation.json"
                                      ]
                   },
                   {
@@ -150,7 +150,7 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_DIRECT_LIGHT_PBR_INTEGRATION: PASS",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\DirectLightPbrIntegrationValidation.json"
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\DirectLightPbrIntegrationValidation.json"
                                      ]
                   },
                   {
@@ -163,7 +163,20 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_PBR_PARAMETER_REGRESSION: PASS",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\PbrParameterRegressionValidation.json"
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\PbrParameterRegressionValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Vertex Displacement Basics",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_VERTEX_DISPLACEMENT_BASICS: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\VertexDisplacementBasicsValidation.json"
                                      ]
                   },
                   {
@@ -176,7 +189,7 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "UNITY_PROJECT_STATIC_ACCEPTANCE: PASS",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Reports\\StaticValidation.json"
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Reports\\StaticValidation.json"
                                      ]
                   },
                   {
@@ -189,7 +202,7 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "RENDERDOC_CAPTURE_READINESS: BLOCKED_TOOLING",
-                                         "Report: E:\\TaProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\RenderDocCaptureReadiness.json"
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\RenderDocCaptureReadiness.json"
                                      ]
                   },
                   {
@@ -225,6 +238,7 @@
                       "UnityMaterialLab/Reports/BasePassLightingDecompositionBoard.png",
                       "UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json",
                       "UnityMaterialLab/Reports/PbrParameterRegressionValidation.json",
+                      "UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

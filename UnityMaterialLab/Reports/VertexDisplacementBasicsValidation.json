@@ -1,0 +1,107 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.6.0",
+    "functionCount":  2,
+    "fixtureCount":  8,
+    "invariantCount":  5,
+    "limitationCount":  2,
+    "tolerance":  1E-06,
+    "maximumError":  0,
+    "generatedAtUtc":  "2026-08-26T14:18:08.9442406Z",
+    "checks":  [
+                   {
+                       "id":  "DECODE_CENTER",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DECODE_BELOW_CENTER",
+                       "pass":  true,
+                       "detail":  "actual=-0.1 expected=-0.1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DECODE_ABOVE_CENTER",
+                       "pass":  true,
+                       "detail":  "actual=0.1 expected=0.1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DECODE_NEGATIVE_AMPLITUDE",
+                       "pass":  true,
+                       "detail":  "actual=-0.2 expected=-0.2",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DECODE_CLAMPED_INPUTS",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_NORMALIZED_NORMAL",
+                       "pass":  true,
+                       "detail":  "actual=1, 2.25, 3 expected=1, 2.25, 3",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_NEGATIVE_NORMAL",
+                       "pass":  true,
+                       "detail":  "actual=1, 2, 2.9 expected=1, 2, 2.9",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_ZERO_NORMAL",
+                       "pass":  true,
+                       "detail":  "actual=1, 2, 3 expected=1, 2, 3",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_DecodeVertexDisplacement",
+                       "pass":  true,
+                       "detail":  "TA_DecodeVertexDisplacement",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ApplyVertexDisplacementOS",
+                       "pass":  true,
+                       "detail":  "TA_ApplyVertexDisplacementOS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DECODE_POLICY",
+                       "pass":  true,
+                       "detail":  "(saturate(heightSample) - saturate(center)) * clamp(amplitude, -1, 1)",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "OBJECT_SPACE_NORMAL_POLICY",
+                       "pass":  true,
+                       "detail":  "positionOS + normalize(normalOS) * displacement",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "VERTEX_TEXTURE_LOD0",
+                       "pass":  true,
+                       "detail":  "Vertex stage uses TA_SampleTexture2DLod with explicit LOD0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEFAULT_PRESERVES_BASELINE",
+                       "pass":  true,
+                       "detail":  "Amplitude 0 preserves the original vertex position",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TRANSFORM_ORDER",
+                       "pass":  true,
+                       "detail":  "Object-space displacement precedes Unity object-to-world and clip transforms",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

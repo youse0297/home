@@ -90,6 +90,8 @@ $hlslLibraryTypesPath = Join-Path $hlslLibraryRootPath 'TA_ShaderTypes.hlsl'
 $hlslLibraryCommonPath = Join-Path $hlslLibraryRootPath 'TA_Common.hlsl'
 $hlslLibraryVectorPath = Join-Path $hlslLibraryRootPath 'TA_Vector.hlsl'
 $hlslLibrarySamplingPath = Join-Path $hlslLibraryRootPath 'TA_Sampling.hlsl'
+$hlslLibraryVertexDisplacementPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl'
+$hlslLibraryVertexDisplacementMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl.meta'
 $hlslLibraryPbrInputPath = Join-Path $hlslLibraryRootPath 'TA_PBRInput.hlsl'
 $hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
@@ -116,6 +118,10 @@ $ggxGeometryFresnelReportPath = Join-Path $projectPath 'Reports\GgxGeometryFresn
 $directLightPbrManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\DirectLightPbrIntegration.json'
 $directLightPbrValidationPath = Join-Path $projectPath 'Tools\ValidateDirectLightPbrIntegration.ps1'
 $directLightPbrReportPath = Join-Path $projectPath 'Reports\DirectLightPbrIntegrationValidation.json'
+$vertexDisplacementManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\VertexDisplacementBasics.json'
+$vertexDisplacementManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\VertexDisplacementBasics.json.meta'
+$vertexDisplacementValidationPath = Join-Path $projectPath 'Tools\ValidateVertexDisplacementBasics.ps1'
+$vertexDisplacementReportPath = Join-Path $projectPath 'Reports\VertexDisplacementBasicsValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -160,12 +166,15 @@ Add-Check ((@(
     $hlslLibraryCommonPath,
     $hlslLibraryVectorPath,
     $hlslLibrarySamplingPath,
+    $hlslLibraryVertexDisplacementPath,
     $hlslLibraryPbrInputPath,
     $hlslLibraryBrdfPath,
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all eight modules'
+    'HLSL source library contains all nine modules'
+Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
+    'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -208,6 +217,14 @@ Add-Check (Test-Path -LiteralPath $directLightPbrValidationPath -PathType Leaf) 
     'Direct-light PBR integration validator exists'
 Add-Check (Test-Path -LiteralPath $directLightPbrReportPath -PathType Leaf) `
     'Direct-light PBR integration validation report exists'
+Add-Check (Test-Path -LiteralPath $vertexDisplacementManifestPath -PathType Leaf) `
+    'Vertex displacement basics contract exists'
+Add-Check (Test-Path -LiteralPath $vertexDisplacementManifestMetaPath -PathType Leaf) `
+    'Vertex displacement basics contract meta exists'
+Add-Check (Test-Path -LiteralPath $vertexDisplacementValidationPath -PathType Leaf) `
+    'Vertex displacement basics validator exists'
+Add-Check (Test-Path -LiteralPath $vertexDisplacementReportPath -PathType Leaf) `
+    'Vertex displacement basics validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -713,6 +730,9 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         'BasePass shader uses the URP forward pass, main light shadows and SH ambient light'
     Add-Check ($basePassShader -match '#include "Library/TA_ShaderLibrary\.hlsl"' -and
         $basePassShader -match 'TA_TransformUV\(' -and
+        $basePassShader -match 'TA_SampleTexture2DLod\(' -and
+        $basePassShader -match 'TA_DecodeVertexDisplacement\(' -and
+        $basePassShader -match 'TA_ApplyVertexDisplacementOS\(' -and
         $basePassShader -match 'TA_TransformTangentToWorld\(' -and
         $basePassShader -match 'TA_PBRInputConfig\s+pbrConfig' -and
         $basePassShader -match 'TA_SamplePBRInput\(' -and
@@ -732,6 +752,12 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match 'pbrConfig\.metallicScale' -and
         $basePassShader -match 'pbrInput\.alpha') `
         'BasePass binds the three PBR maps through the simplified input configuration'
+    Add-Check ($basePassShader -match '_DisplacementMap\("Displacement Height", 2D\) = "gray"' -and
+        $basePassShader -match '_DisplacementAmplitude\("Displacement Amplitude", Range\(-1, 1\)\) = 0' -and
+        $basePassShader -match '_DisplacementCenter\("Displacement Center", Range\(0, 1\)\) = 0\.5' -and
+        $basePassShader -match 'TA_SampleTexture2DLod\s*\([\s\S]*?displacementUV,\s*\r?\n\s*0\.0' -and
+        $basePassShader -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?GetVertexPositionInputs\(displacedPositionOS\)') `
+        'BasePass samples vertex displacement at LOD0 and applies it before object transforms'
     Add-Check ($basePassShader -match 'Direct Diffuse,6' -and
         $basePassShader -match 'Direct Specular,7' -and
         $basePassShader -match 'Indirect Diffuse,8' -and
@@ -746,11 +772,22 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Common\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Vector\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_VertexDisplacement\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_PBRInput\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_BRDF\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryVertexDisplacementPath) {
+    $hlslLibraryVertexDisplacement = Get-Content -LiteralPath $hlslLibraryVertexDisplacementPath -Raw
+    Add-Check ($hlslLibraryVertexDisplacement -match 'TA_DecodeVertexDisplacement' -and
+        $hlslLibraryVertexDisplacement -match 'saturate\(heightSample\)' -and
+        $hlslLibraryVertexDisplacement -match 'clamp\(amplitude, -1\.0h, 1\.0h\)' -and
+        $hlslLibraryVertexDisplacement -match 'TA_ApplyVertexDisplacementOS' -and
+        $hlslLibraryVertexDisplacement -match 'TA_SafeNormalize\(normalOS\)') `
+        'HLSL vertex displacement module fixes decode bounds and normalized object-space application'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryPbrInputPath) {
@@ -812,27 +849,27 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.5.0' -and
+        $hlslLibraryManifest.version -eq '1.6.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 8 -and
-        @($hlslLibraryManifest.invariants).Count -eq 9) `
+        @($hlslLibraryManifest.modules).Count -eq 9 -and
+        @($hlslLibraryManifest.invariants).Count -eq 10) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 8 -and
-        $hlslLibraryReport.publicSymbolCount -eq 29 -and
+        $hlslLibraryReport.moduleCount -eq 9 -and
+        $hlslLibraryReport.publicSymbolCount -eq 31 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-        'HLSL source library report validates eight modules and twenty-nine public symbols'
+        'HLSL source library report validates nine modules and thirty-one public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
     $vectorSamplingManifest = Get-Content -LiteralPath $vectorSamplingManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $vectorSamplingManifest.version -eq '1.1.0' -and
-        $vectorSamplingManifest.sourceLibraryVersion -eq '1.5.0' -and
+        $vectorSamplingManifest.sourceLibraryVersion -eq '1.6.0' -and
         @($vectorSamplingManifest.functions).Count -eq 10 -and
         @($vectorSamplingManifest.fixtures).Count -eq 9) `
         'Vector and sampling contract fixes ten functions and nine numeric fixtures'
@@ -841,7 +878,7 @@ if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
 if (Test-Path -LiteralPath $vectorSamplingReportPath) {
     $vectorSamplingReport = Get-Content -LiteralPath $vectorSamplingReportPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingReport.status -eq 'PASS' -and
-        $vectorSamplingReport.sourceLibraryVersion -eq '1.5.0' -and
+        $vectorSamplingReport.sourceLibraryVersion -eq '1.6.0' -and
         $vectorSamplingReport.functionCount -eq 10 -and
         $vectorSamplingReport.fixtureCount -eq 9 -and
         $vectorSamplingReport.maximumError -le 0.000001 -and
@@ -853,7 +890,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
     $pbrInputManifest = Get-Content -LiteralPath $pbrInputManifestPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $pbrInputManifest.version -eq '1.0.0' -and
-        $pbrInputManifest.sourceLibraryVersion -eq '1.5.0' -and
+        $pbrInputManifest.sourceLibraryVersion -eq '1.6.0' -and
         @($pbrInputManifest.publicSymbols).Count -eq 4 -and
         @($pbrInputManifest.fixtures).Count -eq 3) `
         'Simplified PBR input contract fixes four public symbols and three boundary fixtures'
@@ -862,7 +899,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
 if (Test-Path -LiteralPath $pbrInputReportPath) {
     $pbrInputReport = Get-Content -LiteralPath $pbrInputReportPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputReport.status -eq 'PASS' -and
-        $pbrInputReport.sourceLibraryVersion -eq '1.5.0' -and
+        $pbrInputReport.sourceLibraryVersion -eq '1.6.0' -and
         $pbrInputReport.functionCount -eq 4 -and
         $pbrInputReport.fixtureCount -eq 3 -and
         $pbrInputReport.maximumError -le 0.000001 -and
@@ -874,7 +911,7 @@ if (Test-Path -LiteralPath $pbrParameterRegressionManifestPath) {
     $pbrParameterRegressionManifest = Get-Content -LiteralPath $pbrParameterRegressionManifestPath -Raw | ConvertFrom-Json
     Add-Check ($pbrParameterRegressionManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $pbrParameterRegressionManifest.version -eq '1.0.0' -and
-        $pbrParameterRegressionManifest.sourceLibraryVersion -eq '1.5.0' -and
+        $pbrParameterRegressionManifest.sourceLibraryVersion -eq '1.6.0' -and
         @($pbrParameterRegressionManifest.publicSymbols).Count -eq 4 -and
         @($pbrParameterRegressionManifest.fixtures).Count -eq 12 -and
         @($pbrParameterRegressionManifest.invariants).Count -eq 5) `
@@ -884,7 +921,7 @@ if (Test-Path -LiteralPath $pbrParameterRegressionManifestPath) {
 if (Test-Path -LiteralPath $pbrParameterRegressionReportPath) {
     $pbrParameterRegressionReport = Get-Content -LiteralPath $pbrParameterRegressionReportPath -Raw | ConvertFrom-Json
     Add-Check ($pbrParameterRegressionReport.status -eq 'PASS' -and
-        $pbrParameterRegressionReport.sourceLibraryVersion -eq '1.5.0' -and
+        $pbrParameterRegressionReport.sourceLibraryVersion -eq '1.6.0' -and
         $pbrParameterRegressionReport.parameterCount -eq 4 -and
         $pbrParameterRegressionReport.fixtureCount -eq 12 -and
         $pbrParameterRegressionReport.maximumError -le 0.000001 -and
@@ -905,7 +942,7 @@ if (Test-Path -LiteralPath $ggxNdfManifestPath) {
     $ggxNdfManifest = Get-Content -LiteralPath $ggxNdfManifestPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $ggxNdfManifest.version -eq '1.0.0' -and
-        $ggxNdfManifest.sourceLibraryVersion -eq '1.5.0' -and
+        $ggxNdfManifest.sourceLibraryVersion -eq '1.6.0' -and
         @($ggxNdfManifest.publicSymbols).Count -eq 3 -and
         @($ggxNdfManifest.fixtures).Count -eq 8) `
         'GGX NDF contract fixes the alpha policy, three entry points and eight fixtures'
@@ -919,7 +956,7 @@ if (Test-Path -LiteralPath $ggxNdfValidationPath) {
 if (Test-Path -LiteralPath $ggxNdfReportPath) {
     $ggxNdfReport = Get-Content -LiteralPath $ggxNdfReportPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfReport.status -eq 'PASS' -and
-        $ggxNdfReport.sourceLibraryVersion -eq '1.5.0' -and
+        $ggxNdfReport.sourceLibraryVersion -eq '1.6.0' -and
         $ggxNdfReport.functionCount -eq 3 -and
         $ggxNdfReport.fixtureCount -eq 8 -and
         $ggxNdfReport.maximumError -le 0.000001 -and
@@ -931,7 +968,7 @@ if (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath) {
     $ggxGeometryFresnelManifest = Get-Content -LiteralPath $ggxGeometryFresnelManifestPath -Raw | ConvertFrom-Json
     Add-Check ($ggxGeometryFresnelManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $ggxGeometryFresnelManifest.version -eq '1.0.0' -and
-        $ggxGeometryFresnelManifest.sourceLibraryVersion -eq '1.5.0' -and
+        $ggxGeometryFresnelManifest.sourceLibraryVersion -eq '1.6.0' -and
         @($ggxGeometryFresnelManifest.publicSymbols).Count -eq 4 -and
         @($ggxGeometryFresnelManifest.fixtures).Count -eq 10) `
         'GGX geometry and Fresnel contract fixes four entry points and ten fixtures'
@@ -940,7 +977,7 @@ if (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath) {
 if (Test-Path -LiteralPath $ggxGeometryFresnelReportPath) {
     $ggxGeometryFresnelReport = Get-Content -LiteralPath $ggxGeometryFresnelReportPath -Raw | ConvertFrom-Json
     Add-Check ($ggxGeometryFresnelReport.status -eq 'PASS' -and
-        $ggxGeometryFresnelReport.sourceLibraryVersion -eq '1.5.0' -and
+        $ggxGeometryFresnelReport.sourceLibraryVersion -eq '1.6.0' -and
         $ggxGeometryFresnelReport.functionCount -eq 4 -and
         $ggxGeometryFresnelReport.fixtureCount -eq 10 -and
         $ggxGeometryFresnelReport.maximumError -le 0.000001 -and
@@ -952,7 +989,7 @@ if (Test-Path -LiteralPath $directLightPbrManifestPath) {
     $directLightPbrManifest = Get-Content -LiteralPath $directLightPbrManifestPath -Raw | ConvertFrom-Json
     Add-Check ($directLightPbrManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $directLightPbrManifest.version -eq '1.0.0' -and
-        $directLightPbrManifest.sourceLibraryVersion -eq '1.5.0' -and
+        $directLightPbrManifest.sourceLibraryVersion -eq '1.6.0' -and
         @($directLightPbrManifest.publicSymbols).Count -eq 2 -and
         @($directLightPbrManifest.fixtures).Count -eq 2) `
         'Direct-light PBR contract fixes the reusable entry point and two numeric fixtures'
@@ -961,12 +998,37 @@ if (Test-Path -LiteralPath $directLightPbrManifestPath) {
 if (Test-Path -LiteralPath $directLightPbrReportPath) {
     $directLightPbrReport = Get-Content -LiteralPath $directLightPbrReportPath -Raw | ConvertFrom-Json
     Add-Check ($directLightPbrReport.status -eq 'PASS' -and
-        $directLightPbrReport.sourceLibraryVersion -eq '1.5.0' -and
+        $directLightPbrReport.sourceLibraryVersion -eq '1.6.0' -and
         $directLightPbrReport.functionCount -eq 2 -and
         $directLightPbrReport.fixtureCount -eq 2 -and
         $directLightPbrReport.maximumError -le 0.000001 -and
         @($directLightPbrReport.failures).Count -eq 0) `
         'Direct-light PBR report validates energy-conserving diffuse, GGX specular and backface guard'
+}
+
+if (Test-Path -LiteralPath $vertexDisplacementManifestPath) {
+    $vertexDisplacementManifest = Get-Content -LiteralPath $vertexDisplacementManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($vertexDisplacementManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $vertexDisplacementManifest.version -eq '1.0.0' -and
+        $vertexDisplacementManifest.sourceLibraryVersion -eq '1.6.0' -and
+        @($vertexDisplacementManifest.publicSymbols).Count -eq 2 -and
+        @($vertexDisplacementManifest.fixtures).Count -eq 8 -and
+        @($vertexDisplacementManifest.invariants).Count -eq 5 -and
+        @($vertexDisplacementManifest.limitations).Count -eq 2) `
+        'Vertex displacement basics contract fixes two entry points, eight fixtures and explicit pass limitations'
+}
+
+if (Test-Path -LiteralPath $vertexDisplacementReportPath) {
+    $vertexDisplacementReport = Get-Content -LiteralPath $vertexDisplacementReportPath -Raw | ConvertFrom-Json
+    Add-Check ($vertexDisplacementReport.status -eq 'PASS' -and
+        $vertexDisplacementReport.sourceLibraryVersion -eq '1.6.0' -and
+        $vertexDisplacementReport.functionCount -eq 2 -and
+        $vertexDisplacementReport.fixtureCount -eq 8 -and
+        $vertexDisplacementReport.invariantCount -eq 5 -and
+        $vertexDisplacementReport.limitationCount -eq 2 -and
+        $vertexDisplacementReport.maximumError -le 0.000001 -and
+        @($vertexDisplacementReport.failures).Count -eq 0) `
+        'Vertex displacement report validates height decode, object-space application, LOD0 and transform order'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {
@@ -1011,8 +1073,13 @@ if (Test-Path -LiteralPath $basePassManifestPath) {
     Add-Check (@($basePassManifest.debugViews | Where-Object { $_.category -eq 'Surface' }).Count -eq 5 -and
         @($basePassManifest.debugViews | Where-Object { $_.category -eq 'Lighting' }).Count -eq 4 -and
         @($basePassManifest.debugViews | Where-Object { $_.category -eq 'Composite' }).Count -eq 1 -and
-        @($basePassManifest.invariants).Count -eq 5) `
+        @($basePassManifest.invariants).Count -eq 6) `
         'BasePass contract separates surface, lighting and composite outputs with fixed invariants'
+    Add-Check ($basePassManifest.vertexDisplacement.map -eq '_DisplacementMap' -and
+        $basePassManifest.vertexDisplacement.defaultAmplitude -eq 0.0 -and
+        $basePassManifest.vertexDisplacement.sampling -eq 'Vertex stage explicit LOD0' -and
+        $basePassManifest.vertexDisplacement.direction -eq 'Normalized object-space vertex normal') `
+        'BasePass contract fixes explicit LOD0 displacement and a zero-amplitude compatibility default'
 }
 
 if (Test-Path -LiteralPath $basePassReportPath) {

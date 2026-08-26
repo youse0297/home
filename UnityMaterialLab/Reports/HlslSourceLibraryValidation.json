@@ -1,11 +1,11 @@
 ﻿{
     "status":  "PASS",
-    "version":  "1.5.0",
-    "moduleCount":  8,
-    "publicSymbolCount":  29,
+    "version":  "1.6.0",
+    "moduleCount":  9,
+    "publicSymbolCount":  31,
     "aggregate":  "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "consumer":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
-    "generatedAtUtc":  "2026-08-21T15:12:23.8144095Z",
+    "generatedAtUtc":  "2026-08-26T14:16:15.2006504Z",
     "checks":  [
                    {
                        "id":  "MODULE_EXISTS_types",
@@ -126,6 +126,36 @@
                        "id":  "PUBLIC_SYMBOLS_sampling",
                        "pass":  true,
                        "detail":  "TA_TransformUV, TA_SampleTexture2D, TA_SampleTexture2DLod, TA_SampleNormalTS, TA_SampleORM"
+                   },
+                   {
+                       "id":  "MODULE_EXISTS_vertexDisplacement",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_VertexDisplacement.hlsl"
+                   },
+                   {
+                       "id":  "INCLUDE_GUARD_vertexDisplacement",
+                       "pass":  true,
+                       "detail":  "TA_VERTEX_DISPLACEMENT_INCLUDED"
+                   },
+                   {
+                       "id":  "NO_PACKAGE_INCLUDE_vertexDisplacement",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_VertexDisplacement.hlsl"
+                   },
+                   {
+                       "id":  "DEPENDENCY_ORDER_vertexDisplacement",
+                       "pass":  true,
+                       "detail":  "vector"
+                   },
+                   {
+                       "id":  "DECLARED_INCLUDES_vertexDisplacement",
+                       "pass":  true,
+                       "detail":  "TA_Vector.hlsl"
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOLS_vertexDisplacement",
+                       "pass":  true,
+                       "detail":  "TA_DecodeVertexDisplacement, TA_ApplyVertexDisplacementOS"
                    },
                    {
                        "id":  "MODULE_EXISTS_pbrInput",
@@ -260,12 +290,12 @@
                    {
                        "id":  "AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_VertexDisplacement.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
                    },
                    {
                        "id":  "MANIFEST_AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "types -\u003e common -\u003e vector -\u003e sampling -\u003e pbrInput -\u003e brdf -\u003e lighting -\u003e debugViews"
+                       "detail":  "types -\u003e common -\u003e vector -\u003e sampling -\u003e vertexDisplacement -\u003e pbrInput -\u003e brdf -\u003e lighting -\u003e debugViews"
                    },
                    {
                        "id":  "CONSUMER_EXISTS",
@@ -275,7 +305,7 @@
                    {
                        "id":  "CONSUMER_WIRING",
                        "pass":  true,
-                       "detail":  "TA_TransformUV, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_EvaluateLighting, TA_SelectDebugView"
+                       "detail":  "TA_TransformUV, TA_SampleTexture2DLod, TA_DecodeVertexDisplacement, TA_ApplyVertexDisplacementOS, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_EvaluateLighting, TA_SelectDebugView"
                    },
                    {
                        "id":  "ADDITIVE_LIGHTING_INVARIANT",

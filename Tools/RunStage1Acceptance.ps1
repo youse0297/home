@@ -254,6 +254,11 @@ Add-ScriptGate -Name 'PBR Parameter Regression' `
     -ExpectedPattern 'UNITY_PBR_PARAMETER_REGRESSION: PASS' `
     -Evidence 'UnityMaterialLab/Reports/PbrParameterRegressionValidation.json' `
     -ReportName 'PbrParameterRegressionValidation.json'
+Add-ScriptGate -Name 'Vertex Displacement Basics' `
+    -ScriptName 'ValidateVertexDisplacementBasics.ps1' `
+    -ExpectedPattern 'UNITY_VERTEX_DISPLACEMENT_BASICS: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json' `
+    -ReportName 'VertexDisplacementBasicsValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -326,6 +331,7 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/BasePassLightingDecompositionBoard.png',
         'UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json',
         'UnityMaterialLab/Reports/PbrParameterRegressionValidation.json',
+        'UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

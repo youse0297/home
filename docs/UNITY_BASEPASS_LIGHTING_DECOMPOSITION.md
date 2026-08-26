@@ -15,6 +15,12 @@
 
 UV、纹理采样、法线解包、PBR 输入、TBN、BRDF、光照合成和调试输出已由 `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 统一提供，BasePass 只保留纹理绑定、配置填写和 URP 光照数据适配。BRDF 的 NDF、相关 Smith 遮蔽和 Schlick Fresnel 子项见 [Unity 几何遮蔽与 Fresnel](UNITY_GGX_GEOMETRY_FRESNEL.md)。模块依赖见 [Unity HLSL 源码库骨架](UNITY_HLSL_SOURCE_LIBRARY.md)，输入边界见 [Unity 简化 PBR 输入层](UNITY_SIMPLIFIED_PBR_INPUT_LAYER.md)。
 
+## 顶点位移
+
+BasePass 顶点阶段可选读取 `_DisplacementMap` R 通道，以 `_DisplacementCenter` 为零点、`_DisplacementAmplitude` 为对象空间尺度，沿归一化对象空间顶点法线位移。顶点纹理固定显式采样 LOD0，位移在 `GetVertexPositionInputs` 之前完成。默认振幅为 `0`，因此既有光照对照板和参数回归保持不变；公式、8 组固定样例和接入顺序见 [Unity 顶点位移基础](UNITY_VERTEX_DISPLACEMENT_BASICS.md)。
+
+当前基础只修改自定义 `UniversalForward` pass，不重建位移法线，也不修改复用的 URP `ShadowCaster`、`DepthOnly` 和 `DepthNormals` pass。使用非零振幅时，阴影/深度轮廓一致性不属于本项已验收范围。
+
 ## 调试视图
 
 | ID | 视图 | 类别 | 输出含义 |
@@ -44,6 +50,7 @@ UV、纹理采样、法线解包、PBR 输入、TBN、BRDF、光照合成和调�
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\Tools\GenerateBasePassLightingBoard.ps1
+powershell -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementBasics.ps1
 powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
@@ -58,6 +65,8 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - 法线贴图转换后没有归一化，导致 `N·L` 与 GGX 高光随插值长度变化。
 - 将粗糙度直接当作 GGX 的 alpha；本实现通过 `TA_GGXAlphaFromRoughness` 使用清理后的 `alpha = roughness²`，并在 NDF 分母设置数值下限。
 - 用 `renderer.material` 切换视图，意外克隆材质；控制器应使用 `MaterialPropertyBlock`。
+- 在顶点阶段使用隐式导数采样，或把对象空间位移放到 `GetVertexPositionInputs` 之后，导致平台编译/空间结果不稳定。
+- 非零位移时把 Forward 轮廓误当作 Shadow/Depth 已同步；当前契约明确没有覆盖这些 pass。
 ## Direct-light PBR integration
 
 `DirectDiffuse` is the energy-conserving `(1-F_Schlick) * (1-metallic)` Lambert component. `DirectSpecular` is the GGX NDF, correlated Smith visibility and Schlick Fresnel product. Both components are evaluated by `TA_EvaluateDirectLighting`; the BasePass continues to expose them independently and reconstructs `FinalLit` additively. The dedicated contract and numeric fixtures live in `Assets/_TA/Documentation/DirectLightPbrIntegration.json` and are checked by `Tools/ValidateDirectLightPbrIntegration.ps1`.

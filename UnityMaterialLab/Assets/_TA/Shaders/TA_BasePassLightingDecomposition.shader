@@ -10,6 +10,9 @@ Shader "TA/BasePass Lighting Decomposition"
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _RoughnessScale("Roughness Scale", Range(0, 1)) = 1
         _MetallicScale("Metallic Scale", Range(0, 1)) = 1
+        _DisplacementMap("Displacement Height", 2D) = "gray" {}
+        _DisplacementAmplitude("Displacement Amplitude", Range(-1, 1)) = 0
+        _DisplacementCenter("Displacement Center", Range(0, 1)) = 0.5
         [Enum(Final Lit,0,Base Color,1,World Normal,2,Ambient Occlusion,3,Roughness,4,Metallic,5,Direct Diffuse,6,Direct Specular,7,Indirect Diffuse,8,Shadow Attenuation,9)] _DebugView("Debug View", Float) = 0
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
         [HideInInspector] _Cutoff("Alpha Cutoff", Range(0, 1)) = 0.5
@@ -51,14 +54,19 @@ Shader "TA/BasePass Lighting Decomposition"
             SAMPLER(sampler_BumpMap);
             TEXTURE2D(_ORMMap);
             SAMPLER(sampler_ORMMap);
+            TEXTURE2D(_DisplacementMap);
+            SAMPLER(sampler_DisplacementMap);
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
+                float4 _DisplacementMap_ST;
                 half4 _BaseColor;
                 half _BumpScale;
                 half _AOStrength;
                 half _RoughnessScale;
                 half _MetallicScale;
+                half _DisplacementAmplitude;
+                half _DisplacementCenter;
                 half _DebugView;
                 half _Cutoff;
                 half _Surface;
@@ -93,7 +101,24 @@ Shader "TA/BasePass Lighting Decomposition"
                 UNITY_TRANSFER_INSTANCE_ID(input, output);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
-                VertexPositionInputs positionInputs = GetVertexPositionInputs(input.positionOS.xyz);
+                float2 displacementUV = TA_TransformUV(input.uv, _DisplacementMap_ST);
+                half displacementHeight = TA_SampleTexture2DLod(
+                    TEXTURE2D_ARGS(_DisplacementMap, sampler_DisplacementMap),
+                    displacementUV,
+                    0.0
+                ).r;
+                half vertexDisplacement = TA_DecodeVertexDisplacement(
+                    displacementHeight,
+                    _DisplacementAmplitude,
+                    _DisplacementCenter
+                );
+                float3 displacedPositionOS = TA_ApplyVertexDisplacementOS(
+                    input.positionOS.xyz,
+                    input.normalOS,
+                    vertexDisplacement
+                );
+
+                VertexPositionInputs positionInputs = GetVertexPositionInputs(displacedPositionOS);
                 VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS, input.tangentOS);
                 output.positionCS = positionInputs.positionCS;
                 output.positionWS = positionInputs.positionWS;

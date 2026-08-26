@@ -1,0 +1,43 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.6.0",
+  "source": "Assets/_TA/Shaders/Library/TA_VertexDisplacement.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "publicSymbols": [
+    "TA_DecodeVertexDisplacement",
+    "TA_ApplyVertexDisplacementOS"
+  ],
+  "properties": {
+    "heightMap": "_DisplacementMap",
+    "amplitude": "_DisplacementAmplitude",
+    "center": "_DisplacementCenter"
+  },
+  "policies": {
+    "sampling": "Vertex stage uses TA_SampleTexture2DLod with explicit LOD0",
+    "decode": "(saturate(heightSample) - saturate(center)) * clamp(amplitude, -1, 1)",
+    "application": "positionOS + normalize(normalOS) * displacement",
+    "default": "Amplitude 0 preserves the original vertex position"
+  },
+  "fixtures": [
+    { "id": "DECODE_CENTER", "function": "TA_DecodeVertexDisplacement", "input": { "heightSample": 0.5, "amplitude": 0.2, "center": 0.5 }, "expected": 0.0 },
+    { "id": "DECODE_BELOW_CENTER", "function": "TA_DecodeVertexDisplacement", "input": { "heightSample": 0.0, "amplitude": 0.2, "center": 0.5 }, "expected": -0.1 },
+    { "id": "DECODE_ABOVE_CENTER", "function": "TA_DecodeVertexDisplacement", "input": { "heightSample": 1.0, "amplitude": 0.2, "center": 0.5 }, "expected": 0.1 },
+    { "id": "DECODE_NEGATIVE_AMPLITUDE", "function": "TA_DecodeVertexDisplacement", "input": { "heightSample": 1.0, "amplitude": -0.4, "center": 0.5 }, "expected": -0.2 },
+    { "id": "DECODE_CLAMPED_INPUTS", "function": "TA_DecodeVertexDisplacement", "input": { "heightSample": 1.5, "amplitude": 2.0, "center": -0.5 }, "expected": 1.0 },
+    { "id": "APPLY_NORMALIZED_NORMAL", "function": "TA_ApplyVertexDisplacementOS", "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 2.0, 0.0], "displacement": 0.25 }, "expected": [1.0, 2.25, 3.0] },
+    { "id": "APPLY_NEGATIVE_NORMAL", "function": "TA_ApplyVertexDisplacementOS", "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 0.0, -2.0], "displacement": 0.1 }, "expected": [1.0, 2.0, 2.9] },
+    { "id": "APPLY_ZERO_NORMAL", "function": "TA_ApplyVertexDisplacementOS", "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 0.0, 0.0], "displacement": 0.5 }, "expected": [1.0, 2.0, 3.0] }
+  ],
+  "invariants": [
+    "A centered height sample produces zero displacement",
+    "Amplitude is limited to one object-space unit in either direction",
+    "Application normalizes the object-space normal before offsetting position",
+    "Zero normal input leaves the position unchanged",
+    "Displacement is applied before object-to-world and clip-space transforms"
+  ],
+  "limitations": [
+    "This baseline does not reconstruct normals from displaced geometry",
+    "The current custom displacement is wired only into UniversalForward; shared URP ShadowCaster, DepthOnly and DepthNormals passes remain undisplaced"
+  ]
+}

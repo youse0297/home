@@ -6,6 +6,13 @@
   "material": "Assets/_TA/Materials/MAT_BasePassLightingDecomposition.mat",
   "scene": "Assets/_TA/BasePass/SCN_BasePassLightingDecomposition.unity",
   "colorSpace": "Linear HDR; display transform is applied by URP",
+  "vertexDisplacement": {
+    "map": "_DisplacementMap",
+    "sampling": "Vertex stage explicit LOD0",
+    "decode": "(saturate(height) - saturate(center)) * clamp(amplitude, -1, 1)",
+    "direction": "Normalized object-space vertex normal",
+    "defaultAmplitude": 0.0
+  },
   "debugViews": [
     { "id": 0, "name": "FinalLit", "category": "Composite", "output": "DirectDiffuse + DirectSpecular + IndirectDiffuse" },
     { "id": 1, "name": "BaseColor", "category": "Surface", "output": "Linear BaseColor" },
@@ -33,6 +40,7 @@
   "invariants": [
     "FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse",
     "DirectDiffuse uses the energy-conserving (1-F_Schlick) diffuse weight",
+    "Default zero displacement preserves the established BasePass lighting baseline",
     "BaseColor is sampled as sRGB and consumed as linear by Unity",
     "Normal, AO, roughness and metallic data textures are sampled as linear",
     "Debug views do not apply fog, exposure or tone mapping in the material pass"

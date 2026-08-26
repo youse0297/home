@@ -23,7 +23,9 @@
 | Unity | Texture Compression | BC1/BC5/BC7 策略、显存和 BC1 往返基线通过 |
 | Unity | LOD Baseline | 三档阈值、四个切换样本与对照板通过 |
 | Unity | BasePass Decomposition | 10 档视图与最终光照加法不变量通过 |
+| Unity | Direct-light PBR Integration | 能量守恒漫反射、GGX 高光与背面归零通过 |
 | Unity | PBR Parameter Regression | 12 组 Metallic/Roughness/夹取/法线直接光 fixture 通过 |
+| Unity | Vertex Displacement Basics | 8 组高度解码/对象空间位移 fixture、LOD0 与变换顺序通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁
@@ -48,7 +50,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 - `output/Stage1AcceptanceReport.json`：机器可读的门禁、阻塞项、证据路径和命令尾部输出。
 - `output/Stage1AcceptanceSummary.md`：可直接归档的中文验收摘要。
 - `build/release_acceptance.ppm`：CPU 三材质发布基准图。
-- `UnityMaterialLab/Reports/`：Unity 参数、函数、压缩、LOD、BasePass 和静态报告。
+- `UnityMaterialLab/Reports/`：Unity 参数、函数、压缩、LOD、BasePass、顶点位移和静态报告。
 
 ## 补验步骤
 
@@ -57,4 +59,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 3. 安装 RenderDoc，运行 `UnityMaterialLab/Tools/RenderDocCaptureCheck.ps1`，要求状态变为 `READY_TO_CAPTURE`。
 4. 捕获稳定帧并保存为 `UnityMaterialLab/Reports/RenderDoc/MaterialLab_Frame_0001.rdc`。
 5. 重新运行阶段 1 总验收，并人工确认外部运行证据。
-The Stage 1 offline gate set now includes the dedicated `Direct-light PBR Integration` validator. It checks the energy-conserving direct diffuse path, GGX/Smith/Fresnel specular composition, back-face guard and BasePass wiring before the aggregate static gate.
+阶段 1 离线门禁包含直接光 PBR、PBR 参数回归和顶点位移三条专项回归，再执行聚合静态门禁；所有 13 条必过门禁均通过后，才会根据 Unity/RenderDoc 外部状态给出 `PASS` 或 `CONDITIONAL_PASS`。
