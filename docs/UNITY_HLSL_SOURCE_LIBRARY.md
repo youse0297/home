@@ -14,6 +14,7 @@
 | `TA_Sampling.hlsl` | UV、普通/LOD 采样、法线解包与 ORM 解码 | Unity Core 前置宏 |
 | `TA_VertexDisplacement.hlsl` | 高度中心解码与对象空间法线位移 | Vector |
 | `TA_VertexAnimation.hlsl` | 行进正弦、高度锚定与波浪/风摆组合 | Vector |
+| `TA_VertexDeformation.hlsl` | 结构化顶点输入/配置/结果与固定效果编排 | VertexDisplacement、VertexAnimation |
 | `TA_PBRInput.hlsl` | BaseColor、Normal、ORM 与材质缩放的简化输入组装 | Types、Common、Vector、Sampling |
 | `TA_BRDF.hlsl` | Schlick Fresnel、GGX NDF、Smith 可见性 | Common |
 | `TA_Lighting.hlsl` | 直接漫反射、直接高光、间接漫反射及最终合成 | Types、Common、Vector、BRDF |
@@ -24,7 +25,7 @@
 
 ## 公共接口
 
-v1.7 固定 34 个公共符号，全部使用 `TA_` 前缀：
+v1.8 固定 38 个公共符号，全部使用 `TA_` 前缀：
 
 - 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_DirectLightingBreakdown`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
@@ -32,6 +33,7 @@ v1.7 固定 34 个公共符号，全部使用 `TA_` 前缀：
 - 采样：`TA_TransformUV`、`TA_SampleTexture2D`、`TA_SampleTexture2DLod`、`TA_SampleNormalTS`、`TA_SampleORM`
 - 顶点位移：`TA_DecodeVertexDisplacement`、`TA_ApplyVertexDisplacementOS`
 - 顶点动画：`TA_EvaluateTravelingSineOS`、`TA_EvaluateHeightWeightOS`、`TA_ApplyWaveWindAnimationOS`
+- 顶点变形：`TA_VertexDeformationInput`、`TA_VertexDeformationConfig`、`TA_VertexDeformationResult`、`TA_EvaluateVertexDeformationOS`
 - PBR 输入：`TA_PBRInputConfig`、`TA_PBRInputData`、`TA_SamplePBRInput`、`TA_BuildSurfaceData`
 - BRDF：`TA_FresnelSchlickScalar`、`TA_FresnelSchlick`、`TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、`TA_DistributionGGX`、`TA_SmithGGXLambdaTerm`、`TA_VisibilitySmithGGXCorrelated`
 - 流程入口：`TA_EvaluateDirectLighting`、`TA_EvaluateLighting`、`TA_SelectDebugView`
@@ -53,7 +55,7 @@ TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
 return TA_SelectDebugView(debugView, surface, lighting, shadowAttenuation, alpha);
 ```
 
-`TA_EvaluateLighting` 保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码、顶点位移/动画、PBR 输入组装与空间变换；具体纹理绑定、材质配置和引擎光照数据获取仍由消费 Shader 负责。GGX NDF 先通过 `TA_GGXAlphaFromRoughness` 生成 alpha，再委托给 `TA_DistributionGGXFromAlpha`；几何遮蔽通过显式 `TA_SmithGGXLambdaTerm` 组成相关 Smith 可见性，Fresnel 通过标量/向量 Schlick 入口共享相同的夹取策略。位移契约详见 [Unity 顶点位移基础](UNITY_VERTEX_DISPLACEMENT_BASICS.md)，动画参数与空间边界详见 [Unity 波浪与风摆动画](UNITY_WAVE_WIND_ANIMATION.md)。
+`TA_EvaluateLighting` 保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码、顶点位移/动画、PBR 输入组装与空间变换；具体纹理绑定、材质配置和引擎光照数据获取仍由消费 Shader 负责。顶点变形高层入口只接收已采样高度、显式时间和配置结构，不依赖 Unity 纹理或时间全局。分层与消费边界详见 [Unity 顶点位移模块化](UNITY_VERTEX_DISPLACEMENT_MODULARIZATION.md)。
 
 ## 与 Shader Graph 函数库的边界
 
@@ -71,12 +73,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateGgxNormalDis
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateGgxGeometryFresnel.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementBasics.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateWaveWindAnimation.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementModularization.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
 专项脚本读取 `Assets/_TA/Documentation/HlslSourceLibrary.json`，检查文件存在性、include guard、包依赖隔离、模块依赖顺序、公共前缀和唯一性、聚合顺序、BasePass 接线及最终光照加法不变量，输出 `Reports/HlslSourceLibraryValidation.json`。项目级静态验收会再次检查关键源码和专项报告。
 
 当前机器若被 Unity 许可证阻塞，离线 `PASS` 不等于 Editor shader 编译成功。最终运行验收仍需在 Unity `2022.3.62f3c1` 中打开 BasePass 对照场景，确认 Shader 无编译错误且 10 档视图可切换。
-## v1.7 更新
+## v1.8 更新
 
-当前契约为 v1.7.0、10 个模块和 34 个公共符号。v1.7 新增 `TA_VertexAnimation.hlsl`，固定显式时间的行进正弦、高度锚定权重，以及法线波浪与风向摆动的加法组合。首个消费端仅接入 `UniversalForward`，Shadow/Depth pass 同步、动画法线重建和世界空间跨对象连续波场属于后续能力边界。
+当前契约为 v1.8.0、11 个模块和 38 个公共符号。v1.8 新增 `TA_VertexDeformation.hlsl`，用输入、配置、结果三个结构体和单一求值入口统一高度、波浪、风摆编排。BasePass 不再直接调用低层位移函数；Shadow/Depth pass 同步、动画法线重建和世界空间跨对象连续波场仍属于后续能力边界。

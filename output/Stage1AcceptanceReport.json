@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  14,
-    "passedRequiredGateCount":  14,
+    "requiredGateCount":  15,
+    "passedRequiredGateCount":  15,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-26T14:39:18.1257279Z",
+    "generatedAtUtc":  "2026-08-26T15:00:06.3996878Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -193,6 +193,19 @@
                                      ]
                   },
                   {
+                      "name":  "Vertex Displacement Modularization",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_VERTEX_DISPLACEMENT_MODULARIZATION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\VertexDisplacementModularizationValidation.json"
+                                     ]
+                  },
+                  {
                       "name":  "Unity Static Validation",
                       "category":  "Unity Offline",
                       "required":  true,
@@ -253,6 +266,7 @@
                       "UnityMaterialLab/Reports/PbrParameterRegressionValidation.json",
                       "UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json",
                       "UnityMaterialLab/Reports/WaveWindAnimationValidation.json",
+                      "UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

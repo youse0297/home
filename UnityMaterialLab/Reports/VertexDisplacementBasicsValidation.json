@@ -1,14 +1,14 @@
 ﻿{
     "status":  "PASS",
     "version":  "1.0.0",
-    "sourceLibraryVersion":  "1.7.0",
+    "sourceLibraryVersion":  "1.8.0",
     "functionCount":  2,
     "fixtureCount":  8,
     "invariantCount":  5,
     "limitationCount":  2,
     "tolerance":  1E-06,
     "maximumError":  0,
-    "generatedAtUtc":  "2026-08-26T14:39:11.5748653Z",
+    "generatedAtUtc":  "2026-08-26T14:59:58.2104919Z",
     "checks":  [
                    {
                        "id":  "DECODE_CENTER",
@@ -97,7 +97,7 @@
                    {
                        "id":  "TRANSFORM_ORDER",
                        "pass":  true,
-                       "detail":  "Object-space displacement precedes optional vertex animation and Unity object transforms",
+                       "detail":  "High-level orchestration applies object-space height displacement before animation and Unity transforms",
                        "maximumError":  0
                    }
                ],

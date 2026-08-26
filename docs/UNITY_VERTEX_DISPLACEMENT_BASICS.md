@@ -34,6 +34,7 @@ displacement = (saturate(height) - saturate(center)) * clamp(amplitude, -1, 1)
 ## 接入文件
 
 - 共享模块：`UnityMaterialLab/Assets/_TA/Shaders/Library/TA_VertexDisplacement.hlsl`
+- 高层编排：`UnityMaterialLab/Assets/_TA/Shaders/Library/TA_VertexDeformation.hlsl`
 - 聚合入口：`UnityMaterialLab/Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl`
 - 首个消费端：`UnityMaterialLab/Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader`
 - 机器契约：`UnityMaterialLab/Assets/_TA/Documentation/VertexDisplacementBasics.json`
@@ -48,6 +49,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
 专项回归固定 8 组样例，覆盖中心值、正负高度、负振幅、输入夹取、非单位/反向/零法线，并检查公共接口、LOD0、零振幅默认值以及位移早于对象变换。结果写入 `Reports/VertexDisplacementBasicsValidation.json`，同时作为阶段 1 必过门禁。
+
+基础公式由 `TA_VertexDisplacement.hlsl` 保持独立，高度、波浪和风摆的调用顺序已提升到 [Unity 顶点位移模块化](UNITY_VERTEX_DISPLACEMENT_MODULARIZATION.md) 的高层入口。
 
 ## 当前边界
 

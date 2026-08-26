@@ -90,8 +90,10 @@ foreach ($fixture in @($manifest.fixtures)) {
 
 $sourcePath = Join-Path $projectPath ($manifest.source -replace '/', '\')
 $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
+$orchestratorPath = Join-Path $projectPath ($manifest.orchestrator -replace '/', '\')
 $source = Get-Content -LiteralPath $sourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
+$orchestrator = Get-Content -LiteralPath $orchestratorPath -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) `
         -Pass ($source -match ('\b' + [Regex]::Escape([string]$symbol) + '\b')) `
@@ -117,8 +119,10 @@ Add-Check -Id 'DEFAULT_PRESERVES_BASELINE' `
         $consumer -match '_DisplacementCenter\("Displacement Center", Range\(0, 1\)\) = 0\.5') `
     -Detail $manifest.policies.default
 Add-Check -Id 'TRANSFORM_ORDER' `
-    -Pass ($consumer -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?GetVertexPositionInputs\(animatedPositionOS\)') `
-    -Detail 'Object-space displacement precedes optional vertex animation and Unity object transforms'
+    -Pass ($orchestrator -match 'TA_DecodeVertexDisplacement\s*\([\s\S]*?TA_ApplyVertexDisplacementOS\s*\([\s\S]*?TA_ApplyWaveWindAnimationOS\s*\(' -and
+        $consumer -match 'deformationInput\.heightSample = displacementHeight' -and
+        $consumer -match 'TA_EvaluateVertexDeformationOS\s*\([\s\S]*?GetVertexPositionInputs\(deformation\.positionOS\)') `
+    -Detail 'High-level orchestration applies object-space height displacement before animation and Unity transforms'
 
 $maximumError = 0.0
 foreach ($check in $checks) {

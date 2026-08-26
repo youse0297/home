@@ -131,50 +131,34 @@ Shader "TA/BasePass Lighting Decomposition"
                     displacementUV,
                     0.0
                 ).r;
-                half vertexDisplacement = TA_DecodeVertexDisplacement(
-                    displacementHeight,
-                    _DisplacementAmplitude,
-                    _DisplacementCenter
-                );
-                float3 displacedPositionOS = TA_ApplyVertexDisplacementOS(
-                    input.positionOS.xyz,
-                    input.normalOS,
-                    vertexDisplacement
-                );
 
-                half waveSignal = TA_EvaluateTravelingSineOS(
-                    input.positionOS.xyz,
-                    _WaveDirection.xz,
-                    _WaveFrequency,
-                    _WaveSpeed,
-                    _Time.y,
-                    _WavePhase
-                );
-                half windSignal = TA_EvaluateTravelingSineOS(
-                    input.positionOS.xyz,
-                    _WindDirection.xz,
-                    _WindFrequency,
-                    _WindSpeed,
-                    _Time.y,
-                    _WindPhase
-                );
-                half windWeight = TA_EvaluateHeightWeightOS(
-                    input.positionOS.y,
-                    _WindPivotHeight,
-                    _WindFadeDistance
-                );
-                float3 animatedPositionOS = TA_ApplyWaveWindAnimationOS(
-                    displacedPositionOS,
-                    input.normalOS,
-                    waveSignal,
-                    _WaveAmplitude,
-                    (half3)_WindDirection.xyz,
-                    windSignal,
-                    _WindAmplitude,
-                    windWeight
-                );
+                TA_VertexDeformationInput deformationInput;
+                deformationInput.positionOS = input.positionOS.xyz;
+                deformationInput.normalOS = input.normalOS;
+                deformationInput.heightSample = displacementHeight;
+                deformationInput.timeSeconds = _Time.y;
 
-                VertexPositionInputs positionInputs = GetVertexPositionInputs(animatedPositionOS);
+                TA_VertexDeformationConfig deformationConfig;
+                deformationConfig.heightAmplitude = _DisplacementAmplitude;
+                deformationConfig.heightCenter = _DisplacementCenter;
+                deformationConfig.waveDirectionXZ = _WaveDirection.xz;
+                deformationConfig.waveAmplitude = _WaveAmplitude;
+                deformationConfig.waveFrequency = _WaveFrequency;
+                deformationConfig.waveSpeed = _WaveSpeed;
+                deformationConfig.wavePhase = _WavePhase;
+                deformationConfig.windDirectionOS = (half3)_WindDirection.xyz;
+                deformationConfig.windAmplitude = _WindAmplitude;
+                deformationConfig.windFrequency = _WindFrequency;
+                deformationConfig.windSpeed = _WindSpeed;
+                deformationConfig.windPhase = _WindPhase;
+                deformationConfig.windPivotHeightOS = _WindPivotHeight;
+                deformationConfig.windFadeDistanceOS = _WindFadeDistance;
+
+                TA_VertexDeformationResult deformation = TA_EvaluateVertexDeformationOS(
+                    deformationInput,
+                    deformationConfig
+                );
+                VertexPositionInputs positionInputs = GetVertexPositionInputs(deformation.positionOS);
                 VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS, input.tangentOS);
                 output.positionCS = positionInputs.positionCS;
                 output.positionWS = positionInputs.positionWS;

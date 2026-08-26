@@ -21,6 +21,14 @@
     "defaultWaveAmplitude": 0.0,
     "defaultWindAmplitude": 0.0
   },
+  "vertexDeformation": {
+    "module": "Assets/_TA/Shaders/Library/TA_VertexDeformation.hlsl",
+    "input": "TA_VertexDeformationInput",
+    "config": "TA_VertexDeformationConfig",
+    "result": "TA_VertexDeformationResult",
+    "entryPoint": "TA_EvaluateVertexDeformationOS",
+    "consumerBoundary": "BasePass samples resources and binds parameters; the module owns effect order"
+  },
   "debugViews": [
     { "id": 0, "name": "FinalLit", "category": "Composite", "output": "DirectDiffuse + DirectSpecular + IndirectDiffuse" },
     { "id": 1, "name": "BaseColor", "category": "Surface", "output": "Linear BaseColor" },
@@ -51,6 +59,7 @@
     "Default zero displacement preserves the established BasePass lighting baseline",
     "Default zero wave and wind amplitudes preserve the established BasePass lighting baseline",
     "Height displacement, wave and wind animation are completed before object-to-world and clip transforms",
+    "BasePass delegates height, wave and wind ordering to one structured vertex deformation entry point",
     "BaseColor is sampled as sRGB and consumed as linear by Unity",
     "Normal, AO, roughness and metallic data textures are sampled as linear",
     "Debug views do not apply fog, exposure or tone mapping in the material pass"

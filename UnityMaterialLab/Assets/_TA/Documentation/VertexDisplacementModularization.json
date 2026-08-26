@@ -1,0 +1,75 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.8.0",
+  "source": "Assets/_TA/Shaders/Library/TA_VertexDeformation.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "dependencies": [
+    "Assets/_TA/Shaders/Library/TA_VertexDisplacement.hlsl",
+    "Assets/_TA/Shaders/Library/TA_VertexAnimation.hlsl"
+  ],
+  "publicSymbols": [
+    "TA_VertexDeformationInput",
+    "TA_VertexDeformationConfig",
+    "TA_VertexDeformationResult",
+    "TA_EvaluateVertexDeformationOS"
+  ],
+  "policies": {
+    "resourceBoundary": "Consumer samples displacement height and supplies explicit time; the module has no Unity texture or time globals",
+    "order": "Decode height, apply height displacement, evaluate wave and wind from original position, then apply additive animation",
+    "singleEntry": "BasePass calls TA_EvaluateVertexDeformationOS once before GetVertexPositionInputs",
+    "diagnostics": "Result exposes heightDisplacement, waveSignal, windSignal and windWeight with final positionOS",
+    "default": "Zero height, wave and wind amplitudes preserve the original position"
+  },
+  "fixtures": [
+    {
+      "id": "DEFAULT_ZERO_AMPLITUDES",
+      "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 1.0, 0.0], "heightSample": 0.9, "timeSeconds": 0.0 },
+      "config": { "heightAmplitude": 0.0, "heightCenter": 0.5, "waveDirectionXZ": [1.0, 0.0], "waveAmplitude": 0.0, "waveFrequency": 0.0, "waveSpeed": 0.0, "wavePhase": 0.0, "windDirectionOS": [1.0, 0.0, 0.0], "windAmplitude": 0.0, "windFrequency": 0.0, "windSpeed": 0.0, "windPhase": 0.0, "windPivotHeightOS": 0.0, "windFadeDistanceOS": 1.0 },
+      "expected": { "positionOS": [1.0, 2.0, 3.0], "heightDisplacement": 0.0, "waveSignal": 0.0, "windSignal": 0.0, "windWeight": 1.0 }
+    },
+    {
+      "id": "HEIGHT_ONLY",
+      "input": { "positionOS": [0.0, 0.0, 0.0], "normalOS": [0.0, 2.0, 0.0], "heightSample": 1.0, "timeSeconds": 0.0 },
+      "config": { "heightAmplitude": 0.2, "heightCenter": 0.5, "waveDirectionXZ": [1.0, 0.0], "waveAmplitude": 0.0, "waveFrequency": 0.0, "waveSpeed": 0.0, "wavePhase": 0.0, "windDirectionOS": [1.0, 0.0, 0.0], "windAmplitude": 0.0, "windFrequency": 0.0, "windSpeed": 0.0, "windPhase": 0.0, "windPivotHeightOS": 0.0, "windFadeDistanceOS": 1.0 },
+      "expected": { "positionOS": [0.0, 0.1, 0.0], "heightDisplacement": 0.1, "waveSignal": 0.0, "windSignal": 0.0, "windWeight": 0.0 }
+    },
+    {
+      "id": "WAVE_ONLY",
+      "input": { "positionOS": [0.0, 0.0, 0.0], "normalOS": [0.0, 2.0, 0.0], "heightSample": 0.5, "timeSeconds": 0.0 },
+      "config": { "heightAmplitude": 0.0, "heightCenter": 0.5, "waveDirectionXZ": [1.0, 0.0], "waveAmplitude": 0.25, "waveFrequency": 0.0, "waveSpeed": 0.0, "wavePhase": 1.5707963267948966, "windDirectionOS": [1.0, 0.0, 0.0], "windAmplitude": 0.0, "windFrequency": 0.0, "windSpeed": 0.0, "windPhase": 0.0, "windPivotHeightOS": 0.0, "windFadeDistanceOS": 1.0 },
+      "expected": { "positionOS": [0.0, 0.25, 0.0], "heightDisplacement": 0.0, "waveSignal": 1.0, "windSignal": 0.0, "windWeight": 0.0 }
+    },
+    {
+      "id": "WIND_BELOW_PIVOT",
+      "input": { "positionOS": [0.0, 0.0, 0.0], "normalOS": [0.0, 1.0, 0.0], "heightSample": 0.5, "timeSeconds": 0.0 },
+      "config": { "heightAmplitude": 0.0, "heightCenter": 0.5, "waveDirectionXZ": [1.0, 0.0], "waveAmplitude": 0.0, "waveFrequency": 0.0, "waveSpeed": 0.0, "wavePhase": 0.0, "windDirectionOS": [1.0, 0.0, 0.0], "windAmplitude": 0.4, "windFrequency": 0.0, "windSpeed": 0.0, "windPhase": 1.5707963267948966, "windPivotHeightOS": 0.5, "windFadeDistanceOS": 1.0 },
+      "expected": { "positionOS": [0.0, 0.0, 0.0], "heightDisplacement": 0.0, "waveSignal": 0.0, "windSignal": 1.0, "windWeight": 0.0 }
+    },
+    {
+      "id": "WIND_MID_FADE",
+      "input": { "positionOS": [1.0, 1.0, 0.0], "normalOS": [0.0, 1.0, 0.0], "heightSample": 0.5, "timeSeconds": 0.0 },
+      "config": { "heightAmplitude": 0.0, "heightCenter": 0.5, "waveDirectionXZ": [1.0, 0.0], "waveAmplitude": 0.0, "waveFrequency": 0.0, "waveSpeed": 0.0, "wavePhase": 0.0, "windDirectionOS": [2.0, 0.0, 0.0], "windAmplitude": 0.4, "windFrequency": 0.0, "windSpeed": 0.0, "windPhase": 1.5707963267948966, "windPivotHeightOS": 0.0, "windFadeDistanceOS": 2.0 },
+      "expected": { "positionOS": [1.2, 1.0, 0.0], "heightDisplacement": 0.0, "waveSignal": 0.0, "windSignal": 1.0, "windWeight": 0.5 }
+    },
+    {
+      "id": "HEIGHT_WAVE_WIND_COMBINED",
+      "input": { "positionOS": [1.0, 1.0, 0.0], "normalOS": [0.0, 0.0, 2.0], "heightSample": 1.0, "timeSeconds": 0.0 },
+      "config": { "heightAmplitude": 0.2, "heightCenter": 0.5, "waveDirectionXZ": [1.0, 0.0], "waveAmplitude": 0.2, "waveFrequency": 0.0, "waveSpeed": 0.0, "wavePhase": 1.5707963267948966, "windDirectionOS": [0.0, 2.0, 0.0], "windAmplitude": 0.3, "windFrequency": 0.0, "windSpeed": 0.0, "windPhase": -1.5707963267948966, "windPivotHeightOS": 0.0, "windFadeDistanceOS": 2.0 },
+      "expected": { "positionOS": [1.0, 0.85, 0.3], "heightDisplacement": 0.1, "waveSignal": 1.0, "windSignal": -1.0, "windWeight": 0.5 }
+    }
+  ],
+  "invariants": [
+    "The high-level module depends only on the low-level displacement and animation modules",
+    "Sampled height and time are explicit inputs rather than hidden engine globals",
+    "Height displacement is applied before additive wave and wind animation",
+    "Wave and wind phase use the original object-space mesh position",
+    "The result exposes final position and four stable diagnostic values",
+    "Zero effect amplitudes preserve the original vertex position"
+  ],
+  "limitations": [
+    "The module does not sample textures and expects the consumer to provide a height sample",
+    "The module does not reconstruct normals or tangents from deformed geometry",
+    "Pass consistency remains a consumer responsibility; current BasePass wiring is UniversalForward only"
+  ]
+}

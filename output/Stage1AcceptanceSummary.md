@@ -1,9 +1,9 @@
 ﻿# Stage 1 Acceptance
 
 - Overall status: `CONDITIONAL_PASS`
-- Required offline gates: `14/14`
+- Required offline gates: `15/15`
 - External runtime acceptance: `BLOCKED`
-- Generated at (UTC): `2026-08-26T14:39:18.1257279Z`
+- Generated at (UTC): `2026-08-26T15:00:06.3996878Z`
 
 ## Gate Results
 
@@ -22,6 +22,7 @@
 | PBR Parameter Regression | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/PbrParameterRegressionValidation.json` |
 | Vertex Displacement Basics | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json` |
 | Wave and Wind Animation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/WaveWindAnimationValidation.json` |
+| Vertex Displacement Modularization | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json` |
 | Unity Static Validation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/StaticValidation.json` |
 | RenderDoc Capture Readiness | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/RenderDocCaptureReadiness.json` |
 | Unity Editor Runtime Validation | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md` |

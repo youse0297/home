@@ -27,6 +27,10 @@ BasePass 顶点阶段可选读取 `_DisplacementMap` R 通道，以 `_Displaceme
 
 动画与高度位移共用 Forward-only 边界：当前不重建法线，也不驱动复用的 Shadow/Depth pass。对象空间相位会随对象变换一起移动，不保证多个对象之间形成连续世界空间波场。
 
+## 顶点位移模块化
+
+BasePass 不再直接编排高度解码、法线位移、波浪信号、风摆权重和组合偏移。顶点阶段采样高度后填充 `TA_VertexDeformationInput` 与 `TA_VertexDeformationConfig`，只调用一次 `TA_EvaluateVertexDeformationOS`，再消费 `TA_VertexDeformationResult.positionOS`。结构字段、依赖边界和兼容回归见 [Unity 顶点位移模块化](UNITY_VERTEX_DISPLACEMENT_MODULARIZATION.md)。
+
 ## 调试视图
 
 | ID | 视图 | 类别 | 输出含义 |
@@ -58,6 +62,7 @@ BasePass 顶点阶段可选读取 `_DisplacementMap` R 通道，以 `_Displaceme
 powershell -ExecutionPolicy Bypass -File .\Tools\GenerateBasePassLightingBoard.ps1
 powershell -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementBasics.ps1
 powershell -ExecutionPolicy Bypass -File .\Tools\ValidateWaveWindAnimation.ps1
+powershell -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementModularization.ps1
 powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 

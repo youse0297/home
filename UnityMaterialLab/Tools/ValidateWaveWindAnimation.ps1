@@ -144,8 +144,10 @@ foreach ($fixture in @($manifest.fixtures)) {
 
 $sourcePath = Join-Path $projectPath ($manifest.source -replace '/', '\')
 $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
+$orchestratorPath = Join-Path $projectPath ($manifest.orchestrator -replace '/', '\')
 $source = Get-Content -LiteralPath $sourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
+$orchestrator = Get-Content -LiteralPath $orchestratorPath -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) `
         -Pass ($source -match ('\b' + [Regex]::Escape([string]$symbol) + '\b')) `
@@ -186,13 +188,15 @@ Add-Check -Id 'DEFAULT_PRESERVES_BASELINE' `
         $consumer -match '_WindAmplitude\("Wind Amplitude", Range\(-1, 1\)\) = 0') `
     -Detail $manifest.policies.default
 Add-Check -Id 'EXPLICIT_UNITY_TIME' `
-    -Pass ($consumer -match 'TA_EvaluateTravelingSineOS\s*\([\s\S]*?_Time\.y') `
+    -Pass ($consumer -match 'deformationInput\.timeSeconds = _Time\.y' -and
+        $orchestrator -match 'inputData\.timeSeconds') `
     -Detail 'BasePass supplies Unity time explicitly to the reusable signal function'
 Add-Check -Id 'HEIGHT_ANCHOR_INPUT' `
-    -Pass ($consumer -match 'TA_EvaluateHeightWeightOS\s*\(\s*\r?\n\s*input\.positionOS\.y') `
+    -Pass ($orchestrator -match 'TA_EvaluateHeightWeightOS\s*\(\s*\r?\n\s*inputData\.positionOS\.y') `
     -Detail 'Wind anchoring is derived from original object-space mesh height'
 Add-Check -Id 'COMPOSITION_ORDER' `
-    -Pass ($consumer -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?TA_ApplyWaveWindAnimationOS\s*\([\s\S]*?GetVertexPositionInputs\(animatedPositionOS\)') `
+    -Pass ($orchestrator -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?TA_EvaluateTravelingSineOS\s*\([\s\S]*?TA_ApplyWaveWindAnimationOS\s*\(' -and
+        $consumer -match 'TA_EvaluateVertexDeformationOS\s*\([\s\S]*?GetVertexPositionInputs\(deformation\.positionOS\)') `
     -Detail $manifest.policies.composition
 
 $maximumError = 0.0

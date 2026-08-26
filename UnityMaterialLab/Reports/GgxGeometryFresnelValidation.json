@@ -1,12 +1,12 @@
 ﻿{
     "status":  "PASS",
     "version":  "1.0.0",
-    "sourceLibraryVersion":  "1.7.0",
+    "sourceLibraryVersion":  "1.8.0",
     "functionCount":  4,
     "fixtureCount":  10,
     "tolerance":  1E-06,
     "maximumError":  1.1102230246251565E-16,
-    "generatedAtUtc":  "2026-08-26T14:37:03.6386433Z",
+    "generatedAtUtc":  "2026-08-26T14:58:01.3664674Z",
     "checks":  [
                    {
                        "id":  "FRESNEL_FACING_DIELECTRIC",

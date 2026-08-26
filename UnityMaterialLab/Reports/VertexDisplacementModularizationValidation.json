@@ -1,0 +1,264 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.8.0",
+    "publicSymbolCount":  4,
+    "dependencyCount":  2,
+    "fixtureCount":  6,
+    "invariantCount":  6,
+    "limitationCount":  3,
+    "tolerance":  1E-06,
+    "maximumError":  5.5511151231257827E-17,
+    "generatedAtUtc":  "2026-08-26T15:00:00.2084482Z",
+    "checks":  [
+                   {
+                       "id":  "DEFAULT_ZERO_AMPLITUDES_POSITION",
+                       "pass":  true,
+                       "detail":  "actual=1, 2, 3 expected=1, 2, 3",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEFAULT_ZERO_AMPLITUDES_HEIGHTDISPLACEMENT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEFAULT_ZERO_AMPLITUDES_WAVESIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEFAULT_ZERO_AMPLITUDES_WINDSIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEFAULT_ZERO_AMPLITUDES_WINDWEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ONLY_POSITION",
+                       "pass":  true,
+                       "detail":  "actual=0, 0.1, 0 expected=0, 0.1, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ONLY_HEIGHTDISPLACEMENT",
+                       "pass":  true,
+                       "detail":  "actual=0.1 expected=0.1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ONLY_WAVESIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ONLY_WINDSIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ONLY_WINDWEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WAVE_ONLY_POSITION",
+                       "pass":  true,
+                       "detail":  "actual=0, 0.25, 0 expected=0, 0.25, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WAVE_ONLY_HEIGHTDISPLACEMENT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WAVE_ONLY_WAVESIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WAVE_ONLY_WINDSIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WAVE_ONLY_WINDWEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_BELOW_PIVOT_POSITION",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0, 0, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_BELOW_PIVOT_HEIGHTDISPLACEMENT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_BELOW_PIVOT_WAVESIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_BELOW_PIVOT_WINDSIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_BELOW_PIVOT_WINDWEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_MID_FADE_POSITION",
+                       "pass":  true,
+                       "detail":  "actual=1.2, 1, 0 expected=1.2, 1, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_MID_FADE_HEIGHTDISPLACEMENT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_MID_FADE_WAVESIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_MID_FADE_WINDSIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WIND_MID_FADE_WINDWEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0.5 expected=0.5",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_WAVE_WIND_COMBINED_POSITION",
+                       "pass":  true,
+                       "detail":  "actual=1, 0.85, 0.3 expected=1, 0.85, 0.3",
+                       "maximumError":  5.5511151231257827E-17
+                   },
+                   {
+                       "id":  "HEIGHT_WAVE_WIND_COMBINED_HEIGHTDISPLACEMENT",
+                       "pass":  true,
+                       "detail":  "actual=0.1 expected=0.1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_WAVE_WIND_COMBINED_WAVESIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_WAVE_WIND_COMBINED_WINDSIGNAL",
+                       "pass":  true,
+                       "detail":  "actual=-1 expected=-1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_WAVE_WIND_COMBINED_WINDWEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0.5 expected=0.5",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_VertexDeformationInput",
+                       "pass":  true,
+                       "detail":  "TA_VertexDeformationInput",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_VertexDeformationConfig",
+                       "pass":  true,
+                       "detail":  "TA_VertexDeformationConfig",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_VertexDeformationResult",
+                       "pass":  true,
+                       "detail":  "TA_VertexDeformationResult",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateVertexDeformationOS",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateVertexDeformationOS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEPENDENCY_BOUNDARY",
+                       "pass":  true,
+                       "detail":  "TA_VertexDisplacement.hlsl -\u003e TA_VertexAnimation.hlsl",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "STRUCTURED_CONTRACT",
+                       "pass":  true,
+                       "detail":  "Result exposes heightDisplacement, waveSignal, windSignal and windWeight with final positionOS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NO_HIDDEN_RESOURCE_OR_TIME_GLOBAL",
+                       "pass":  true,
+                       "detail":  "Consumer samples displacement height and supplies explicit time; the module has no Unity texture or time globals",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FIXED_ORCHESTRATION_ORDER",
+                       "pass":  true,
+                       "detail":  "Decode height, apply height displacement, evaluate wave and wind from original position, then apply additive animation",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ORIGINAL_POSITION_PHASE",
+                       "pass":  true,
+                       "detail":  "Wave, wind and height weight use the original mesh position",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SINGLE_CONSUMER_ENTRY",
+                       "pass":  true,
+                       "detail":  "BasePass calls TA_EvaluateVertexDeformationOS once before GetVertexPositionInputs",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NO_LOW_LEVEL_CONSUMER_ORCHESTRATION",
+                       "pass":  true,
+                       "detail":  "BasePass no longer owns low-level effect order",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

@@ -27,6 +27,7 @@
 | Unity | PBR Parameter Regression | 12 组 Metallic/Roughness/夹取/法线直接光 fixture 通过 |
 | Unity | Vertex Displacement Basics | 8 组高度解码/对象空间位移 fixture、LOD0 与变换顺序通过 |
 | Unity | Wave and Wind Animation | 15 组固定时间正弦、高度锚定与组合偏移 fixture 通过 |
+| Unity | Vertex Displacement Modularization | 结构化单入口、2 个依赖与 6 组组合 fixture 通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁
@@ -51,7 +52,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 - `output/Stage1AcceptanceReport.json`：机器可读的门禁、阻塞项、证据路径和命令尾部输出。
 - `output/Stage1AcceptanceSummary.md`：可直接归档的中文验收摘要。
 - `build/release_acceptance.ppm`：CPU 三材质发布基准图。
-- `UnityMaterialLab/Reports/`：Unity 参数、函数、压缩、LOD、BasePass、顶点位移/动画和静态报告。
+- `UnityMaterialLab/Reports/`：Unity 参数、函数、压缩、LOD、BasePass、结构化顶点变形和静态报告。
 
 ## 补验步骤
 
@@ -60,4 +61,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 3. 安装 RenderDoc，运行 `UnityMaterialLab/Tools/RenderDocCaptureCheck.ps1`，要求状态变为 `READY_TO_CAPTURE`。
 4. 捕获稳定帧并保存为 `UnityMaterialLab/Reports/RenderDoc/MaterialLab_Frame_0001.rdc`。
 5. 重新运行阶段 1 总验收，并人工确认外部运行证据。
-阶段 1 离线门禁包含直接光 PBR、PBR 参数、顶点位移和波浪/风摆动画专项回归，再执行聚合静态门禁；所有 14 条必过门禁均通过后，才会根据 Unity/RenderDoc 外部状态给出 `PASS` 或 `CONDITIONAL_PASS`。
+阶段 1 离线门禁包含直接光 PBR、PBR 参数、顶点位移/动画和模块化专项回归，再执行聚合静态门禁；所有 15 条必过门禁均通过后，才会根据 Unity/RenderDoc 外部状态给出 `PASS` 或 `CONDITIONAL_PASS`。

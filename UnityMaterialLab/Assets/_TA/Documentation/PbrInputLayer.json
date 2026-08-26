@@ -1,7 +1,7 @@
 {
   "status": "STATIC_NUMERIC_VALIDATED",
   "version": "1.0.0",
-  "sourceLibraryVersion": "1.7.0",
+  "sourceLibraryVersion": "1.8.0",
   "source": "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
   "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
   "publicSymbols": [

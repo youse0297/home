@@ -47,7 +47,7 @@ windWeight = saturate((positionOS.y - pivotHeight) / max(abs(fadeDistance), epsi
 3. 在已位移位置上加上波浪与风摆偏移。
 4. 把动画位置传给 `GetVertexPositionInputs`，生成世界空间和裁剪空间位置。
 
-实现位于 `UnityMaterialLab/Assets/_TA/Shaders/Library/TA_VertexAnimation.hlsl`，首个消费端为 `TA_BasePassLightingDecomposition.shader`。机器契约位于 `Assets/_TA/Documentation/WaveWindAnimation.json`。
+底层公式位于 `UnityMaterialLab/Assets/_TA/Shaders/Library/TA_VertexAnimation.hlsl`，调用顺序由 `TA_VertexDeformation.hlsl` 统一编排，首个消费端为 `TA_BasePassLightingDecomposition.shader`。机器契约位于 `Assets/_TA/Documentation/WaveWindAnimation.json`，分层边界见 [Unity 顶点位移模块化](UNITY_VERTEX_DISPLACEMENT_MODULARIZATION.md)。
 
 ## 验收
 

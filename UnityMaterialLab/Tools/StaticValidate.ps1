@@ -94,6 +94,8 @@ $hlslLibraryVertexDisplacementPath = Join-Path $hlslLibraryRootPath 'TA_VertexDi
 $hlslLibraryVertexDisplacementMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl.meta'
 $hlslLibraryVertexAnimationPath = Join-Path $hlslLibraryRootPath 'TA_VertexAnimation.hlsl'
 $hlslLibraryVertexAnimationMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexAnimation.hlsl.meta'
+$hlslLibraryVertexDeformationPath = Join-Path $hlslLibraryRootPath 'TA_VertexDeformation.hlsl'
+$hlslLibraryVertexDeformationMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDeformation.hlsl.meta'
 $hlslLibraryPbrInputPath = Join-Path $hlslLibraryRootPath 'TA_PBRInput.hlsl'
 $hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
@@ -128,6 +130,10 @@ $waveWindManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\WaveWin
 $waveWindManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\WaveWindAnimation.json.meta'
 $waveWindValidationPath = Join-Path $projectPath 'Tools\ValidateWaveWindAnimation.ps1'
 $waveWindReportPath = Join-Path $projectPath 'Reports\WaveWindAnimationValidation.json'
+$vertexModularizationManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\VertexDisplacementModularization.json'
+$vertexModularizationManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\VertexDisplacementModularization.json.meta'
+$vertexModularizationValidationPath = Join-Path $projectPath 'Tools\ValidateVertexDisplacementModularization.ps1'
+$vertexModularizationReportPath = Join-Path $projectPath 'Reports\VertexDisplacementModularizationValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -174,16 +180,19 @@ Add-Check ((@(
     $hlslLibrarySamplingPath,
     $hlslLibraryVertexDisplacementPath,
     $hlslLibraryVertexAnimationPath,
+    $hlslLibraryVertexDeformationPath,
     $hlslLibraryPbrInputPath,
     $hlslLibraryBrdfPath,
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all ten modules'
+    'HLSL source library contains all eleven modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
     'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType Leaf) `
     'HLSL vertex animation module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDeformationMetaPath -PathType Leaf) `
+    'HLSL vertex deformation module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -242,6 +251,14 @@ Add-Check (Test-Path -LiteralPath $waveWindValidationPath -PathType Leaf) `
     'Wave and wind animation validator exists'
 Add-Check (Test-Path -LiteralPath $waveWindReportPath -PathType Leaf) `
     'Wave and wind animation validation report exists'
+Add-Check (Test-Path -LiteralPath $vertexModularizationManifestPath -PathType Leaf) `
+    'Vertex displacement modularization contract exists'
+Add-Check (Test-Path -LiteralPath $vertexModularizationManifestMetaPath -PathType Leaf) `
+    'Vertex displacement modularization contract meta exists'
+Add-Check (Test-Path -LiteralPath $vertexModularizationValidationPath -PathType Leaf) `
+    'Vertex displacement modularization validator exists'
+Add-Check (Test-Path -LiteralPath $vertexModularizationReportPath -PathType Leaf) `
+    'Vertex displacement modularization validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -748,11 +765,10 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
     Add-Check ($basePassShader -match '#include "Library/TA_ShaderLibrary\.hlsl"' -and
         $basePassShader -match 'TA_TransformUV\(' -and
         $basePassShader -match 'TA_SampleTexture2DLod\(' -and
-        $basePassShader -match 'TA_DecodeVertexDisplacement\(' -and
-        $basePassShader -match 'TA_ApplyVertexDisplacementOS\(' -and
-        $basePassShader -match 'TA_EvaluateTravelingSineOS\(' -and
-        $basePassShader -match 'TA_EvaluateHeightWeightOS\(' -and
-        $basePassShader -match 'TA_ApplyWaveWindAnimationOS\(' -and
+        $basePassShader -match 'TA_VertexDeformationInput\s+deformationInput' -and
+        $basePassShader -match 'TA_VertexDeformationConfig\s+deformationConfig' -and
+        $basePassShader -match 'TA_VertexDeformationResult\s+deformation' -and
+        $basePassShader -match 'TA_EvaluateVertexDeformationOS\(' -and
         $basePassShader -match 'TA_TransformTangentToWorld\(' -and
         $basePassShader -match 'TA_PBRInputConfig\s+pbrConfig' -and
         $basePassShader -match 'TA_SamplePBRInput\(' -and
@@ -776,16 +792,25 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match '_DisplacementAmplitude\("Displacement Amplitude", Range\(-1, 1\)\) = 0' -and
         $basePassShader -match '_DisplacementCenter\("Displacement Center", Range\(0, 1\)\) = 0\.5' -and
         $basePassShader -match 'TA_SampleTexture2DLod\s*\([\s\S]*?displacementUV,\s*\r?\n\s*0\.0' -and
-        $basePassShader -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?GetVertexPositionInputs\(animatedPositionOS\)') `
+        $basePassShader -match 'deformationInput\.heightSample = displacementHeight' -and
+        $basePassShader -match 'deformationConfig\.heightAmplitude = _DisplacementAmplitude' -and
+        $basePassShader -match 'TA_EvaluateVertexDeformationOS\s*\([\s\S]*?GetVertexPositionInputs\(deformation\.positionOS\)') `
         'BasePass samples vertex displacement at LOD0 and applies it before object transforms'
     Add-Check ($basePassShader -match '_WaveAmplitude\("Wave Amplitude", Range\(-1, 1\)\) = 0' -and
         $basePassShader -match '_WindAmplitude\("Wind Amplitude", Range\(-1, 1\)\) = 0' -and
         $basePassShader -match '_WaveFrequency\("Wave Spatial Frequency", Range\(0, 32\)\)' -and
         $basePassShader -match '_WindPivotHeight\("Wind Pivot Height OS", Float\)' -and
-        $basePassShader -match 'TA_EvaluateTravelingSineOS\s*\([\s\S]*?_Time\.y' -and
-        $basePassShader -match 'TA_EvaluateHeightWeightOS\s*\(\s*\r?\n\s*input\.positionOS\.y' -and
-        $basePassShader -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?TA_ApplyWaveWindAnimationOS\s*\([\s\S]*?GetVertexPositionInputs\(animatedPositionOS\)') `
+        $basePassShader -match 'deformationInput\.timeSeconds = _Time\.y' -and
+        $basePassShader -match 'deformationConfig\.waveDirectionXZ = _WaveDirection\.xz' -and
+        $basePassShader -match 'deformationConfig\.windPivotHeightOS = _WindPivotHeight' -and
+        $basePassShader -match 'TA_EvaluateVertexDeformationOS\s*\([\s\S]*?GetVertexPositionInputs\(deformation\.positionOS\)') `
         'BasePass composes explicit-time wave and height-anchored wind animation before object transforms'
+    Add-Check (([Regex]::Matches($basePassShader, '\bTA_EvaluateVertexDeformationOS\s*\(')).Count -eq 1 -and
+        $basePassShader -notmatch '\bTA_DecodeVertexDisplacement\s*\(' -and
+        $basePassShader -notmatch '\bTA_ApplyVertexDisplacementOS\s*\(' -and
+        $basePassShader -notmatch '\bTA_EvaluateTravelingSineOS\s*\(' -and
+        $basePassShader -notmatch '\bTA_ApplyWaveWindAnimationOS\s*\(') `
+        'BasePass delegates low-level vertex effect order to one structured deformation entry point'
     Add-Check ($basePassShader -match 'Direct Diffuse,6' -and
         $basePassShader -match 'Direct Specular,7' -and
         $basePassShader -match 'Indirect Diffuse,8' -and
@@ -802,6 +827,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_VertexDisplacement\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_VertexAnimation\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_VertexDeformation\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_PBRInput\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_BRDF\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
@@ -829,6 +855,17 @@ if (Test-Path -LiteralPath $hlslLibraryVertexAnimationPath) {
         $hlslLibraryVertexAnimation -match 'TA_ApplyWaveWindAnimationOS' -and
         $hlslLibraryVertexAnimation -match 'waveOffsetOS \+ windOffsetOS') `
         'HLSL vertex animation module fixes bounded sine phase, height weight and additive wave/wind application'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryVertexDeformationPath) {
+    $hlslLibraryVertexDeformation = Get-Content -LiteralPath $hlslLibraryVertexDeformationPath -Raw
+    Add-Check ($hlslLibraryVertexDeformation -match 'struct TA_VertexDeformationInput' -and
+        $hlslLibraryVertexDeformation -match 'struct TA_VertexDeformationConfig' -and
+        $hlslLibraryVertexDeformation -match 'struct TA_VertexDeformationResult' -and
+        $hlslLibraryVertexDeformation -match 'TA_EvaluateVertexDeformationOS' -and
+        $hlslLibraryVertexDeformation -match 'TA_DecodeVertexDisplacement\s*\([\s\S]*?TA_ApplyVertexDisplacementOS\s*\([\s\S]*?TA_EvaluateTravelingSineOS\s*\([\s\S]*?TA_ApplyWaveWindAnimationOS\s*\(' -and
+        $hlslLibraryVertexDeformation -notmatch 'TEXTURE2D|_Time\b') `
+        'HLSL vertex deformation module owns structured effect order without hidden resources or time globals'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryPbrInputPath) {
@@ -890,27 +927,27 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.7.0' -and
+        $hlslLibraryManifest.version -eq '1.8.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 10 -and
-        @($hlslLibraryManifest.invariants).Count -eq 12) `
+        @($hlslLibraryManifest.modules).Count -eq 11 -and
+        @($hlslLibraryManifest.invariants).Count -eq 14) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 10 -and
-        $hlslLibraryReport.publicSymbolCount -eq 34 -and
+        $hlslLibraryReport.moduleCount -eq 11 -and
+        $hlslLibraryReport.publicSymbolCount -eq 38 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-        'HLSL source library report validates ten modules and thirty-four public symbols'
+        'HLSL source library report validates eleven modules and thirty-eight public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
     $vectorSamplingManifest = Get-Content -LiteralPath $vectorSamplingManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $vectorSamplingManifest.version -eq '1.1.0' -and
-        $vectorSamplingManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $vectorSamplingManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($vectorSamplingManifest.functions).Count -eq 10 -and
         @($vectorSamplingManifest.fixtures).Count -eq 9) `
         'Vector and sampling contract fixes ten functions and nine numeric fixtures'
@@ -919,7 +956,7 @@ if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
 if (Test-Path -LiteralPath $vectorSamplingReportPath) {
     $vectorSamplingReport = Get-Content -LiteralPath $vectorSamplingReportPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingReport.status -eq 'PASS' -and
-        $vectorSamplingReport.sourceLibraryVersion -eq '1.7.0' -and
+        $vectorSamplingReport.sourceLibraryVersion -eq '1.8.0' -and
         $vectorSamplingReport.functionCount -eq 10 -and
         $vectorSamplingReport.fixtureCount -eq 9 -and
         $vectorSamplingReport.maximumError -le 0.000001 -and
@@ -931,7 +968,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
     $pbrInputManifest = Get-Content -LiteralPath $pbrInputManifestPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $pbrInputManifest.version -eq '1.0.0' -and
-        $pbrInputManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $pbrInputManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($pbrInputManifest.publicSymbols).Count -eq 4 -and
         @($pbrInputManifest.fixtures).Count -eq 3) `
         'Simplified PBR input contract fixes four public symbols and three boundary fixtures'
@@ -940,7 +977,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
 if (Test-Path -LiteralPath $pbrInputReportPath) {
     $pbrInputReport = Get-Content -LiteralPath $pbrInputReportPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputReport.status -eq 'PASS' -and
-        $pbrInputReport.sourceLibraryVersion -eq '1.7.0' -and
+        $pbrInputReport.sourceLibraryVersion -eq '1.8.0' -and
         $pbrInputReport.functionCount -eq 4 -and
         $pbrInputReport.fixtureCount -eq 3 -and
         $pbrInputReport.maximumError -le 0.000001 -and
@@ -952,7 +989,7 @@ if (Test-Path -LiteralPath $pbrParameterRegressionManifestPath) {
     $pbrParameterRegressionManifest = Get-Content -LiteralPath $pbrParameterRegressionManifestPath -Raw | ConvertFrom-Json
     Add-Check ($pbrParameterRegressionManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $pbrParameterRegressionManifest.version -eq '1.0.0' -and
-        $pbrParameterRegressionManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $pbrParameterRegressionManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($pbrParameterRegressionManifest.publicSymbols).Count -eq 4 -and
         @($pbrParameterRegressionManifest.fixtures).Count -eq 12 -and
         @($pbrParameterRegressionManifest.invariants).Count -eq 5) `
@@ -962,7 +999,7 @@ if (Test-Path -LiteralPath $pbrParameterRegressionManifestPath) {
 if (Test-Path -LiteralPath $pbrParameterRegressionReportPath) {
     $pbrParameterRegressionReport = Get-Content -LiteralPath $pbrParameterRegressionReportPath -Raw | ConvertFrom-Json
     Add-Check ($pbrParameterRegressionReport.status -eq 'PASS' -and
-        $pbrParameterRegressionReport.sourceLibraryVersion -eq '1.7.0' -and
+        $pbrParameterRegressionReport.sourceLibraryVersion -eq '1.8.0' -and
         $pbrParameterRegressionReport.parameterCount -eq 4 -and
         $pbrParameterRegressionReport.fixtureCount -eq 12 -and
         $pbrParameterRegressionReport.maximumError -le 0.000001 -and
@@ -983,7 +1020,7 @@ if (Test-Path -LiteralPath $ggxNdfManifestPath) {
     $ggxNdfManifest = Get-Content -LiteralPath $ggxNdfManifestPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $ggxNdfManifest.version -eq '1.0.0' -and
-        $ggxNdfManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $ggxNdfManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($ggxNdfManifest.publicSymbols).Count -eq 3 -and
         @($ggxNdfManifest.fixtures).Count -eq 8) `
         'GGX NDF contract fixes the alpha policy, three entry points and eight fixtures'
@@ -997,7 +1034,7 @@ if (Test-Path -LiteralPath $ggxNdfValidationPath) {
 if (Test-Path -LiteralPath $ggxNdfReportPath) {
     $ggxNdfReport = Get-Content -LiteralPath $ggxNdfReportPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfReport.status -eq 'PASS' -and
-        $ggxNdfReport.sourceLibraryVersion -eq '1.7.0' -and
+        $ggxNdfReport.sourceLibraryVersion -eq '1.8.0' -and
         $ggxNdfReport.functionCount -eq 3 -and
         $ggxNdfReport.fixtureCount -eq 8 -and
         $ggxNdfReport.maximumError -le 0.000001 -and
@@ -1009,7 +1046,7 @@ if (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath) {
     $ggxGeometryFresnelManifest = Get-Content -LiteralPath $ggxGeometryFresnelManifestPath -Raw | ConvertFrom-Json
     Add-Check ($ggxGeometryFresnelManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $ggxGeometryFresnelManifest.version -eq '1.0.0' -and
-        $ggxGeometryFresnelManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $ggxGeometryFresnelManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($ggxGeometryFresnelManifest.publicSymbols).Count -eq 4 -and
         @($ggxGeometryFresnelManifest.fixtures).Count -eq 10) `
         'GGX geometry and Fresnel contract fixes four entry points and ten fixtures'
@@ -1018,7 +1055,7 @@ if (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath) {
 if (Test-Path -LiteralPath $ggxGeometryFresnelReportPath) {
     $ggxGeometryFresnelReport = Get-Content -LiteralPath $ggxGeometryFresnelReportPath -Raw | ConvertFrom-Json
     Add-Check ($ggxGeometryFresnelReport.status -eq 'PASS' -and
-        $ggxGeometryFresnelReport.sourceLibraryVersion -eq '1.7.0' -and
+        $ggxGeometryFresnelReport.sourceLibraryVersion -eq '1.8.0' -and
         $ggxGeometryFresnelReport.functionCount -eq 4 -and
         $ggxGeometryFresnelReport.fixtureCount -eq 10 -and
         $ggxGeometryFresnelReport.maximumError -le 0.000001 -and
@@ -1030,7 +1067,7 @@ if (Test-Path -LiteralPath $directLightPbrManifestPath) {
     $directLightPbrManifest = Get-Content -LiteralPath $directLightPbrManifestPath -Raw | ConvertFrom-Json
     Add-Check ($directLightPbrManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $directLightPbrManifest.version -eq '1.0.0' -and
-        $directLightPbrManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $directLightPbrManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($directLightPbrManifest.publicSymbols).Count -eq 2 -and
         @($directLightPbrManifest.fixtures).Count -eq 2) `
         'Direct-light PBR contract fixes the reusable entry point and two numeric fixtures'
@@ -1039,7 +1076,7 @@ if (Test-Path -LiteralPath $directLightPbrManifestPath) {
 if (Test-Path -LiteralPath $directLightPbrReportPath) {
     $directLightPbrReport = Get-Content -LiteralPath $directLightPbrReportPath -Raw | ConvertFrom-Json
     Add-Check ($directLightPbrReport.status -eq 'PASS' -and
-        $directLightPbrReport.sourceLibraryVersion -eq '1.7.0' -and
+        $directLightPbrReport.sourceLibraryVersion -eq '1.8.0' -and
         $directLightPbrReport.functionCount -eq 2 -and
         $directLightPbrReport.fixtureCount -eq 2 -and
         $directLightPbrReport.maximumError -le 0.000001 -and
@@ -1051,7 +1088,7 @@ if (Test-Path -LiteralPath $vertexDisplacementManifestPath) {
     $vertexDisplacementManifest = Get-Content -LiteralPath $vertexDisplacementManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vertexDisplacementManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $vertexDisplacementManifest.version -eq '1.0.0' -and
-        $vertexDisplacementManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $vertexDisplacementManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($vertexDisplacementManifest.publicSymbols).Count -eq 2 -and
         @($vertexDisplacementManifest.fixtures).Count -eq 8 -and
         @($vertexDisplacementManifest.invariants).Count -eq 5 -and
@@ -1062,7 +1099,7 @@ if (Test-Path -LiteralPath $vertexDisplacementManifestPath) {
 if (Test-Path -LiteralPath $vertexDisplacementReportPath) {
     $vertexDisplacementReport = Get-Content -LiteralPath $vertexDisplacementReportPath -Raw | ConvertFrom-Json
     Add-Check ($vertexDisplacementReport.status -eq 'PASS' -and
-        $vertexDisplacementReport.sourceLibraryVersion -eq '1.7.0' -and
+        $vertexDisplacementReport.sourceLibraryVersion -eq '1.8.0' -and
         $vertexDisplacementReport.functionCount -eq 2 -and
         $vertexDisplacementReport.fixtureCount -eq 8 -and
         $vertexDisplacementReport.invariantCount -eq 5 -and
@@ -1076,7 +1113,7 @@ if (Test-Path -LiteralPath $waveWindManifestPath) {
     $waveWindManifest = Get-Content -LiteralPath $waveWindManifestPath -Raw | ConvertFrom-Json
     Add-Check ($waveWindManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $waveWindManifest.version -eq '1.0.0' -and
-        $waveWindManifest.sourceLibraryVersion -eq '1.7.0' -and
+        $waveWindManifest.sourceLibraryVersion -eq '1.8.0' -and
         @($waveWindManifest.publicSymbols).Count -eq 3 -and
         @($waveWindManifest.fixtures).Count -eq 15 -and
         @($waveWindManifest.invariants).Count -eq 7 -and
@@ -1087,7 +1124,7 @@ if (Test-Path -LiteralPath $waveWindManifestPath) {
 if (Test-Path -LiteralPath $waveWindReportPath) {
     $waveWindReport = Get-Content -LiteralPath $waveWindReportPath -Raw | ConvertFrom-Json
     Add-Check ($waveWindReport.status -eq 'PASS' -and
-        $waveWindReport.sourceLibraryVersion -eq '1.7.0' -and
+        $waveWindReport.sourceLibraryVersion -eq '1.8.0' -and
         $waveWindReport.functionCount -eq 3 -and
         $waveWindReport.fixtureCount -eq 15 -and
         $waveWindReport.invariantCount -eq 7 -and
@@ -1095,6 +1132,33 @@ if (Test-Path -LiteralPath $waveWindReportPath) {
         $waveWindReport.maximumError -le 0.000001 -and
         @($waveWindReport.failures).Count -eq 0) `
         'Wave and wind report validates bounded phase, height anchoring, additive offsets and BasePass order'
+}
+
+if (Test-Path -LiteralPath $vertexModularizationManifestPath) {
+    $vertexModularizationManifest = Get-Content -LiteralPath $vertexModularizationManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($vertexModularizationManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $vertexModularizationManifest.version -eq '1.0.0' -and
+        $vertexModularizationManifest.sourceLibraryVersion -eq '1.8.0' -and
+        @($vertexModularizationManifest.publicSymbols).Count -eq 4 -and
+        @($vertexModularizationManifest.dependencies).Count -eq 2 -and
+        @($vertexModularizationManifest.fixtures).Count -eq 6 -and
+        @($vertexModularizationManifest.invariants).Count -eq 6 -and
+        @($vertexModularizationManifest.limitations).Count -eq 3) `
+        'Vertex modularization contract fixes structured APIs, two dependencies and six integration fixtures'
+}
+
+if (Test-Path -LiteralPath $vertexModularizationReportPath) {
+    $vertexModularizationReport = Get-Content -LiteralPath $vertexModularizationReportPath -Raw | ConvertFrom-Json
+    Add-Check ($vertexModularizationReport.status -eq 'PASS' -and
+        $vertexModularizationReport.sourceLibraryVersion -eq '1.8.0' -and
+        $vertexModularizationReport.publicSymbolCount -eq 4 -and
+        $vertexModularizationReport.dependencyCount -eq 2 -and
+        $vertexModularizationReport.fixtureCount -eq 6 -and
+        $vertexModularizationReport.invariantCount -eq 6 -and
+        $vertexModularizationReport.limitationCount -eq 3 -and
+        $vertexModularizationReport.maximumError -le 0.000001 -and
+        @($vertexModularizationReport.failures).Count -eq 0) `
+        'Vertex modularization report validates structure, effect order, diagnostics and unchanged numeric output'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {
@@ -1139,7 +1203,7 @@ if (Test-Path -LiteralPath $basePassManifestPath) {
     Add-Check (@($basePassManifest.debugViews | Where-Object { $_.category -eq 'Surface' }).Count -eq 5 -and
         @($basePassManifest.debugViews | Where-Object { $_.category -eq 'Lighting' }).Count -eq 4 -and
         @($basePassManifest.debugViews | Where-Object { $_.category -eq 'Composite' }).Count -eq 1 -and
-        @($basePassManifest.invariants).Count -eq 8) `
+        @($basePassManifest.invariants).Count -eq 9) `
         'BasePass contract separates surface, lighting and composite outputs with fixed invariants'
     Add-Check ($basePassManifest.vertexDisplacement.map -eq '_DisplacementMap' -and
         $basePassManifest.vertexDisplacement.defaultAmplitude -eq 0.0 -and
@@ -1151,6 +1215,12 @@ if (Test-Path -LiteralPath $basePassManifestPath) {
         $basePassManifest.vertexAnimation.defaultWindAmplitude -eq 0.0 -and
         $basePassManifest.vertexAnimation.windWeight -eq 'saturate((positionOS.y - pivotHeight) / max(abs(fadeDistance), epsilon))') `
         'BasePass contract fixes explicit animation time, height-anchored wind and zero-amplitude defaults'
+    Add-Check ($basePassManifest.vertexDeformation.module -eq 'Assets/_TA/Shaders/Library/TA_VertexDeformation.hlsl' -and
+        $basePassManifest.vertexDeformation.input -eq 'TA_VertexDeformationInput' -and
+        $basePassManifest.vertexDeformation.config -eq 'TA_VertexDeformationConfig' -and
+        $basePassManifest.vertexDeformation.result -eq 'TA_VertexDeformationResult' -and
+        $basePassManifest.vertexDeformation.entryPoint -eq 'TA_EvaluateVertexDeformationOS') `
+        'BasePass contract delegates vertex effect order through the structured deformation module'
 }
 
 if (Test-Path -LiteralPath $basePassReportPath) {
