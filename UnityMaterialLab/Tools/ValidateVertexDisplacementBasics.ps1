@@ -117,8 +117,8 @@ Add-Check -Id 'DEFAULT_PRESERVES_BASELINE' `
         $consumer -match '_DisplacementCenter\("Displacement Center", Range\(0, 1\)\) = 0\.5') `
     -Detail $manifest.policies.default
 Add-Check -Id 'TRANSFORM_ORDER' `
-    -Pass ($consumer -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?GetVertexPositionInputs\(displacedPositionOS\)') `
-    -Detail 'Object-space displacement precedes Unity object-to-world and clip transforms'
+    -Pass ($consumer -match 'TA_ApplyVertexDisplacementOS\s*\([\s\S]*?GetVertexPositionInputs\(animatedPositionOS\)') `
+    -Detail 'Object-space displacement precedes optional vertex animation and Unity object transforms'
 
 $maximumError = 0.0
 foreach ($check in $checks) {

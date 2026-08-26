@@ -50,6 +50,7 @@
 | #57 | Unity BasePass 直接光仍把 diffuse/specular 内联在总光照函数中，且 diffuse 未使用 Fresnel 能量权重 | 2026-08-21 | 已新增 `TA_DirectLightingBreakdown`/`TA_EvaluateDirectLighting`，统一 `(1-F)*(1-metallic)` diffuse、GGX/Smith/Fresnel specular、背面归零契约，并补齐数值 validator、离线基准板和静态门禁 |
 | #58 | PBR 参数边界已有范围矩阵，但缺少 Metallic/Roughness/夹取/法线组合后的直接光数值回归 | 2026-08-21 | 已新增 12 组 PBR parameter regression fixture、线性 HDR 输出报告、单调性/有限性不变量，并接入 Stage 1 必选门禁 |
 | #59 | Renderer BasePass 缺少可复用的高度图顶点位移、明确空间顺序和专项数值回归 | 2026-08-26 | 已新增中心化高度解码、对象空间法线位移、LOD0 顶点采样、8 组 fixture 和 Stage 1 门禁；法线重建及 Shadow/Depth pass 同步明确留作后续 |
+| #60 | 顶点位移只有静态高度，缺少可复现的波浪、根部锚定风摆和固定时间回归 | 2026-08-26 | 已新增显式时间行进正弦、高度渐变权重、法线波浪/风向摆动组合、15 组 fixture 和 Stage 1 门禁；对象空间连续性及 Shadow/Depth 同步明确留作后续 |
 
 ## 🔴 待解决 / 待验证 (Open)
 

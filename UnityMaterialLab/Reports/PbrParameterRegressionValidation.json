@@ -1,7 +1,7 @@
 ﻿{
     "status":  "PASS",
     "version":  "1.0.0",
-    "sourceLibraryVersion":  "1.6.0",
+    "sourceLibraryVersion":  "1.7.0",
     "parameterCount":  4,
     "fixtureCount":  12,
     "tolerance":  1E-06,
@@ -176,7 +176,7 @@
                                                            ]
                                     }
                 },
-    "generatedAtUtc":  "2026-08-26T14:18:07.9392161Z",
+    "generatedAtUtc":  "2026-08-26T14:39:10.7216509Z",
     "checks":  [
                    {
                        "id":  "METALLIC_00_DIFFUSE",

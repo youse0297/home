@@ -1,0 +1,65 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.7.0",
+  "source": "Assets/_TA/Shaders/Library/TA_VertexAnimation.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "publicSymbols": [
+    "TA_EvaluateTravelingSineOS",
+    "TA_EvaluateHeightWeightOS",
+    "TA_ApplyWaveWindAnimationOS"
+  ],
+  "properties": {
+    "waveDirection": "_WaveDirection",
+    "waveAmplitude": "_WaveAmplitude",
+    "waveFrequency": "_WaveFrequency",
+    "waveSpeed": "_WaveSpeed",
+    "wavePhase": "_WavePhase",
+    "windDirection": "_WindDirection",
+    "windAmplitude": "_WindAmplitude",
+    "windFrequency": "_WindFrequency",
+    "windSpeed": "_WindSpeed",
+    "windPhase": "_WindPhase",
+    "windPivotHeight": "_WindPivotHeight",
+    "windFadeDistance": "_WindFadeDistance"
+  },
+  "policies": {
+    "phase": "dot(positionOS.xz, normalize(directionXZ)) * clamp(abs(frequency), 0, 32) + timeSeconds * clamp(speed, -16, 16) + phaseOffset",
+    "wave": "Normalized object-space vertex normal * sine signal * clamped amplitude",
+    "windWeight": "saturate((positionOS.y - pivotHeight) / max(abs(fadeDistance), epsilon))",
+    "wind": "Normalized object-space wind direction * sine signal * clamped amplitude * windWeight",
+    "composition": "Height displacement first, then additive wave and wind offsets, then Unity object transforms",
+    "default": "Wave and wind amplitudes are both zero"
+  },
+  "fixtures": [
+    { "id": "SINE_ZERO_PHASE", "function": "TA_EvaluateTravelingSineOS", "input": { "positionOS": [0.0, 0.0, 0.0], "directionXZ": [1.0, 0.0], "spatialFrequency": 1.0, "speed": 1.0, "timeSeconds": 0.0, "phaseOffset": 0.0 }, "expected": 0.0 },
+    { "id": "SINE_QUARTER_PHASE", "function": "TA_EvaluateTravelingSineOS", "input": { "positionOS": [0.0, 0.0, 0.0], "directionXZ": [1.0, 0.0], "spatialFrequency": 1.0, "speed": 0.0, "timeSeconds": 0.0, "phaseOffset": 1.5707963267948966 }, "expected": 1.0 },
+    { "id": "SINE_NORMALIZED_DIRECTION", "function": "TA_EvaluateTravelingSineOS", "input": { "positionOS": [1.0, 0.0, 0.0], "directionXZ": [2.0, 0.0], "spatialFrequency": 1.5707963267948966, "speed": 0.0, "timeSeconds": 0.0, "phaseOffset": 0.0 }, "expected": 1.0 },
+    { "id": "SINE_TIME_PROGRESS", "function": "TA_EvaluateTravelingSineOS", "input": { "positionOS": [0.0, 0.0, 0.0], "directionXZ": [1.0, 0.0], "spatialFrequency": 0.0, "speed": 3.141592653589793, "timeSeconds": 0.5, "phaseOffset": 0.0 }, "expected": 1.0 },
+    { "id": "SINE_ABSOLUTE_FREQUENCY", "function": "TA_EvaluateTravelingSineOS", "input": { "positionOS": [1.0, 0.0, 0.0], "directionXZ": [1.0, 0.0], "spatialFrequency": -1.5707963267948966, "speed": 0.0, "timeSeconds": 0.0, "phaseOffset": 0.0 }, "expected": 1.0 },
+    { "id": "SINE_CLAMPED_SPEED", "function": "TA_EvaluateTravelingSineOS", "input": { "positionOS": [0.0, 0.0, 0.0], "directionXZ": [0.0, 0.0], "spatialFrequency": 2.0, "speed": 100.0, "timeSeconds": 0.09817477042468103, "phaseOffset": 0.0 }, "expected": 1.0 },
+    { "id": "HEIGHT_BELOW_PIVOT", "function": "TA_EvaluateHeightWeightOS", "input": { "positionHeightOS": -0.25, "pivotHeightOS": 0.0, "fadeDistanceOS": 1.0 }, "expected": 0.0 },
+    { "id": "HEIGHT_MID_FADE", "function": "TA_EvaluateHeightWeightOS", "input": { "positionHeightOS": 0.5, "pivotHeightOS": 0.0, "fadeDistanceOS": 1.0 }, "expected": 0.5 },
+    { "id": "HEIGHT_ABOVE_FADE", "function": "TA_EvaluateHeightWeightOS", "input": { "positionHeightOS": 2.0, "pivotHeightOS": 0.0, "fadeDistanceOS": 1.0 }, "expected": 1.0 },
+    { "id": "HEIGHT_ABSOLUTE_FADE", "function": "TA_EvaluateHeightWeightOS", "input": { "positionHeightOS": 1.0, "pivotHeightOS": 0.0, "fadeDistanceOS": -2.0 }, "expected": 0.5 },
+    { "id": "APPLY_WAVE_ONLY", "function": "TA_ApplyWaveWindAnimationOS", "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 2.0, 0.0], "waveSignal": 1.0, "waveAmplitude": 0.25, "windDirectionOS": [1.0, 0.0, 0.0], "windSignal": 0.0, "windAmplitude": 1.0, "windWeight": 1.0 }, "expected": [1.0, 2.25, 3.0] },
+    { "id": "APPLY_WEIGHTED_WIND_ONLY", "function": "TA_ApplyWaveWindAnimationOS", "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 1.0, 0.0], "waveSignal": 0.0, "waveAmplitude": 1.0, "windDirectionOS": [2.0, 0.0, 0.0], "windSignal": -1.0, "windAmplitude": 0.4, "windWeight": 0.5 }, "expected": [0.8, 2.0, 3.0] },
+    { "id": "APPLY_COMBINED", "function": "TA_ApplyWaveWindAnimationOS", "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 0.0, 2.0], "waveSignal": 0.5, "waveAmplitude": 0.4, "windDirectionOS": [0.0, 2.0, 0.0], "windSignal": 1.0, "windAmplitude": 0.3, "windWeight": 0.5 }, "expected": [1.0, 2.15, 3.2] },
+    { "id": "APPLY_ZERO_AMPLITUDES", "function": "TA_ApplyWaveWindAnimationOS", "input": { "positionOS": [1.0, 2.0, 3.0], "normalOS": [0.0, 1.0, 0.0], "waveSignal": 1.0, "waveAmplitude": 0.0, "windDirectionOS": [1.0, 0.0, 0.0], "windSignal": 1.0, "windAmplitude": 0.0, "windWeight": 1.0 }, "expected": [1.0, 2.0, 3.0] },
+    { "id": "APPLY_CLAMPED_AMPLITUDES", "function": "TA_ApplyWaveWindAnimationOS", "input": { "positionOS": [0.0, 0.0, 0.0], "normalOS": [0.0, 2.0, 0.0], "waveSignal": 1.0, "waveAmplitude": 2.0, "windDirectionOS": [2.0, 0.0, 0.0], "windSignal": 1.0, "windAmplitude": -2.0, "windWeight": 2.0 }, "expected": [-1.0, 1.0, 0.0] }
+  ],
+  "invariants": [
+    "Fixed position and explicit time produce deterministic sine output",
+    "Wave and wind phase directions are normalized safely in object-space XZ",
+    "Spatial frequency and speed are bounded before phase evaluation",
+    "Wind height weight remains in the closed interval zero to one",
+    "Wave offset follows the normalized object-space vertex normal",
+    "Wind offset follows the normalized object-space wind direction and height weight",
+    "Zero wave and wind amplitudes preserve the input position"
+  ],
+  "limitations": [
+    "Animation uses original mesh normals and does not reconstruct normals from animated geometry",
+    "Animation is wired only into UniversalForward; shared URP ShadowCaster, DepthOnly and DepthNormals passes remain static",
+    "Phase and wind direction are object-space, so separate objects do not form a continuous world-space wave field"
+  ]
+}

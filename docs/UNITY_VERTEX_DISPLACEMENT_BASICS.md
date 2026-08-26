@@ -27,6 +27,8 @@ displacement = (saturate(height) - saturate(center)) * clamp(amplitude, -1, 1)
 3. 沿归一化对象空间顶点法线修改 `positionOS`。
 4. 把新位置传给 `GetVertexPositionInputs`，再生成世界空间与裁剪空间位置。
 
+若启用程序化动画，波浪与风摆会在基础高度位移之后、`GetVertexPositionInputs` 之前以加法偏移叠加；详见 [Unity 波浪与风摆动画](UNITY_WAVE_WIND_ANIMATION.md)。
+
 零法线通过安全归一化产生零方向，不会把非有限值写入顶点位置；零振幅无条件保留原始位置。
 
 ## 接入文件

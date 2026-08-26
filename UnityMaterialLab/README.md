@@ -107,15 +107,21 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## HLSL 源码库
 
-- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按 Types、Common、Vector、Sampling、VertexDisplacement、PBRInput、BRDF、Lighting、DebugViews 的依赖顺序装配 9 个模块。
+- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按 Types、Common、Vector、Sampling、VertexDisplacement、VertexAnimation、PBRInput、BRDF、Lighting、DebugViews 的依赖顺序装配 10 个模块。
 - BasePass 通过 `TA_PBRInputConfig`、`TA_SamplePBRInput` 和 `TA_BuildSurfaceData` 组装表面数据，再调用 `TA_EvaluateLighting` 与 `TA_SelectDebugView`；采样、材质边界、GGX 和调试选择不再内联重复。
-- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 31 个公共符号；位移、直接光 PBR、参数及 BRDF 边界由对应专项脚本验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md` 和 `../docs/UNITY_VERTEX_DISPLACEMENT_BASICS.md`。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 34 个公共符号；位移、动画、直接光 PBR、参数及 BRDF 边界由对应专项脚本验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md` 和 `../docs/UNITY_WAVE_WIND_ANIMATION.md`。
 
 ## 顶点位移基础
 
 - `TA_VertexDisplacement.hlsl` 提供中心化高度解码和对象空间法线位移；BasePass 顶点阶段用显式 LOD0 读取 `_DisplacementMap`。
 - `_DisplacementAmplitude` 默认 `0`，保持既有材质与光照基线；`Tools/ValidateVertexDisplacementBasics.ps1` 固定 8 组数值与源码接线检查。
 - 当前只接入 `UniversalForward`，不重建法线，也不修改 URP 的 ShadowCaster/Depth pass；完整边界见 `../docs/UNITY_VERTEX_DISPLACEMENT_BASICS.md`。
+
+## 波浪与风摆动画
+
+- `TA_VertexAnimation.hlsl` 提供显式时间的行进正弦、高度锚定权重，以及法线波浪与风向偏移的加法组合。
+- BasePass 使用 `_Time.y` 驱动，`_WaveAmplitude` 和 `_WindAmplitude` 默认均为 `0`；`Tools/ValidateWaveWindAnimation.ps1` 固定 15 组数值与源码接线检查。
+- 当前动画采用对象空间相位且只接入 `UniversalForward`；跨对象连续波场、动画法线重建和 Shadow/Depth 同步属于后续边界。
 
 ## 几何遮蔽与 Fresnel
 
@@ -139,12 +145,12 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## 当前边界
 
-本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景、RenderDoc 截帧准备层、URP Forward BasePass 光照拆解视图，以及包含向量、采样、顶点位移和简化 PBR 输入层的 Renderer HLSL 源码库。完整 Shader Graph 主材质属于后续日程任务。
+本阶段已建立工程、资产基线、BaseColor/Normal/ORM 输入契约、三个 URP Lit 材质实例、参数边界矩阵、可生成的 Shader Graph Custom Function 子图示例、材质函数库 v1、Standalone 贴图压缩策略与对照基准、三档 LOD 基础策略和切换场景、RenderDoc 截帧准备层、URP Forward BasePass 光照拆解视图，以及包含向量、采样、顶点位移/动画和简化 PBR 输入层的 Renderer HLSL 源码库。完整 Shader Graph 主材质属于后续日程任务。
 
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
 ## Direct-light PBR integration
 
-The renderer-facing HLSL source library is v1.6.0. BasePass direct light remains evaluated through `TA_EvaluateDirectLighting`; the new vertex-displacement module is validated independently and defaults to zero amplitude.
+The renderer-facing HLSL source library is v1.7.0. BasePass direct light remains evaluated through `TA_EvaluateDirectLighting`; vertex displacement and wave/wind animation are validated independently and default to zero amplitude.
 
 ## PBR parameter regression
 

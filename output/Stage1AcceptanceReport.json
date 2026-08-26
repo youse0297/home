@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  13,
-    "passedRequiredGateCount":  13,
+    "requiredGateCount":  14,
+    "passedRequiredGateCount":  14,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-26T14:18:15.8466543Z",
+    "generatedAtUtc":  "2026-08-26T14:39:18.1257279Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -44,21 +44,21 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "      Start  7: texture_sampling_acceptance",
-                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.02 sec",
                                          "      Start  8: surface_attributes_acceptance",
-                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.02 sec",
                                          "      Start  9: diffuse_exposure_acceptance",
-                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.04 sec",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.02 sec",
                                          "      Start 10: ggx_brdf_acceptance",
                                          "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
                                          "      Start 11: material_workflow_acceptance",
-                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.02 sec",
                                          "      Start 12: release_acceptance",
-                                         "12/12 Test #12: release_acceptance ......................   Passed    0.04 sec",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.03 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.36 sec"
+                                         "Total Test time (real) =   0.25 sec"
                                      ]
                   },
                   {
@@ -180,6 +180,19 @@
                                      ]
                   },
                   {
+                      "name":  "Wave and Wind Animation",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/WaveWindAnimationValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_WAVE_WIND_ANIMATION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\WaveWindAnimationValidation.json"
+                                     ]
+                  },
+                  {
                       "name":  "Unity Static Validation",
                       "category":  "Unity Offline",
                       "required":  true,
@@ -239,6 +252,7 @@
                       "UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json",
                       "UnityMaterialLab/Reports/PbrParameterRegressionValidation.json",
                       "UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json",
+                      "UnityMaterialLab/Reports/WaveWindAnimationValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

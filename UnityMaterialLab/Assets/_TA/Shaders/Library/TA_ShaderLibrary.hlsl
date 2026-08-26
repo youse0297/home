@@ -7,6 +7,7 @@
 #include "TA_Vector.hlsl"
 #include "TA_Sampling.hlsl"
 #include "TA_VertexDisplacement.hlsl"
+#include "TA_VertexAnimation.hlsl"
 #include "TA_PBRInput.hlsl"
 #include "TA_BRDF.hlsl"
 #include "TA_Lighting.hlsl"

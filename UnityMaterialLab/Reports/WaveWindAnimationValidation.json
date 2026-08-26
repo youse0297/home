@@ -1,0 +1,173 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.7.0",
+    "functionCount":  3,
+    "fixtureCount":  15,
+    "invariantCount":  7,
+    "limitationCount":  3,
+    "tolerance":  1E-06,
+    "maximumError":  0,
+    "generatedAtUtc":  "2026-08-26T14:39:12.5181745Z",
+    "checks":  [
+                   {
+                       "id":  "SINE_ZERO_PHASE",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SINE_QUARTER_PHASE",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SINE_NORMALIZED_DIRECTION",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SINE_TIME_PROGRESS",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SINE_ABSOLUTE_FREQUENCY",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SINE_CLAMPED_SPEED",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_BELOW_PIVOT",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_MID_FADE",
+                       "pass":  true,
+                       "detail":  "actual=0.5 expected=0.5",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ABOVE_FADE",
+                       "pass":  true,
+                       "detail":  "actual=1 expected=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ABSOLUTE_FADE",
+                       "pass":  true,
+                       "detail":  "actual=0.5 expected=0.5",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_WAVE_ONLY",
+                       "pass":  true,
+                       "detail":  "actual=1, 2.25, 3 expected=1, 2.25, 3",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_WEIGHTED_WIND_ONLY",
+                       "pass":  true,
+                       "detail":  "actual=0.8, 2, 3 expected=0.8, 2, 3",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_COMBINED",
+                       "pass":  true,
+                       "detail":  "actual=1, 2.15, 3.2 expected=1, 2.15, 3.2",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_ZERO_AMPLITUDES",
+                       "pass":  true,
+                       "detail":  "actual=1, 2, 3 expected=1, 2, 3",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "APPLY_CLAMPED_AMPLITUDES",
+                       "pass":  true,
+                       "detail":  "actual=-1, 1, 0 expected=-1, 1, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateTravelingSineOS",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateTravelingSineOS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateHeightWeightOS",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateHeightWeightOS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ApplyWaveWindAnimationOS",
+                       "pass":  true,
+                       "detail":  "TA_ApplyWaveWindAnimationOS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TRAVELING_SINE_POLICY",
+                       "pass":  true,
+                       "detail":  "dot(positionOS.xz, normalize(directionXZ)) * clamp(abs(frequency), 0, 32) + timeSeconds * clamp(speed, -16, 16) + phaseOffset",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_WEIGHT_POLICY",
+                       "pass":  true,
+                       "detail":  "saturate((positionOS.y - pivotHeight) / max(abs(fadeDistance), epsilon))",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ADDITIVE_APPLICATION_POLICY",
+                       "pass":  true,
+                       "detail":  "Height displacement first, then additive wave and wind offsets, then Unity object transforms",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "CONSUMER_PARAMETERS",
+                       "pass":  true,
+                       "detail":  "BasePass exposes wave and height-anchored wind controls",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEFAULT_PRESERVES_BASELINE",
+                       "pass":  true,
+                       "detail":  "Wave and wind amplitudes are both zero",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "EXPLICIT_UNITY_TIME",
+                       "pass":  true,
+                       "detail":  "BasePass supplies Unity time explicitly to the reusable signal function",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_ANCHOR_INPUT",
+                       "pass":  true,
+                       "detail":  "Wind anchoring is derived from original object-space mesh height",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "COMPOSITION_ORDER",
+                       "pass":  true,
+                       "detail":  "Height displacement first, then additive wave and wind offsets, then Unity object transforms",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

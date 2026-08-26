@@ -13,6 +13,14 @@
     "direction": "Normalized object-space vertex normal",
     "defaultAmplitude": 0.0
   },
+  "vertexAnimation": {
+    "time": "Unity _Time.y seconds",
+    "wave": "Traveling sine along normalized object-space vertex normal",
+    "wind": "Traveling sine along normalized object-space wind direction",
+    "windWeight": "saturate((positionOS.y - pivotHeight) / max(abs(fadeDistance), epsilon))",
+    "defaultWaveAmplitude": 0.0,
+    "defaultWindAmplitude": 0.0
+  },
   "debugViews": [
     { "id": 0, "name": "FinalLit", "category": "Composite", "output": "DirectDiffuse + DirectSpecular + IndirectDiffuse" },
     { "id": 1, "name": "BaseColor", "category": "Surface", "output": "Linear BaseColor" },
@@ -41,6 +49,8 @@
     "FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse",
     "DirectDiffuse uses the energy-conserving (1-F_Schlick) diffuse weight",
     "Default zero displacement preserves the established BasePass lighting baseline",
+    "Default zero wave and wind amplitudes preserve the established BasePass lighting baseline",
+    "Height displacement, wave and wind animation are completed before object-to-world and clip transforms",
     "BaseColor is sampled as sRGB and consumed as linear by Unity",
     "Normal, AO, roughness and metallic data textures are sampled as linear",
     "Debug views do not apply fog, exposure or tone mapping in the material pass"

@@ -259,6 +259,11 @@ Add-ScriptGate -Name 'Vertex Displacement Basics' `
     -ExpectedPattern 'UNITY_VERTEX_DISPLACEMENT_BASICS: PASS' `
     -Evidence 'UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json' `
     -ReportName 'VertexDisplacementBasicsValidation.json'
+Add-ScriptGate -Name 'Wave and Wind Animation' `
+    -ScriptName 'ValidateWaveWindAnimation.ps1' `
+    -ExpectedPattern 'UNITY_WAVE_WIND_ANIMATION: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/WaveWindAnimationValidation.json' `
+    -ReportName 'WaveWindAnimationValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -332,6 +337,7 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json',
         'UnityMaterialLab/Reports/PbrParameterRegressionValidation.json',
         'UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json',
+        'UnityMaterialLab/Reports/WaveWindAnimationValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

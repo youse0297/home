@@ -21,6 +21,12 @@ BasePass 顶点阶段可选读取 `_DisplacementMap` R 通道，以 `_Displaceme
 
 当前基础只修改自定义 `UniversalForward` pass，不重建位移法线，也不修改复用的 URP `ShadowCaster`、`DepthOnly` 和 `DepthNormals` pass。使用非零振幅时，阴影/深度轮廓一致性不属于本项已验收范围。
 
+## 波浪与风摆动画
+
+高度位移之后，BasePass 以 `_Time.y` 显式驱动两个行进正弦信号：波浪沿归一化对象空间顶点法线偏移，风摆沿归一化 `_WindDirection` 偏移，并使用对象空间高度渐变固定根部。`_WaveAmplitude` 与 `_WindAmplitude` 默认均为 `0`，因此静态光照对照板保持可复现。参数、公式与 15 组固定时间回归见 [Unity 波浪与风摆动画](UNITY_WAVE_WIND_ANIMATION.md)。
+
+动画与高度位移共用 Forward-only 边界：当前不重建法线，也不驱动复用的 Shadow/Depth pass。对象空间相位会随对象变换一起移动，不保证多个对象之间形成连续世界空间波场。
+
 ## 调试视图
 
 | ID | 视图 | 类别 | 输出含义 |
@@ -51,6 +57,7 @@ BasePass 顶点阶段可选读取 `_DisplacementMap` R 通道，以 `_Displaceme
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\Tools\GenerateBasePassLightingBoard.ps1
 powershell -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementBasics.ps1
+powershell -ExecutionPolicy Bypass -File .\Tools\ValidateWaveWindAnimation.ps1
 powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
@@ -67,6 +74,8 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - 用 `renderer.material` 切换视图，意外克隆材质；控制器应使用 `MaterialPropertyBlock`。
 - 在顶点阶段使用隐式导数采样，或把对象空间位移放到 `GetVertexPositionInputs` 之后，导致平台编译/空间结果不稳定。
 - 非零位移时把 Forward 轮廓误当作 Shadow/Depth 已同步；当前契约明确没有覆盖这些 pass。
+- 用脚本直接累加 `_Time` 到材质参数，导致每个实例时间漂移；共享函数应接收显式 Unity 时间和可复现相位。
+- 风摆没有高度权重，使根部跟随顶部一起平移；应设置与模型对象空间高度匹配的 pivot 和 fade。
 ## Direct-light PBR integration
 
 `DirectDiffuse` is the energy-conserving `(1-F_Schlick) * (1-metallic)` Lambert component. `DirectSpecular` is the GGX NDF, correlated Smith visibility and Schlick Fresnel product. Both components are evaluated by `TA_EvaluateDirectLighting`; the BasePass continues to expose them independently and reconstructs `FinalLit` additively. The dedicated contract and numeric fixtures live in `Assets/_TA/Documentation/DirectLightPbrIntegration.json` and are checked by `Tools/ValidateDirectLightPbrIntegration.ps1`.

@@ -13,6 +13,18 @@ Shader "TA/BasePass Lighting Decomposition"
         _DisplacementMap("Displacement Height", 2D) = "gray" {}
         _DisplacementAmplitude("Displacement Amplitude", Range(-1, 1)) = 0
         _DisplacementCenter("Displacement Center", Range(0, 1)) = 0.5
+        _WaveDirection("Wave Direction XZ", Vector) = (1, 0, 0, 0)
+        _WaveAmplitude("Wave Amplitude", Range(-1, 1)) = 0
+        _WaveFrequency("Wave Spatial Frequency", Range(0, 32)) = 1
+        _WaveSpeed("Wave Speed", Range(-16, 16)) = 1
+        _WavePhase("Wave Phase", Range(-6.283185, 6.283185)) = 0
+        _WindDirection("Wind Direction OS", Vector) = (1, 0, 0, 0)
+        _WindAmplitude("Wind Amplitude", Range(-1, 1)) = 0
+        _WindFrequency("Wind Spatial Frequency", Range(0, 32)) = 1
+        _WindSpeed("Wind Speed", Range(-16, 16)) = 1
+        _WindPhase("Wind Phase", Range(-6.283185, 6.283185)) = 0
+        _WindPivotHeight("Wind Pivot Height OS", Float) = 0
+        _WindFadeDistance("Wind Height Fade", Range(0.001, 10)) = 1
         [Enum(Final Lit,0,Base Color,1,World Normal,2,Ambient Occlusion,3,Roughness,4,Metallic,5,Direct Diffuse,6,Direct Specular,7,Indirect Diffuse,8,Shadow Attenuation,9)] _DebugView("Debug View", Float) = 0
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
         [HideInInspector] _Cutoff("Alpha Cutoff", Range(0, 1)) = 0.5
@@ -60,6 +72,8 @@ Shader "TA/BasePass Lighting Decomposition"
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 float4 _DisplacementMap_ST;
+                float4 _WaveDirection;
+                float4 _WindDirection;
                 half4 _BaseColor;
                 half _BumpScale;
                 half _AOStrength;
@@ -67,6 +81,16 @@ Shader "TA/BasePass Lighting Decomposition"
                 half _MetallicScale;
                 half _DisplacementAmplitude;
                 half _DisplacementCenter;
+                half _WaveAmplitude;
+                half _WaveFrequency;
+                half _WaveSpeed;
+                half _WavePhase;
+                half _WindAmplitude;
+                half _WindFrequency;
+                half _WindSpeed;
+                half _WindPhase;
+                float _WindPivotHeight;
+                float _WindFadeDistance;
                 half _DebugView;
                 half _Cutoff;
                 half _Surface;
@@ -118,7 +142,39 @@ Shader "TA/BasePass Lighting Decomposition"
                     vertexDisplacement
                 );
 
-                VertexPositionInputs positionInputs = GetVertexPositionInputs(displacedPositionOS);
+                half waveSignal = TA_EvaluateTravelingSineOS(
+                    input.positionOS.xyz,
+                    _WaveDirection.xz,
+                    _WaveFrequency,
+                    _WaveSpeed,
+                    _Time.y,
+                    _WavePhase
+                );
+                half windSignal = TA_EvaluateTravelingSineOS(
+                    input.positionOS.xyz,
+                    _WindDirection.xz,
+                    _WindFrequency,
+                    _WindSpeed,
+                    _Time.y,
+                    _WindPhase
+                );
+                half windWeight = TA_EvaluateHeightWeightOS(
+                    input.positionOS.y,
+                    _WindPivotHeight,
+                    _WindFadeDistance
+                );
+                float3 animatedPositionOS = TA_ApplyWaveWindAnimationOS(
+                    displacedPositionOS,
+                    input.normalOS,
+                    waveSignal,
+                    _WaveAmplitude,
+                    (half3)_WindDirection.xyz,
+                    windSignal,
+                    _WindAmplitude,
+                    windWeight
+                );
+
+                VertexPositionInputs positionInputs = GetVertexPositionInputs(animatedPositionOS);
                 VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS, input.tangentOS);
                 output.positionCS = positionInputs.positionCS;
                 output.positionWS = positionInputs.positionWS;

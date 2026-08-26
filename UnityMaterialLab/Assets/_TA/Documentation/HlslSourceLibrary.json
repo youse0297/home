@@ -1,13 +1,13 @@
 {
   "status": "STATIC_LIBRARY_VALIDATED",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "root": "Assets/_TA/Shaders/Library",
   "namespacePrefix": "TA_",
   "precisionPolicy": "Renderer-facing calculations use half precision unless Unity requires float inputs",
   "aggregate": {
     "file": "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "includeGuard": "TA_SHADER_LIBRARY_INCLUDED",
-    "modules": ["types", "common", "vector", "sampling", "vertexDisplacement", "pbrInput", "brdf", "lighting", "debugViews"]
+    "modules": ["types", "common", "vector", "sampling", "vertexDisplacement", "vertexAnimation", "pbrInput", "brdf", "lighting", "debugViews"]
   },
   "consumer": {
     "file": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
@@ -17,6 +17,9 @@
       "TA_SampleTexture2DLod",
       "TA_DecodeVertexDisplacement",
       "TA_ApplyVertexDisplacementOS",
+      "TA_EvaluateTravelingSineOS",
+      "TA_EvaluateHeightWeightOS",
+      "TA_ApplyWaveWindAnimationOS",
       "TA_SamplePBRInput",
       "TA_TransformTangentToWorld",
       "TA_BuildSurfaceData",
@@ -81,6 +84,18 @@
       ]
     },
     {
+      "id": "vertexAnimation",
+      "file": "Assets/_TA/Shaders/Library/TA_VertexAnimation.hlsl",
+      "role": "Deterministic traveling-wave signal, height-anchored wind weight and additive object-space animation",
+      "includeGuard": "TA_VERTEX_ANIMATION_INCLUDED",
+      "dependencies": ["vector"],
+      "publicSymbols": [
+        "TA_EvaluateTravelingSineOS",
+        "TA_EvaluateHeightWeightOS",
+        "TA_ApplyWaveWindAnimationOS"
+      ]
+    },
+    {
       "id": "pbrInput",
       "file": "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
       "role": "Simplified BaseColor, Normal and ORM material input assembly",
@@ -136,6 +151,8 @@
     "GGX NDF derives alpha from sanitized perceptual roughness and clamps the distribution denominator",
     "Fresnel clamps cosine and F0, while correlated Smith visibility reuses the explicit lambda term",
     "Direct light uses energy-conserving (1-F) diffuse weighting with GGX specular components",
-    "Vertex displacement samples explicit LOD0 and offsets object-space position along a normalized object-space normal"
+    "Vertex displacement samples explicit LOD0 and offsets object-space position along a normalized object-space normal",
+    "Traveling sine animation uses explicit time, normalized XZ direction and bounded frequency and speed",
+    "Wave and height-weighted wind offsets combine additively in object space before Unity position transforms"
   ]
 }
