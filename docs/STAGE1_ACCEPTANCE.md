@@ -29,6 +29,7 @@
 | Unity | Wave and Wind Animation | 15 组固定时间正弦、高度锚定与组合偏移 fixture 通过 |
 | Unity | Vertex Displacement Modularization | 结构化单入口、2 个依赖与 6 组组合 fixture 通过 |
 | Unity | Normal Layer Blending | 切线空间 RNM、多层顺序、权重夹取与 7 组 fixture 通过 |
+| Unity | Layered Normal Material | 多层法线材质、Profile 引用与非零层权重通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁

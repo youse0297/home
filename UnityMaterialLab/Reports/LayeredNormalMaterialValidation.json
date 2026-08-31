@@ -1,0 +1,52 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.9.0",
+    "checkCount":  8,
+    "generatedAtUtc":  "2026-08-31T12:40:37.8218995Z",
+    "checks":  [
+                   {
+                       "id":  "MATERIAL_EXISTS",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Materials/MAT_LayeredNormal.mat"
+                   },
+                   {
+                       "id":  "PROFILE_EXISTS",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Materials/Instances/MI_LayeredNormal.asset"
+                   },
+                   {
+                       "id":  "SHADER_BINDING",
+                       "pass":  true,
+                       "detail":  "TA/BasePass Lighting Decomposition"
+                   },
+                   {
+                       "id":  "MATERIAL_LAYER_TEXTURES",
+                       "pass":  true,
+                       "detail":  "Base, detail, macro and ORM texture slots are serialized"
+                   },
+                   {
+                       "id":  "MATERIAL_LAYER_WEIGHTS",
+                       "pass":  true,
+                       "detail":  "Serialized layer weights are non-zero"
+                   },
+                   {
+                       "id":  "PROFILE_LAYER_TEXTURES",
+                       "pass":  true,
+                       "detail":  "Profile exposes all material texture inputs"
+                   },
+                   {
+                       "id":  "PROFILE_LAYER_PARAMETERS",
+                       "pass":  true,
+                       "detail":  "Profile serializes bounded multi-layer parameters"
+                   },
+                   {
+                       "id":  "PROFILE_INPUT_POLICY",
+                       "pass":  true,
+                       "detail":  "Profile retains PBR input policy"
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

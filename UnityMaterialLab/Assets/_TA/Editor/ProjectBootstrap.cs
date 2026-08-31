@@ -21,6 +21,8 @@ namespace TA.MaterialLab.Editor
         private const string TexturePath = Root + "/Art/Textures/T_CC0_Crate_BaseColor.png";
         private const string NormalTexturePath = Root + "/Art/Textures/T_PBR_Normal.png";
         private const string OrmTexturePath = Root + "/Art/Textures/T_PBR_ORM.png";
+        private const string LayeredNormalMaterialPath = Root + "/Materials/MAT_LayeredNormal.mat";
+        private const string LayeredNormalProfilePath = PbrInstancesPath + "/MI_LayeredNormal.asset";
         private const string PipelinePath = Root + "/Settings/RP_MaterialLab_URP.asset";
         private const string RendererPath = Root + "/Settings/RD_MaterialLab_Forward.asset";
         private const string BallPrefabPath = Root + "/Prefabs/PF_MaterialBall.prefab";
@@ -328,6 +330,7 @@ namespace TA.MaterialLab.Editor
                 throw new BuildFailedException("PBR input textures are unavailable.");
             }
             CreatePbrMaterials(shader, crateTexture, normalTexture, ormTexture);
+            CreateLayeredNormalMaterial(shader, crateTexture, normalTexture, ormTexture);
 
             return new Dictionary<string, Material>
             {
@@ -387,6 +390,10 @@ namespace TA.MaterialLab.Editor
                     )
                 },
                 {
+                    "layeredNormal",
+                    AssetDatabase.LoadAssetAtPath<Material>(LayeredNormalMaterialPath)
+                },
+                {
                     "pbrDielectric",
                     AssetDatabase.LoadAssetAtPath<Material>(PbrDielectricMaterialPath)
                 },
@@ -399,6 +406,48 @@ namespace TA.MaterialLab.Editor
                     AssetDatabase.LoadAssetAtPath<Material>(PbrSmoothMetalMaterialPath)
                 }
             };
+        }
+
+        private static void CreateLayeredNormalMaterial(
+            Shader shader,
+            Texture2D baseColor,
+            Texture2D normal,
+            Texture2D orm
+        )
+        {
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(LayeredNormalMaterialPath);
+            if (material == null)
+            {
+                material = new Material(shader);
+                material.name = "MAT_LayeredNormal";
+                AssetDatabase.CreateAsset(material, LayeredNormalMaterialPath);
+            }
+            material.shader = Shader.Find("TA/BasePass Lighting Decomposition") ?? shader;
+            MaterialInputProfile profile = AssetDatabase.LoadAssetAtPath<MaterialInputProfile>(LayeredNormalProfilePath);
+            if (profile == null)
+            {
+                profile = ScriptableObject.CreateInstance<MaterialInputProfile>();
+                profile.name = "MI_LayeredNormal";
+                AssetDatabase.CreateAsset(profile, LayeredNormalProfilePath);
+            }
+            profile.baseColor = baseColor;
+            profile.normal = normal;
+            profile.orm = orm;
+            profile.detailNormal = normal;
+            profile.macroNormal = normal;
+            profile.baseColorTint = Color.white;
+            profile.normalScale = 1.0f;
+            profile.detailNormalScale = 0.75f;
+            profile.detailNormalWeight = 0.65f;
+            profile.macroNormalScale = 0.5f;
+            profile.macroNormalWeight = 0.35f;
+            profile.metallic = 0.15f;
+            profile.roughness = 0.42f;
+            profile.occlusionStrength = 1.0f;
+            profile.alpha = 1.0f;
+            profile.ApplyTo(material);
+            EditorUtility.SetDirty(profile);
+            EditorUtility.SetDirty(material);
         }
 
         private static void CreatePbrMaterials(
@@ -901,6 +950,16 @@ namespace TA.MaterialLab.Editor
             Check(masterMaterial != null, "PBR master material is loaded", report);
             Check(report.pbrMaterialCount == 4, "PBR master plus 3 instances are loaded", report);
             Check(report.pbrProfileCount == 3, "Three PBR input profiles are loaded", report);
+            Material layeredNormalMaterial = AssetDatabase.LoadAssetAtPath<Material>(LayeredNormalMaterialPath);
+            MaterialInputProfile layeredNormalProfile = AssetDatabase.LoadAssetAtPath<MaterialInputProfile>(LayeredNormalProfilePath);
+            Check(layeredNormalMaterial != null, "Layered normal material is loaded", report);
+            Check(layeredNormalProfile != null, "Layered normal profile is loaded", report);
+            if (layeredNormalMaterial != null && layeredNormalProfile != null)
+            {
+                Check(layeredNormalMaterial.GetTexture("_DetailNormalMap") == layeredNormalProfile.detailNormal, "Layered detail normal matches profile", report);
+                Check(layeredNormalMaterial.GetTexture("_MacroNormalMap") == layeredNormalProfile.macroNormal, "Layered macro normal matches profile", report);
+                Check(layeredNormalProfile.detailNormalWeight > 0.0f && layeredNormalProfile.macroNormalWeight > 0.0f, "Layered normal profile enables both layers", report);
+            }
             if (masterMaterial != null)
             {
                 Check(

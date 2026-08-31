@@ -35,6 +35,10 @@ $inputsDocPath = Join-Path $projectPath 'Assets\_TA\Documentation\MATERIAL_INPUT
 $bootstrapPath = Join-Path $projectPath 'Assets\_TA\Editor\ProjectBootstrap.cs'
 $profilePath = Join-Path $projectPath 'Assets\_TA\Runtime\MaterialInputProfile.cs'
 $profileMetaPath = Join-Path $projectPath 'Assets\_TA\Runtime\MaterialInputProfile.cs.meta'
+$layeredNormalMaterialPath = Join-Path $projectPath 'Assets\_TA\Materials\MAT_LayeredNormal.mat'
+$layeredNormalMaterialMetaPath = Join-Path $projectPath 'Assets\_TA\Materials\MAT_LayeredNormal.mat.meta'
+$layeredNormalProfilePath = Join-Path $projectPath 'Assets\_TA\Materials\Instances\MI_LayeredNormal.asset'
+$layeredNormalProfileMetaPath = Join-Path $projectPath 'Assets\_TA\Materials\Instances\MI_LayeredNormal.asset.meta'
 $boundarySourcePath = Join-Path $projectPath 'Assets\_TA\Runtime\MaterialBoundaryMatrix.cs'
 $boundaryEditorPath = Join-Path $projectPath 'Assets\_TA\Editor\MaterialBoundaryValidator.cs'
 $boundaryMatrixPath = Join-Path $projectPath 'Assets\_TA\Documentation\MaterialBoundaryMatrix.json'
@@ -140,6 +144,10 @@ $normalLayerManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\Norm
 $normalLayerManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\NormalLayerBlending.json.meta'
 $normalLayerValidationPath = Join-Path $projectPath 'Tools\ValidateNormalLayerBlending.ps1'
 $normalLayerReportPath = Join-Path $projectPath 'Reports\NormalLayerBlendingValidation.json'
+$layeredNormalMaterialManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\LayeredNormalMaterial.json'
+$layeredNormalMaterialManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\LayeredNormalMaterial.json.meta'
+$layeredNormalMaterialValidationPath = Join-Path $projectPath 'Tools\ValidateLayeredNormalMaterial.ps1'
+$layeredNormalMaterialReportPath = Join-Path $projectPath 'Reports\LayeredNormalMaterialValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -276,6 +284,38 @@ Add-Check (Test-Path -LiteralPath $normalLayerValidationPath -PathType Leaf) `
     'Normal layer blending validator exists'
 Add-Check (Test-Path -LiteralPath $normalLayerReportPath -PathType Leaf) `
     'Normal layer blending validation report exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalMaterialManifestPath -PathType Leaf) `
+    'Layered normal material contract exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalMaterialManifestMetaPath -PathType Leaf) `
+    'Layered normal material contract meta exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalMaterialValidationPath -PathType Leaf) `
+    'Layered normal material validator exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalMaterialReportPath -PathType Leaf) `
+    'Layered normal material validation report exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
+    'Layered normal material asset exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
+    'Layered normal material meta exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalProfilePath -PathType Leaf) `
+    'Layered normal material profile exists'
+Add-Check (Test-Path -LiteralPath $layeredNormalProfileMetaPath -PathType Leaf) `
+    'Layered normal material profile meta exists'
+if ((Test-Path -LiteralPath $layeredNormalMaterialPath) -and (Test-Path -LiteralPath $layeredNormalProfilePath)) {
+    $layeredNormalMaterial = Get-Content -LiteralPath $layeredNormalMaterialPath -Raw
+    $layeredNormalProfile = Get-Content -LiteralPath $layeredNormalProfilePath -Raw
+    Add-Check ($layeredNormalMaterial -match 'm_Name: MAT_LayeredNormal' -and
+        $layeredNormalMaterial -match '_DetailNormalMap:' -and
+        $layeredNormalMaterial -match '_MacroNormalMap:' -and
+        $layeredNormalMaterial -match '_DetailNormalWeight: 0\.65' -and
+        $layeredNormalMaterial -match '_MacroNormalWeight: 0\.35') `
+        'Layered normal material binds both normal layers with non-zero weights'
+    Add-Check ($layeredNormalProfile -match 'm_Name: MI_LayeredNormal' -and
+        $layeredNormalProfile -match 'detailNormal:' -and
+        $layeredNormalProfile -match 'macroNormal:' -and
+        $layeredNormalProfile -match 'detailNormalWeight: 0\.65' -and
+        $layeredNormalProfile -match 'macroNormalWeight: 0\.35') `
+        'Layered normal profile exposes both layer textures and weights'
+}
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -1221,6 +1261,23 @@ if (Test-Path -LiteralPath $normalLayerReportPath) {
         @($normalLayerReport.failures).Count -eq 0) `
         'Normal layer blending report validates RNM composition and BasePass wiring'
 }
+if (Test-Path -LiteralPath $layeredNormalMaterialManifestPath) {
+    $layeredNormalMaterialManifest = Get-Content -LiteralPath $layeredNormalMaterialManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($layeredNormalMaterialManifest.status -eq 'STATIC_MATERIAL_VALIDATED' -and
+        $layeredNormalMaterialManifest.version -eq '1.0.0' -and
+        $layeredNormalMaterialManifest.sourceLibraryVersion -eq '1.9.0' -and
+        @($layeredNormalMaterialManifest.invariants).Count -eq 5 -and
+        @($layeredNormalMaterialManifest.limitations).Count -eq 3) `
+        'Layered normal material contract fixes shader, profile, inputs and bounded layer parameters'
+}
+if (Test-Path -LiteralPath $layeredNormalMaterialReportPath) {
+    $layeredNormalMaterialReport = Get-Content -LiteralPath $layeredNormalMaterialReportPath -Raw | ConvertFrom-Json
+    Add-Check ($layeredNormalMaterialReport.status -eq 'PASS' -and
+        $layeredNormalMaterialReport.sourceLibraryVersion -eq '1.9.0' -and
+        $layeredNormalMaterialReport.checkCount -eq 8 -and
+        @($layeredNormalMaterialReport.failures).Count -eq 0) `
+        'Layered normal material report validates asset and profile wiring'
+}
 
 if (Test-Path -LiteralPath $basePassControllerPath) {
     $basePassController = Get-Content -LiteralPath $basePassControllerPath -Raw
@@ -1386,7 +1443,7 @@ foreach ($assetFile in $assetFiles) {
 $profileAssets = Get-ChildItem -LiteralPath (Join-Path $projectPath 'Assets\_TA') `
     -Recurse -File -Filter 'MI_*.asset'
 foreach ($profileAsset in $profileAssets) {
-    Add-Check ($profileAsset.Name -match '^MI_PBR_(Dielectric|RoughMetal|SmoothMetal)\.asset$') `
+    Add-Check ($profileAsset.Name -match '^MI_PBR_(Dielectric|RoughMetal|SmoothMetal)\.asset$|^MI_LayeredNormal\.asset$') `
         ("Material instance profile uses naming prefix: " + $profileAsset.Name)
 }
 

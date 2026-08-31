@@ -1,0 +1,36 @@
+{
+  "status": "STATIC_MATERIAL_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.9.0",
+  "material": "Assets/_TA/Materials/MAT_LayeredNormal.mat",
+  "profile": "Assets/_TA/Materials/Instances/MI_LayeredNormal.asset",
+  "shader": "TA/BasePass Lighting Decomposition",
+  "inputs": {
+    "baseColor": "Assets/_TA/Art/Textures/T_CC0_Crate_BaseColor.png",
+    "baseNormal": "Assets/_TA/Art/Textures/T_PBR_Normal.png",
+    "detailNormal": "Assets/_TA/Art/Textures/T_PBR_Normal.png",
+    "macroNormal": "Assets/_TA/Art/Textures/T_PBR_Normal.png",
+    "orm": "Assets/_TA/Art/Textures/T_PBR_ORM.png"
+  },
+  "parameters": {
+    "normalScale": 1.0,
+    "detailNormalScale": 0.75,
+    "detailNormalWeight": 0.65,
+    "macroNormalScale": 0.5,
+    "macroNormalWeight": 0.35,
+    "metallic": 0.15,
+    "roughness": 0.42
+  },
+  "invariants": [
+    "The material uses the TA BasePass Lighting Decomposition shader",
+    "Base, detail and macro normal inputs are assigned through the profile",
+    "Detail and macro weights are finite and strictly greater than zero",
+    "Normal scales remain inside the shared [0,2] policy",
+    "Material and profile keep the same layer texture references"
+  ],
+  "limitations": [
+    "The sample asset reuses the repository normal texture for both optional layers",
+    "Runtime visual confirmation still requires a licensed Unity Editor",
+    "The current material exposes two optional normal layers"
+  ]
+}

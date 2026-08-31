@@ -3,7 +3,7 @@
     "projectPath":  "E:\\ueProject\\home\\UnityMaterialLab",
     "unityRoot":  "F:\\unity\\2022.3.62f3c1\\Editor",
     "editorRuntimeValidation":  "BLOCKED_LICENSE",
-    "generatedAtUtc":  "2026-08-31T12:22:49.9054000Z",
+    "generatedAtUtc":  "2026-08-31T12:40:43.6712490Z",
     "checks":  [
                    "ProjectVersion.txt exists",
                    "Packages/manifest.json exists",
@@ -66,6 +66,16 @@
                    "Normal layer blending contract meta exists",
                    "Normal layer blending validator exists",
                    "Normal layer blending validation report exists",
+                   "Layered normal material contract exists",
+                   "Layered normal material contract meta exists",
+                   "Layered normal material validator exists",
+                   "Layered normal material validation report exists",
+                   "Layered normal material asset exists",
+                   "Layered normal material meta exists",
+                   "Layered normal material profile exists",
+                   "Layered normal material profile meta exists",
+                   "Layered normal material binds both normal layers with non-zero weights",
+                   "Layered normal profile exposes both layer textures and weights",
                    "Project bootstrap source exists",
                    "Material input profile source exists",
                    "Material input profile meta exists",
@@ -231,6 +241,8 @@
                    "Vertex modularization report validates structure, effect order, diagnostics and unchanged numeric output",
                    "Normal layer blending contract fixes RNM entry points, seven fixtures and six invariants",
                    "Normal layer blending report validates RNM composition and BasePass wiring",
+                   "Layered normal material contract fixes shader, profile, inputs and bounded layer parameters",
+                   "Layered normal material report validates asset and profile wiring",
                    "BasePass controller maps ten views through MaterialPropertyBlock without cloning materials",
                    "BasePass bootstrap creates the ten-view scene, material and Editor report",
                    "BasePass contract fixes the URP forward path and ten debug views",
@@ -248,7 +260,8 @@
                    "Imported source uses naming prefix: SM_CC0_DisplayCrate.obj",
                    "Imported source uses naming prefix: T_CC0_Crate_BaseColor.png",
                    "Imported source uses naming prefix: T_PBR_Normal.png",
-                   "Imported source uses naming prefix: T_PBR_ORM.png"
+                   "Imported source uses naming prefix: T_PBR_ORM.png",
+                   "Material instance profile uses naming prefix: MI_LayeredNormal.asset"
                ],
     "errors":  [
 

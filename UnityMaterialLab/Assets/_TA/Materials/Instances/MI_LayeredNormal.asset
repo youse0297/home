@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e8de37dfecf4ee7bca6f14fb9fca10c, type: 3}
+  m_Name: MI_LayeredNormal
+  m_EditorClassIdentifier: 
+  baseColor: {fileID: 2800000, guid: 302a2545038ceb14a8b817cdde6a9157, type: 3}
+  normal: {fileID: 2800000, guid: de1a8489795955a4cb993efd84be01a2, type: 3}
+  orm: {fileID: 2800000, guid: 0a5f4eea2eada7846bf34f6332519f64, type: 3}
+  detailNormal: {fileID: 2800000, guid: de1a8489795955a4cb993efd84be01a2, type: 3}
+  macroNormal: {fileID: 2800000, guid: de1a8489795955a4cb993efd84be01a2, type: 3}
+  baseColorTint: {r: 1, g: 1, b: 1, a: 1}
+  normalScale: 1
+  detailNormalScale: 0.75
+  detailNormalWeight: 0.65
+  macroNormalScale: 0.5
+  macroNormalWeight: 0.35
+  metallic: 0.15
+  roughness: 0.42
+  occlusionStrength: 1
+  alpha: 1

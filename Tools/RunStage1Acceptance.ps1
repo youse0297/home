@@ -274,6 +274,11 @@ Add-ScriptGate -Name 'Normal Layer Blending' `
     -ExpectedPattern 'UNITY_NORMAL_LAYER_BLENDING: PASS' `
     -Evidence 'UnityMaterialLab/Reports/NormalLayerBlendingValidation.json' `
     -ReportName 'NormalLayerBlendingValidation.json'
+Add-ScriptGate -Name 'Layered Normal Material' `
+    -ScriptName 'ValidateLayeredNormalMaterial.ps1' `
+    -ExpectedPattern 'UNITY_LAYERED_NORMAL_MATERIAL: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/LayeredNormalMaterialValidation.json' `
+    -ReportName 'LayeredNormalMaterialValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -350,6 +355,7 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/WaveWindAnimationValidation.json',
         'UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json',
         'UnityMaterialLab/Reports/NormalLayerBlendingValidation.json',
+        'UnityMaterialLab/Reports/LayeredNormalMaterialValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

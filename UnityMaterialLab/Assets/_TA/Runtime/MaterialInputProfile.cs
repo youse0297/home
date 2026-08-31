@@ -17,12 +17,28 @@ namespace TA.MaterialLab
         public Texture2D normal;
         public Texture2D orm;
 
+        [Header("Optional normal layers")]
+        public Texture2D detailNormal;
+        public Texture2D macroNormal;
+
         [Header("Instance parameters")]
         [ColorUsage(true, true)]
         public Color baseColorTint = Color.white;
 
         [Range(0.0f, 2.0f)]
         public float normalScale = 1.0f;
+
+        [Range(0.0f, 2.0f)]
+        public float detailNormalScale = 1.0f;
+
+        [Range(0.0f, 1.0f)]
+        public float detailNormalWeight;
+
+        [Range(0.0f, 2.0f)]
+        public float macroNormalScale = 1.0f;
+
+        [Range(0.0f, 1.0f)]
+        public float macroNormalWeight;
 
         [Range(0.0f, 1.0f)]
         public float metallic;
@@ -46,11 +62,17 @@ namespace TA.MaterialLab
 
             SetTextureIfSupported(material, "_BaseMap", baseColor);
             SetTextureIfSupported(material, "_BumpMap", normal);
+            SetTextureIfSupported(material, "_DetailNormalMap", detailNormal);
+            SetTextureIfSupported(material, "_MacroNormalMap", macroNormal);
             SetTextureIfSupported(material, "_OcclusionMap", orm);
             SetTextureIfSupported(material, "_ORMMap", orm);
             SetColorIfSupported(material, "_BaseColor", baseColorTint);
             SetColorIfSupported(material, "_Color", baseColorTint);
             SetFloatIfSupported(material, "_BumpScale", normalScale);
+            SetFloatIfSupported(material, "_DetailNormalScale", detailNormalScale);
+            SetFloatIfSupported(material, "_DetailNormalWeight", detailNormalWeight);
+            SetFloatIfSupported(material, "_MacroNormalScale", macroNormalScale);
+            SetFloatIfSupported(material, "_MacroNormalWeight", macroNormalWeight);
             SetFloatIfSupported(material, "_Metallic", metallic);
             SetFloatIfSupported(material, "_Smoothness", 1.0f - roughness);
             SetFloatIfSupported(material, "_OcclusionStrength", occlusionStrength);
@@ -66,6 +88,16 @@ namespace TA.MaterialLab
                    IsFinite(alpha) &&
                    normalScale >= MinimumNormalScale &&
                    normalScale <= MaximumNormalScale &&
+                   IsFinite(detailNormalScale) &&
+                   IsFinite(detailNormalWeight) &&
+                   IsFinite(macroNormalScale) &&
+                   IsFinite(macroNormalWeight) &&
+                   detailNormalScale >= MinimumNormalScale &&
+                   detailNormalScale <= MaximumNormalScale &&
+                   detailNormalWeight >= 0.0f && detailNormalWeight <= 1.0f &&
+                   macroNormalScale >= MinimumNormalScale &&
+                   macroNormalScale <= MaximumNormalScale &&
+                   macroNormalWeight >= 0.0f && macroNormalWeight <= 1.0f &&
                    metallic >= 0.0f && metallic <= 1.0f &&
                    roughness >= 0.0f && roughness <= 1.0f &&
                    occlusionStrength >= 0.0f && occlusionStrength <= 1.0f &&
@@ -75,6 +107,10 @@ namespace TA.MaterialLab
         public void ClampToValidRanges()
         {
             normalScale = ClampFinite(normalScale, MinimumNormalScale, MaximumNormalScale, 1.0f);
+            detailNormalScale = ClampFinite(detailNormalScale, MinimumNormalScale, MaximumNormalScale, 1.0f);
+            detailNormalWeight = ClampFinite(detailNormalWeight, 0.0f, 1.0f, 0.0f);
+            macroNormalScale = ClampFinite(macroNormalScale, MinimumNormalScale, MaximumNormalScale, 1.0f);
+            macroNormalWeight = ClampFinite(macroNormalWeight, 0.0f, 1.0f, 0.0f);
             metallic = ClampFinite(metallic, 0.0f, 1.0f, 0.0f);
             roughness = ClampFinite(roughness, 0.0f, 1.0f, 0.5f);
             occlusionStrength = ClampFinite(occlusionStrength, 0.0f, 1.0f, 1.0f);
