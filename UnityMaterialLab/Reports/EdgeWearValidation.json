@@ -1,110 +1,116 @@
 ﻿{
     "status":  "PASS",
     "version":  "1.0.0",
-    "sourceLibraryVersion":  "1.10.0",
-    "publicSymbolCount":  3,
-    "dependencyCount":  1,
+    "sourceLibraryVersion":  "1.11.0",
+    "publicSymbolCount":  4,
+    "dependencyCount":  2,
     "fixtureCount":  8,
     "invariantCount":  5,
     "limitationCount":  3,
     "tolerance":  1E-06,
-    "maximumError":  0,
-    "generatedAtUtc":  "2026-08-31T13:14:24.0105480Z",
+    "maximumError":  1.1102230246251565E-16,
+    "generatedAtUtc":  "2026-08-31T13:14:24.9621378Z",
     "checks":  [
                    {
-                       "id":  "IDENTITY_STRENGTH_ZERO",
-                       "pass":  true,
-                       "detail":  "actual=1",
-                       "maximumError":  0
-                   },
-                   {
-                       "id":  "SINE_CENTER",
-                       "pass":  true,
-                       "detail":  "actual=0.5",
-                       "maximumError":  0
-                   },
-                   {
-                       "id":  "SINE_CREST",
-                       "pass":  true,
-                       "detail":  "actual=1",
-                       "maximumError":  0
-                   },
-                   {
-                       "id":  "SINE_TROUGH",
+                       "id":  "FRONT_FACE_ZERO",
                        "pass":  true,
                        "detail":  "actual=0",
                        "maximumError":  0
                    },
                    {
-                       "id":  "PARTIAL_STRENGTH",
+                       "id":  "GRAZING_FULL",
+                       "pass":  true,
+                       "detail":  "actual=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "THRESHOLD_MIDPOINT",
+                       "pass":  true,
+                       "detail":  "actual=0.5",
+                       "maximumError":  1.1102230246251565E-16
+                   },
+                   {
+                       "id":  "STRENGTH_HALF",
                        "pass":  true,
                        "detail":  "actual=0.5",
                        "maximumError":  0
                    },
                    {
-                       "id":  "CONTRAST_ZERO",
+                       "id":  "COLOR_MIX",
                        "pass":  true,
-                       "detail":  "actual=0.5",
+                       "detail":  "actual=0.4, 0.35, 0.3",
+                       "maximumError":  5.5511151231257827E-17
+                   },
+                   {
+                       "id":  "ROUGHNESS_BOOST",
+                       "pass":  true,
+                       "detail":  "actual=0.7",
                        "maximumError":  0
                    },
                    {
-                       "id":  "LAYER_WEIGHT_MULTIPLY",
+                       "id":  "ROUGHNESS_PARTIAL",
                        "pass":  true,
-                       "detail":  "actual=0.2",
+                       "detail":  "actual=0.55",
                        "maximumError":  0
                    },
                    {
-                       "id":  "LAYER_WEIGHT_CLAMP",
+                       "id":  "INPUT_CLAMP",
                        "pass":  true,
                        "detail":  "actual=0",
                        "maximumError":  0
                    },
                    {
-                       "id":  "PUBLIC_SYMBOL_TA_ProceduralMaskConfig",
+                       "id":  "PUBLIC_SYMBOL_TA_EdgeWearConfig",
                        "pass":  true,
-                       "detail":  "TA_ProceduralMaskConfig",
+                       "detail":  "TA_EdgeWearConfig",
                        "maximumError":  0
                    },
                    {
-                       "id":  "PUBLIC_SYMBOL_TA_EvaluateProceduralMask",
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateEdgeWear",
                        "pass":  true,
-                       "detail":  "TA_EvaluateProceduralMask",
+                       "detail":  "TA_EvaluateEdgeWear",
                        "maximumError":  0
                    },
                    {
-                       "id":  "PUBLIC_SYMBOL_TA_ApplyProceduralMask",
+                       "id":  "PUBLIC_SYMBOL_TA_ApplyEdgeWearColor",
                        "pass":  true,
-                       "detail":  "TA_ApplyProceduralMask",
+                       "detail":  "TA_ApplyEdgeWearColor",
                        "maximumError":  0
                    },
                    {
-                       "id":  "BOUNDED_OUTPUT",
+                       "id":  "PUBLIC_SYMBOL_TA_ApplyEdgeWearRoughness",
                        "pass":  true,
-                       "detail":  "Mask strength and contrast are bounded",
+                       "detail":  "TA_ApplyEdgeWearRoughness",
                        "maximumError":  0
                    },
                    {
-                       "id":  "EXPLICIT_TIME",
+                       "id":  "GRAZING_SIGNAL",
                        "pass":  true,
-                       "detail":  "Time is an explicit function input",
+                       "detail":  "Edge wear derives a grazing-angle signal",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BOUNDED_PARAMETERS",
+                       "pass":  true,
+                       "detail":  "Edge wear parameters are bounded",
                        "maximumError":  0
                    },
                    {
                        "id":  "CONSUMER_WIRING",
                        "pass":  true,
-                       "detail":  "BasePass evaluates and applies the mask",
+                       "detail":  "BasePass applies edge wear to color and roughness",
                        "maximumError":  0
                    },
                    {
                        "id":  "MATERIAL_PARAMETERS",
                        "pass":  true,
-                       "detail":  "Material serializes procedural mask parameters",
+                       "detail":  "Material serializes edge wear parameters",
                        "maximumError":  0
                    },
                    {
                        "id":  "PROFILE_PARAMETERS",
                        "pass":  true,
-                       "detail":  "Profile serializes procedural mask parameters",
+                       "detail":  "Profile serializes edge wear parameters",
                        "maximumError":  0
                    }
                ],

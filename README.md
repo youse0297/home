@@ -156,7 +156,7 @@ OBJ 读取、顶点着色、三角形覆盖、深度缓冲、纹理/UV 采样、
 
 URP Forward 的 BasePass 调试材质现提供 10 档表面/光照视图，并固定 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse` 的线性 HDR 加法关系。使用 Unity 菜单可生成两行五列对照场景；无许可证时可运行离线公式板和静态门禁。完整模式、捕获检查点与验收命令见 [Unity BasePass 与光照拆解](docs/UNITY_BASEPASS_LIGHTING_DECOMPOSITION.md)。
 
-Renderer 侧共享 HLSL 已拆分为 13 个模块，并由 `TA_ShaderLibrary.hlsl` 稳定聚合。`TA_VertexDeformation.hlsl` 通过结构化输入、配置、结果和单一入口统一高度、波浪、风摆顺序，`TA_ProceduralMask.hlsl` 提供显式时间驱动的 UV 程序化遮罩。模块边界见 [Unity 顶点位移模块化](docs/UNITY_VERTEX_DISPLACEMENT_MODULARIZATION.md) 和 [Unity 程序化遮罩](docs/UNITY_PROCEDURAL_MASK.md)。
+Renderer 侧共享 HLSL 已拆分为 14 个模块，并由 `TA_ShaderLibrary.hlsl` 稳定聚合。`TA_VertexDeformation.hlsl` 通过结构化输入、配置、结果和单一入口统一高度、波浪、风摆顺序，`TA_ProceduralMask.hlsl` 提供显式时间驱动的 UV 程序化遮罩，`TA_EdgeWear.hlsl` 提供视角掠射边缘磨损。模块边界见 [Unity 顶点位移模块化](docs/UNITY_VERTEX_DISPLACEMENT_MODULARIZATION.md)、[Unity 程序化遮罩](docs/UNITY_PROCEDURAL_MASK.md) 和 [Unity 边缘磨损](docs/UNITY_EDGE_WEAR.md)。
 
 ## 使用示例
 

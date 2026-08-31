@@ -31,6 +31,7 @@
 | Unity | Normal Layer Blending | 切线空间 RNM、多层顺序、权重夹取与 7 组 fixture 通过 |
 | Unity | Layered Normal Material | 多层法线材质、Profile 引用与非零层权重通过 |
 | Unity | Procedural Mask | 显式时间驱动的 UV 程序化遮罩、边界夹取与材质接线通过 |
+| Unity | Edge Wear | 视角掠射边缘磨损、颜色/粗糙度响应与参数夹取通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁

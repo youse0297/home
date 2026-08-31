@@ -1,0 +1,79 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.11.0",
+  "source": "Assets/_TA/Shaders/Library/TA_EdgeWear.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "material": "Assets/_TA/Materials/MAT_LayeredNormal.mat",
+  "profile": "Assets/_TA/Materials/Instances/MI_LayeredNormal.asset",
+  "publicSymbols": ["TA_EdgeWearConfig", "TA_EvaluateEdgeWear", "TA_ApplyEdgeWearColor", "TA_ApplyEdgeWearRoughness"],
+  "dependencies": ["common", "vector"],
+  "model": {
+    "space": "World space normal and view direction",
+    "signal": "Grazing angle 1 - saturate(N dot V)",
+    "falloff": "Thresholded smoothstep with a minimum softness",
+    "responses": "Wear mask blends color toward wearColor and raises roughness toward one"
+  },
+  "fixtures": [
+    {
+      "id": "FRONT_FACE_ZERO",
+      "function": "TA_EvaluateEdgeWear",
+      "input": { "normal": [0.0, 0.0, 1.0], "view": [0.0, 0.0, 1.0], "threshold": 0.65, "softness": 0.2, "strength": 1.0, "roughnessBoost": 0.25, "wearColor": [1.0, 0.4, 0.1] },
+      "expected": 0.0
+    },
+    {
+      "id": "GRAZING_FULL",
+      "function": "TA_EvaluateEdgeWear",
+      "input": { "normal": [0.0, 0.0, 1.0], "view": [1.0, 0.0, 0.0], "threshold": 0.65, "softness": 0.2, "strength": 1.0, "roughnessBoost": 0.25, "wearColor": [1.0, 0.4, 0.1] },
+      "expected": 1.0
+    },
+    {
+      "id": "THRESHOLD_MIDPOINT",
+      "function": "TA_EvaluateEdgeWear",
+      "input": { "normal": [0.0, 0.0, 1.0], "view": [0.8, 0.0, 0.6], "threshold": 0.25, "softness": 0.3, "strength": 1.0, "roughnessBoost": 0.25, "wearColor": [1.0, 0.4, 0.1] },
+      "expected": 0.5
+    },
+    {
+      "id": "STRENGTH_HALF",
+      "function": "TA_EvaluateEdgeWear",
+      "input": { "normal": [0.0, 0.0, 1.0], "view": [1.0, 0.0, 0.0], "threshold": 0.65, "softness": 0.2, "strength": 0.5, "roughnessBoost": 0.25, "wearColor": [1.0, 0.4, 0.1] },
+      "expected": 0.5
+    },
+    {
+      "id": "COLOR_MIX",
+      "function": "TA_ApplyEdgeWearColor",
+      "input": { "baseColor": [0.2, 0.3, 0.4], "wearColor": [1.0, 0.5, 0.0], "wearMask": 0.25 },
+      "expected": [0.4, 0.35, 0.3]
+    },
+    {
+      "id": "ROUGHNESS_BOOST",
+      "function": "TA_ApplyEdgeWearRoughness",
+      "input": { "roughness": 0.4, "roughnessBoost": 0.5, "wearMask": 1.0 },
+      "expected": 0.7
+    },
+    {
+      "id": "ROUGHNESS_PARTIAL",
+      "function": "TA_ApplyEdgeWearRoughness",
+      "input": { "roughness": 0.4, "roughnessBoost": 0.5, "wearMask": 0.5 },
+      "expected": 0.55
+    },
+    {
+      "id": "INPUT_CLAMP",
+      "function": "TA_EvaluateEdgeWear",
+      "input": { "normal": [0.0, 0.0, 2.0], "view": [1.0, 0.0, 0.0], "threshold": 2.0, "softness": 0.0, "strength": 2.0, "roughnessBoost": 2.0, "wearColor": [1.0, 0.4, 0.1] },
+      "expected": 0.0
+    }
+  ],
+  "invariants": [
+    "Normal and view inputs are safely normalized before the grazing signal",
+    "Threshold, softness, strength and roughness boost remain bounded",
+    "Front-facing surfaces produce no wear when below threshold",
+    "Color response is bounded and roughness response never falls below the shared minimum",
+    "The same computed mask drives both color and roughness responses"
+  ],
+  "limitations": [
+    "The current signal is view-angle based and does not use curvature, baked AO or a cavity map",
+    "Wear is consumed by the BasePass sample material; other shaders require explicit edge-wear wiring",
+    "Visual confirmation still requires a licensed Unity Editor"
+  ]
+}

@@ -56,6 +56,10 @@ Material:
     - _ProceduralMaskPhase: 0
     - _ProceduralMaskContrast: 1.4
     - _ProceduralMaskStrength: 0.75
+    - _EdgeWearThreshold: 0.58
+    - _EdgeWearSoftness: 0.24
+    - _EdgeWearStrength: 0.7
+    - _EdgeWearRoughnessBoost: 0.35
     - _AOStrength: 1
     - _RoughnessScale: 1
     - _MetallicScale: 1
@@ -67,4 +71,5 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _ProceduralMaskScale: {r: 6, g: 6, b: 0, a: 0}
     - _ProceduralMaskOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _EdgeWearColor: {r: 1, g: 0.42, b: 0.08, a: 1}
   m_BuildTextureStacks: []

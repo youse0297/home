@@ -284,6 +284,11 @@ Add-ScriptGate -Name 'Procedural Mask' `
     -ExpectedPattern 'UNITY_PROCEDURAL_MASK: PASS' `
     -Evidence 'UnityMaterialLab/Reports/ProceduralMaskValidation.json' `
     -ReportName 'ProceduralMaskValidation.json'
+Add-ScriptGate -Name 'Edge Wear' `
+    -ScriptName 'ValidateEdgeWear.ps1' `
+    -ExpectedPattern 'UNITY_EDGE_WEAR: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/EdgeWearValidation.json' `
+    -ReportName 'EdgeWearValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -362,6 +367,7 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/NormalLayerBlendingValidation.json',
         'UnityMaterialLab/Reports/LayeredNormalMaterialValidation.json',
         'UnityMaterialLab/Reports/ProceduralMaskValidation.json',
+        'UnityMaterialLab/Reports/EdgeWearValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

@@ -59,6 +59,22 @@ namespace TA.MaterialLab
         [Range(0.0f, 1.0f)]
         public float proceduralMaskStrength;
 
+        [Header("Edge wear")]
+        [ColorUsage(true, true)]
+        public Color edgeWearColor = Color.white;
+
+        [Range(0.0f, 1.0f)]
+        public float edgeWearThreshold = 0.65f;
+
+        [Range(0.001f, 1.0f)]
+        public float edgeWearSoftness = 0.2f;
+
+        [Range(0.0f, 1.0f)]
+        public float edgeWearStrength;
+
+        [Range(0.0f, 1.0f)]
+        public float edgeWearRoughnessBoost = 0.25f;
+
         [Range(0.0f, 1.0f)]
         public float metallic;
 
@@ -107,6 +123,11 @@ namespace TA.MaterialLab
             SetFloatIfSupported(material, "_ProceduralMaskPhase", proceduralMaskPhase);
             SetFloatIfSupported(material, "_ProceduralMaskContrast", proceduralMaskContrast);
             SetFloatIfSupported(material, "_ProceduralMaskStrength", proceduralMaskStrength);
+            SetColorIfSupported(material, "_EdgeWearColor", edgeWearColor);
+            SetFloatIfSupported(material, "_EdgeWearThreshold", edgeWearThreshold);
+            SetFloatIfSupported(material, "_EdgeWearSoftness", edgeWearSoftness);
+            SetFloatIfSupported(material, "_EdgeWearStrength", edgeWearStrength);
+            SetFloatIfSupported(material, "_EdgeWearRoughnessBoost", edgeWearRoughnessBoost);
             SetFloatIfSupported(material, "_Metallic", metallic);
             SetFloatIfSupported(material, "_Smoothness", 1.0f - roughness);
             SetFloatIfSupported(material, "_OcclusionStrength", occlusionStrength);
@@ -146,6 +167,16 @@ namespace TA.MaterialLab
                    proceduralMaskPhase >= -6.2831853f && proceduralMaskPhase <= 6.2831853f &&
                    proceduralMaskContrast >= 0.0f && proceduralMaskContrast <= 4.0f &&
                    proceduralMaskStrength >= 0.0f && proceduralMaskStrength <= 1.0f &&
+                   IsFinite(edgeWearColor.r) && IsFinite(edgeWearColor.g) &&
+                   IsFinite(edgeWearColor.b) && IsFinite(edgeWearColor.a) &&
+                   IsFinite(edgeWearThreshold) && IsFinite(edgeWearSoftness) &&
+                   IsFinite(edgeWearStrength) && IsFinite(edgeWearRoughnessBoost) &&
+                   edgeWearColor.r >= 0.0f && edgeWearColor.g >= 0.0f &&
+                   edgeWearColor.b >= 0.0f && edgeWearColor.a >= 0.0f &&
+                   edgeWearThreshold >= 0.0f && edgeWearThreshold <= 1.0f &&
+                   edgeWearSoftness >= 0.001f && edgeWearSoftness <= 1.0f &&
+                   edgeWearStrength >= 0.0f && edgeWearStrength <= 1.0f &&
+                   edgeWearRoughnessBoost >= 0.0f && edgeWearRoughnessBoost <= 1.0f &&
                    metallic >= 0.0f && metallic <= 1.0f &&
                    roughness >= 0.0f && roughness <= 1.0f &&
                    occlusionStrength >= 0.0f && occlusionStrength <= 1.0f &&
@@ -168,6 +199,14 @@ namespace TA.MaterialLab
             proceduralMaskPhase = ClampFinite(proceduralMaskPhase, -6.2831853f, 6.2831853f, 0.0f);
             proceduralMaskContrast = ClampFinite(proceduralMaskContrast, 0.0f, 4.0f, 1.0f);
             proceduralMaskStrength = ClampFinite(proceduralMaskStrength, 0.0f, 1.0f, 0.0f);
+            edgeWearColor.r = ClampFinite(edgeWearColor.r, 0.0f, float.MaxValue, 1.0f);
+            edgeWearColor.g = ClampFinite(edgeWearColor.g, 0.0f, float.MaxValue, 1.0f);
+            edgeWearColor.b = ClampFinite(edgeWearColor.b, 0.0f, float.MaxValue, 1.0f);
+            edgeWearColor.a = ClampFinite(edgeWearColor.a, 0.0f, float.MaxValue, 1.0f);
+            edgeWearThreshold = ClampFinite(edgeWearThreshold, 0.0f, 1.0f, 0.65f);
+            edgeWearSoftness = ClampFinite(edgeWearSoftness, 0.001f, 1.0f, 0.2f);
+            edgeWearStrength = ClampFinite(edgeWearStrength, 0.0f, 1.0f, 0.0f);
+            edgeWearRoughnessBoost = ClampFinite(edgeWearRoughnessBoost, 0.0f, 1.0f, 0.25f);
             metallic = ClampFinite(metallic, 0.0f, 1.0f, 0.0f);
             roughness = ClampFinite(roughness, 0.0f, 1.0f, 0.5f);
             occlusionStrength = ClampFinite(occlusionStrength, 0.0f, 1.0f, 1.0f);

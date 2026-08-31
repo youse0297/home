@@ -19,6 +19,11 @@ Shader "TA/BasePass Lighting Decomposition"
         _ProceduralMaskPhase("Procedural Mask Phase", Range(-6.2831853, 6.2831853)) = 0
         _ProceduralMaskContrast("Procedural Mask Contrast", Range(0, 4)) = 1
         _ProceduralMaskStrength("Procedural Mask Strength", Range(0, 1)) = 0
+        [HDR] _EdgeWearColor("Edge Wear Color", Color) = (1, 1, 1, 1)
+        _EdgeWearThreshold("Edge Wear Threshold", Range(0, 1)) = 0.65
+        _EdgeWearSoftness("Edge Wear Softness", Range(0.001, 1)) = 0.2
+        _EdgeWearStrength("Edge Wear Strength", Range(0, 1)) = 0
+        _EdgeWearRoughnessBoost("Edge Wear Roughness Boost", Range(0, 1)) = 0.25
         _ORMMap("ORM (R=AO G=Roughness B=Metallic)", 2D) = "white" {}
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _RoughnessScale("Roughness Scale", Range(0, 1)) = 1
@@ -95,6 +100,7 @@ Shader "TA/BasePass Lighting Decomposition"
                 float4 _WindDirection;
                 float4 _ProceduralMaskScale;
                 float4 _ProceduralMaskOffset;
+                half4 _EdgeWearColor;
                 half4 _BaseColor;
                 half _BumpScale;
                 half _DetailNormalScale;
@@ -106,6 +112,10 @@ Shader "TA/BasePass Lighting Decomposition"
                 half _ProceduralMaskPhase;
                 half _ProceduralMaskContrast;
                 half _ProceduralMaskStrength;
+                half _EdgeWearThreshold;
+                half _EdgeWearSoftness;
+                half _EdgeWearStrength;
+                half _EdgeWearRoughnessBoost;
                 half _AOStrength;
                 half _RoughnessScale;
                 half _MetallicScale;
@@ -266,11 +276,33 @@ Shader "TA/BasePass Lighting Decomposition"
                     input.normalWS,
                     input.tangentWS
                 );
+                half3 viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+                TA_EdgeWearConfig edgeWearConfig;
+                edgeWearConfig.threshold = _EdgeWearThreshold;
+                edgeWearConfig.softness = _EdgeWearSoftness;
+                edgeWearConfig.strength = _EdgeWearStrength;
+                edgeWearConfig.roughnessBoost = _EdgeWearRoughnessBoost;
+                edgeWearConfig.wearColor = _EdgeWearColor.rgb;
+                half edgeWearMask = TA_EvaluateEdgeWear(
+                    normalWS,
+                    viewDirectionWS,
+                    edgeWearConfig
+                );
+                pbrInput.baseColor = TA_ApplyEdgeWearColor(
+                    pbrInput.baseColor,
+                    edgeWearConfig,
+                    edgeWearMask
+                );
+                pbrInput.roughness = TA_ApplyEdgeWearRoughness(
+                    pbrInput.roughness,
+                    edgeWearConfig,
+                    edgeWearMask
+                );
                 TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
 
                 Light mainLight = GetMainLight(input.shadowCoord);
                 TA_LightingInput lightingInput;
-                lightingInput.viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+                lightingInput.viewDirectionWS = viewDirectionWS;
                 lightingInput.lightDirectionWS = mainLight.direction;
                 lightingInput.lightColor = mainLight.color;
                 lightingInput.lightAttenuation = mainLight.distanceAttenuation * mainLight.shadowAttenuation;

@@ -448,6 +448,11 @@ namespace TA.MaterialLab.Editor
             profile.proceduralMaskPhase = 0.0f;
             profile.proceduralMaskContrast = 1.4f;
             profile.proceduralMaskStrength = 0.75f;
+            profile.edgeWearColor = new Color(1.0f, 0.42f, 0.08f, 1.0f);
+            profile.edgeWearThreshold = 0.58f;
+            profile.edgeWearSoftness = 0.24f;
+            profile.edgeWearStrength = 0.7f;
+            profile.edgeWearRoughnessBoost = 0.35f;
             profile.metallic = 0.15f;
             profile.roughness = 0.42f;
             profile.occlusionStrength = 1.0f;
@@ -968,6 +973,7 @@ namespace TA.MaterialLab.Editor
                 Check(layeredNormalProfile.detailNormalWeight > 0.0f && layeredNormalProfile.macroNormalWeight > 0.0f, "Layered normal profile enables both layers", report);
                 Check(layeredNormalMaterial.HasProperty("_ProceduralMaskStrength") && layeredNormalProfile.proceduralMaskStrength > 0.0f, "Layered normal profile enables procedural mask", report);
                 Check(layeredNormalProfile.HasValidParameters(), "Layered normal procedural mask parameters are valid", report);
+                Check(layeredNormalMaterial.HasProperty("_EdgeWearStrength") && layeredNormalProfile.edgeWearStrength > 0.0f, "Layered normal profile enables edge wear", report);
             }
             if (masterMaterial != null)
             {

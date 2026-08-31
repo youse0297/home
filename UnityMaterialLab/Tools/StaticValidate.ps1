@@ -95,6 +95,8 @@ $hlslLibraryCommonPath = Join-Path $hlslLibraryRootPath 'TA_Common.hlsl'
 $hlslLibraryVectorPath = Join-Path $hlslLibraryRootPath 'TA_Vector.hlsl'
 $hlslLibraryProceduralMaskPath = Join-Path $hlslLibraryRootPath 'TA_ProceduralMask.hlsl'
 $hlslLibraryProceduralMaskMetaPath = Join-Path $hlslLibraryRootPath 'TA_ProceduralMask.hlsl.meta'
+$hlslLibraryEdgeWearPath = Join-Path $hlslLibraryRootPath 'TA_EdgeWear.hlsl'
+$hlslLibraryEdgeWearMetaPath = Join-Path $hlslLibraryRootPath 'TA_EdgeWear.hlsl.meta'
 $hlslLibrarySamplingPath = Join-Path $hlslLibraryRootPath 'TA_Sampling.hlsl'
 $hlslLibraryVertexDisplacementPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl'
 $hlslLibraryVertexDisplacementMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl.meta'
@@ -197,6 +199,7 @@ Add-Check ((@(
     $hlslLibraryTypesPath,
     $hlslLibraryCommonPath,
     $hlslLibraryVectorPath,
+    $hlslLibraryEdgeWearPath,
     $hlslLibraryProceduralMaskPath,
     $hlslLibrarySamplingPath,
     $hlslLibraryVertexDisplacementPath,
@@ -208,7 +211,7 @@ Add-Check ((@(
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all thirteen modules'
+    'HLSL source library contains all fourteen modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
     'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType Leaf) `
@@ -219,6 +222,8 @@ Add-Check (Test-Path -LiteralPath $hlslLibraryNormalBlendMetaPath -PathType Leaf
     'HLSL normal blend module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryProceduralMaskMetaPath -PathType Leaf) `
     'HLSL procedural mask module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryEdgeWearMetaPath -PathType Leaf) `
+    'HLSL edge wear module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -309,6 +314,18 @@ Add-Check (Test-Path -LiteralPath $proceduralMaskValidationPath -PathType Leaf) 
     'Procedural mask validator exists'
 Add-Check (Test-Path -LiteralPath $proceduralMaskReportPath -PathType Leaf) `
     'Procedural mask validation report exists'
+$edgeWearManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\EdgeWear.json'
+$edgeWearManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\EdgeWear.json.meta'
+$edgeWearValidationPath = Join-Path $projectPath 'Tools\ValidateEdgeWear.ps1'
+$edgeWearReportPath = Join-Path $projectPath 'Reports\EdgeWearValidation.json'
+Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
+    'Edge wear contract exists'
+Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
+    'Edge wear contract meta exists'
+Add-Check (Test-Path -LiteralPath $edgeWearValidationPath -PathType Leaf) `
+    'Edge wear validator exists'
+Add-Check (Test-Path -LiteralPath $edgeWearReportPath -PathType Leaf) `
+    'Edge wear validation report exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -909,6 +926,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
     Add-Check ($hlslLibraryAggregate -match '#include "TA_ShaderTypes\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Common\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Vector\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_EdgeWear\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_ProceduralMask\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_NormalBlend\.hlsl"' -and
@@ -920,6 +938,17 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryEdgeWearPath) {
+    $hlslLibraryEdgeWear = Get-Content -LiteralPath $hlslLibraryEdgeWearPath -Raw
+    Add-Check ($hlslLibraryEdgeWear -match 'struct TA_EdgeWearConfig' -and
+        $hlslLibraryEdgeWear -match 'TA_EvaluateEdgeWear' -and
+        $hlslLibraryEdgeWear -match 'TA_ApplyEdgeWearColor' -and
+        $hlslLibraryEdgeWear -match 'TA_ApplyEdgeWearRoughness' -and
+        $hlslLibraryEdgeWear -match '1\.0h - saturate\(dot\(' -and
+        $hlslLibraryEdgeWear -match 'TA_SanitizePerceptualRoughness') `
+        'HLSL edge wear module fixes grazing mask, bounded responses and roughness policy'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryProceduralMaskPath) {
@@ -1035,20 +1064,20 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.10.0' -and
+        $hlslLibraryManifest.version -eq '1.11.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 13 -and
-        @($hlslLibraryManifest.invariants).Count -eq 16) `
+        @($hlslLibraryManifest.modules).Count -eq 14 -and
+        @($hlslLibraryManifest.invariants).Count -eq 17) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 13 -and
-        $hlslLibraryReport.publicSymbolCount -eq 45 -and
+        $hlslLibraryReport.moduleCount -eq 14 -and
+        $hlslLibraryReport.publicSymbolCount -eq 49 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-    'HLSL source library report validates thirteen modules and forty-five public symbols'
+    'HLSL source library report validates fourteen modules and forty-nine public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
@@ -1310,6 +1339,31 @@ if (Test-Path -LiteralPath $layeredNormalMaterialReportPath) {
         $layeredNormalMaterialReport.checkCount -eq 8 -and
         @($layeredNormalMaterialReport.failures).Count -eq 0) `
         'Layered normal material report validates asset and profile wiring'
+}
+if (Test-Path -LiteralPath $edgeWearManifestPath) {
+    $edgeWearManifest = Get-Content -LiteralPath $edgeWearManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($edgeWearManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $edgeWearManifest.version -eq '1.0.0' -and
+        $edgeWearManifest.sourceLibraryVersion -eq '1.11.0' -and
+        @($edgeWearManifest.publicSymbols).Count -eq 4 -and
+        @($edgeWearManifest.dependencies).Count -eq 2 -and
+        @($edgeWearManifest.fixtures).Count -eq 8 -and
+        @($edgeWearManifest.invariants).Count -eq 5 -and
+        @($edgeWearManifest.limitations).Count -eq 3) `
+        'Edge wear contract fixes four entry points, eight fixtures and explicit response policies'
+}
+if (Test-Path -LiteralPath $edgeWearReportPath) {
+    $edgeWearReport = Get-Content -LiteralPath $edgeWearReportPath -Raw | ConvertFrom-Json
+    Add-Check ($edgeWearReport.status -eq 'PASS' -and
+        $edgeWearReport.sourceLibraryVersion -eq '1.11.0' -and
+        $edgeWearReport.publicSymbolCount -eq 4 -and
+        $edgeWearReport.dependencyCount -eq 2 -and
+        $edgeWearReport.fixtureCount -eq 8 -and
+        $edgeWearReport.invariantCount -eq 5 -and
+        $edgeWearReport.limitationCount -eq 3 -and
+        $edgeWearReport.maximumError -le 0.000001 -and
+        @($edgeWearReport.failures).Count -eq 0) `
+        'Edge wear report validates grazing, color, roughness and clamping fixtures'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

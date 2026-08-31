@@ -30,6 +30,11 @@ MonoBehaviour:
   proceduralMaskPhase: 0
   proceduralMaskContrast: 1.4
   proceduralMaskStrength: 0.75
+  edgeWearColor: {r: 1, g: 0.42, b: 0.08, a: 1}
+  edgeWearThreshold: 0.58
+  edgeWearSoftness: 0.24
+  edgeWearStrength: 0.7
+  edgeWearRoughnessBoost: 0.35
   metallic: 0.15
   roughness: 0.42
   occlusionStrength: 1
