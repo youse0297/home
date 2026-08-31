@@ -1,9 +1,9 @@
 ﻿# Stage 1 Acceptance
 
 - Overall status: `CONDITIONAL_PASS`
-- Required offline gates: `15/15`
+- Required offline gates: `16/16`
 - External runtime acceptance: `BLOCKED`
-- Generated at (UTC): `2026-08-26T15:00:06.3996878Z`
+- Generated at (UTC): `2026-08-31T12:22:53.3662531Z`
 
 ## Gate Results
 
@@ -23,6 +23,7 @@
 | Vertex Displacement Basics | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json` |
 | Wave and Wind Animation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/WaveWindAnimationValidation.json` |
 | Vertex Displacement Modularization | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json` |
+| Normal Layer Blending | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/NormalLayerBlendingValidation.json` |
 | Unity Static Validation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/StaticValidation.json` |
 | RenderDoc Capture Readiness | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/RenderDocCaptureReadiness.json` |
 | Unity Editor Runtime Validation | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md` |

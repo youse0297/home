@@ -1,7 +1,7 @@
 {
   "status": "STATIC_NUMERIC_VALIDATED",
   "version": "1.0.0",
-  "sourceLibraryVersion": "1.8.0",
+  "sourceLibraryVersion": "1.9.0",
   "source": "Assets/_TA/Shaders/Library/TA_VertexAnimation.hlsl",
   "orchestrator": "Assets/_TA/Shaders/Library/TA_VertexDeformation.hlsl",
   "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",

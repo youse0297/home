@@ -269,6 +269,11 @@ Add-ScriptGate -Name 'Vertex Displacement Modularization' `
     -ExpectedPattern 'UNITY_VERTEX_DISPLACEMENT_MODULARIZATION: PASS' `
     -Evidence 'UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json' `
     -ReportName 'VertexDisplacementModularizationValidation.json'
+Add-ScriptGate -Name 'Normal Layer Blending' `
+    -ScriptName 'ValidateNormalLayerBlending.ps1' `
+    -ExpectedPattern 'UNITY_NORMAL_LAYER_BLENDING: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/NormalLayerBlendingValidation.json' `
+    -ReportName 'NormalLayerBlendingValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -344,6 +349,7 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json',
         'UnityMaterialLab/Reports/WaveWindAnimationValidation.json',
         'UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json',
+        'UnityMaterialLab/Reports/NormalLayerBlendingValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

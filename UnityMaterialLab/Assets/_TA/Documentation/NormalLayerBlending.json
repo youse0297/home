@@ -1,0 +1,78 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.9.0",
+  "source": "Assets/_TA/Shaders/Library/TA_NormalBlend.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "publicSymbols": [
+    "TA_NormalLayerTS",
+    "TA_BlendNormalRNMTS",
+    "TA_ApplyNormalLayerTS",
+    "TA_ComposeNormalLayersTS"
+  ],
+  "dependencies": ["vector"],
+  "model": {
+    "space": "Tangent space",
+    "blend": "Reoriented Normal Mapping with a stable orthonormal frame",
+    "weights": "Each layer weight is saturate-clamped to [0,1]",
+    "order": "Base normal then detail layer then macro layer",
+    "normalization": "Every input, intermediate and final output uses safe normalization"
+  },
+  "fixtures": [
+    {
+      "id": "BASE_ONLY",
+      "function": "TA_ComposeNormalLayersTS",
+      "input": { "base": [0.0, 0.0, 1.0], "detail": [0.0, 0.0, 1.0], "detailWeight": 0.0, "macro": [0.0, 0.0, 1.0], "macroWeight": 0.0 },
+      "expected": [0.0, 0.0, 1.0]
+    },
+    {
+      "id": "DETAIL_FULL_WEIGHT",
+      "function": "TA_ComposeNormalLayersTS",
+      "input": { "base": [0.0, 0.0, 1.0], "detail": [0.6, 0.0, 0.8], "detailWeight": 1.0, "macro": [0.0, 0.0, 1.0], "macroWeight": 0.0 },
+      "expected": [0.6, 0.0, 0.8]
+    },
+    {
+      "id": "DETAIL_HALF_WEIGHT",
+      "function": "TA_ComposeNormalLayersTS",
+      "input": { "base": [0.0, 0.0, 1.0], "detail": [0.6, 0.0, 0.8], "detailWeight": 0.5, "macro": [0.0, 0.0, 1.0], "macroWeight": 0.0 },
+      "expected": [0.3162277660, 0.0, 0.9486832981]
+    },
+    {
+      "id": "MACRO_FULL_WEIGHT",
+      "function": "TA_ComposeNormalLayersTS",
+      "input": { "base": [0.0, 0.0, 1.0], "detail": [0.6, 0.0, 0.8], "detailWeight": 0.0, "macro": [0.0, 0.8, 0.6], "macroWeight": 1.0 },
+      "expected": [0.0, 0.8, 0.6]
+    },
+    {
+      "id": "COMBINED_LAYERS",
+      "function": "TA_ComposeNormalLayersTS",
+      "input": { "base": [0.0, 0.0, 1.0], "detail": [0.6, 0.0, 0.8], "detailWeight": 1.0, "macro": [0.0, 0.8, 0.6], "macroWeight": 1.0 },
+      "expected": [-0.28, 0.0, 0.96]
+    },
+    {
+      "id": "WEIGHT_CLAMP",
+      "function": "TA_ComposeNormalLayersTS",
+      "input": { "base": [0.0, 0.0, 1.0], "detail": [0.6, 0.0, 0.8], "detailWeight": 2.0, "macro": [0.0, 0.8, 0.6], "macroWeight": -1.0 },
+      "expected": [0.6, 0.0, 0.8]
+    },
+    {
+      "id": "NON_UNIT_INPUTS",
+      "function": "TA_ComposeNormalLayersTS",
+      "input": { "base": [0.0, 0.0, 2.0], "detail": [3.0, 0.0, 4.0], "detailWeight": 1.0, "macro": [0.0, 4.0, 3.0], "macroWeight": 0.0 },
+      "expected": [0.6, 0.0, 0.8]
+    }
+  ],
+  "invariants": [
+    "All normal layers are combined in tangent space before the TBN transform",
+    "RNM preserves the base layer orientation instead of adding tangent vectors directly",
+    "Layer weights are saturated before interpolation",
+    "Layer order is deterministic: base, detail, macro",
+    "Zero-weight layers are identity operations",
+    "The final normal is finite and safely normalized"
+  ],
+  "limitations": [
+    "The module does not sample textures or own UV transforms",
+    "The current BasePass exposes two optional layers; additional layers require explicit material bindings",
+    "Normal maps remain tangent-space inputs and rely on Unity normal import settings"
+  ]
+}

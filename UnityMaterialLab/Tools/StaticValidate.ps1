@@ -96,6 +96,8 @@ $hlslLibraryVertexAnimationPath = Join-Path $hlslLibraryRootPath 'TA_VertexAnima
 $hlslLibraryVertexAnimationMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexAnimation.hlsl.meta'
 $hlslLibraryVertexDeformationPath = Join-Path $hlslLibraryRootPath 'TA_VertexDeformation.hlsl'
 $hlslLibraryVertexDeformationMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDeformation.hlsl.meta'
+$hlslLibraryNormalBlendPath = Join-Path $hlslLibraryRootPath 'TA_NormalBlend.hlsl'
+$hlslLibraryNormalBlendMetaPath = Join-Path $hlslLibraryRootPath 'TA_NormalBlend.hlsl.meta'
 $hlslLibraryPbrInputPath = Join-Path $hlslLibraryRootPath 'TA_PBRInput.hlsl'
 $hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
@@ -134,6 +136,10 @@ $vertexModularizationManifestPath = Join-Path $projectPath 'Assets\_TA\Documenta
 $vertexModularizationManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\VertexDisplacementModularization.json.meta'
 $vertexModularizationValidationPath = Join-Path $projectPath 'Tools\ValidateVertexDisplacementModularization.ps1'
 $vertexModularizationReportPath = Join-Path $projectPath 'Reports\VertexDisplacementModularizationValidation.json'
+$normalLayerManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\NormalLayerBlending.json'
+$normalLayerManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\NormalLayerBlending.json.meta'
+$normalLayerValidationPath = Join-Path $projectPath 'Tools\ValidateNormalLayerBlending.ps1'
+$normalLayerReportPath = Join-Path $projectPath 'Reports\NormalLayerBlendingValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -181,6 +187,7 @@ Add-Check ((@(
     $hlslLibraryVertexDisplacementPath,
     $hlslLibraryVertexAnimationPath,
     $hlslLibraryVertexDeformationPath,
+    $hlslLibraryNormalBlendPath,
     $hlslLibraryPbrInputPath,
     $hlslLibraryBrdfPath,
     $hlslLibraryLightingPath,
@@ -193,6 +200,8 @@ Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType 
     'HLSL vertex animation module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDeformationMetaPath -PathType Leaf) `
     'HLSL vertex deformation module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryNormalBlendMetaPath -PathType Leaf) `
+    'HLSL normal blend module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -259,6 +268,14 @@ Add-Check (Test-Path -LiteralPath $vertexModularizationValidationPath -PathType 
     'Vertex displacement modularization validator exists'
 Add-Check (Test-Path -LiteralPath $vertexModularizationReportPath -PathType Leaf) `
     'Vertex displacement modularization validation report exists'
+Add-Check (Test-Path -LiteralPath $normalLayerManifestPath -PathType Leaf) `
+    'Normal layer blending contract exists'
+Add-Check (Test-Path -LiteralPath $normalLayerManifestMetaPath -PathType Leaf) `
+    'Normal layer blending contract meta exists'
+Add-Check (Test-Path -LiteralPath $normalLayerValidationPath -PathType Leaf) `
+    'Normal layer blending validator exists'
+Add-Check (Test-Path -LiteralPath $normalLayerReportPath -PathType Leaf) `
+    'Normal layer blending validation report exists'
 Add-Check (Test-Path -LiteralPath $bootstrapPath -PathType Leaf) `
     'Project bootstrap source exists'
 Add-Check (Test-Path -LiteralPath $profilePath -PathType Leaf) `
@@ -805,6 +822,12 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match 'deformationConfig\.windPivotHeightOS = _WindPivotHeight' -and
         $basePassShader -match 'TA_EvaluateVertexDeformationOS\s*\([\s\S]*?GetVertexPositionInputs\(deformation\.positionOS\)') `
         'BasePass composes explicit-time wave and height-anchored wind animation before object transforms'
+    Add-Check ($basePassShader -match '_DetailNormalMap\("Detail Normal Map", 2D\) = "bump"' -and
+        $basePassShader -match '_MacroNormalMap\("Macro Normal Map", 2D\) = "bump"' -and
+        $basePassShader -match '_DetailNormalWeight\("Detail Normal Weight", Range\(0, 1\)\) = 0' -and
+        $basePassShader -match '_MacroNormalWeight\("Macro Normal Weight", Range\(0, 1\)\) = 0' -and
+        $basePassShader -match 'TA_ComposeNormalLayersTS\(') `
+        'BasePass exposes two optional tangent-space normal layers through the shared blend module'
     Add-Check (([Regex]::Matches($basePassShader, '\bTA_EvaluateVertexDeformationOS\s*\(')).Count -eq 1 -and
         $basePassShader -notmatch '\bTA_DecodeVertexDisplacement\s*\(' -and
         $basePassShader -notmatch '\bTA_ApplyVertexDisplacementOS\s*\(' -and
@@ -825,6 +848,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Common\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Vector\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_NormalBlend\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_VertexDisplacement\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_VertexAnimation\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_VertexDeformation\.hlsl"' -and
@@ -833,6 +857,17 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryNormalBlendPath) {
+    $hlslLibraryNormalBlend = Get-Content -LiteralPath $hlslLibraryNormalBlendPath -Raw
+    Add-Check ($hlslLibraryNormalBlend -match 'struct TA_NormalLayerTS' -and
+        $hlslLibraryNormalBlend -match 'TA_BlendNormalRNMTS' -and
+        $hlslLibraryNormalBlend -match 'TA_ApplyNormalLayerTS' -and
+        $hlslLibraryNormalBlend -match 'TA_ComposeNormalLayersTS' -and
+        $hlslLibraryNormalBlend -match 'saturate\(layer\.weight\)' -and
+        $hlslLibraryNormalBlend -match 'cross\(reference, base\)') `
+        'HLSL normal blend module fixes tangent-space RNM, bounded weights and layer order'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryVertexDisplacementPath) {
@@ -927,27 +962,27 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.8.0' -and
+        $hlslLibraryManifest.version -eq '1.9.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 11 -and
-        @($hlslLibraryManifest.invariants).Count -eq 14) `
+        @($hlslLibraryManifest.modules).Count -eq 12 -and
+        @($hlslLibraryManifest.invariants).Count -eq 15) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 11 -and
-        $hlslLibraryReport.publicSymbolCount -eq 38 -and
+        $hlslLibraryReport.moduleCount -eq 12 -and
+        $hlslLibraryReport.publicSymbolCount -eq 42 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-        'HLSL source library report validates eleven modules and thirty-eight public symbols'
+        'HLSL source library report validates twelve modules and forty-two public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
     $vectorSamplingManifest = Get-Content -LiteralPath $vectorSamplingManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $vectorSamplingManifest.version -eq '1.1.0' -and
-        $vectorSamplingManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $vectorSamplingManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($vectorSamplingManifest.functions).Count -eq 10 -and
         @($vectorSamplingManifest.fixtures).Count -eq 9) `
         'Vector and sampling contract fixes ten functions and nine numeric fixtures'
@@ -956,7 +991,7 @@ if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
 if (Test-Path -LiteralPath $vectorSamplingReportPath) {
     $vectorSamplingReport = Get-Content -LiteralPath $vectorSamplingReportPath -Raw | ConvertFrom-Json
     Add-Check ($vectorSamplingReport.status -eq 'PASS' -and
-        $vectorSamplingReport.sourceLibraryVersion -eq '1.8.0' -and
+        $vectorSamplingReport.sourceLibraryVersion -eq '1.9.0' -and
         $vectorSamplingReport.functionCount -eq 10 -and
         $vectorSamplingReport.fixtureCount -eq 9 -and
         $vectorSamplingReport.maximumError -le 0.000001 -and
@@ -968,7 +1003,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
     $pbrInputManifest = Get-Content -LiteralPath $pbrInputManifestPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $pbrInputManifest.version -eq '1.0.0' -and
-        $pbrInputManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $pbrInputManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($pbrInputManifest.publicSymbols).Count -eq 4 -and
         @($pbrInputManifest.fixtures).Count -eq 3) `
         'Simplified PBR input contract fixes four public symbols and three boundary fixtures'
@@ -977,7 +1012,7 @@ if (Test-Path -LiteralPath $pbrInputManifestPath) {
 if (Test-Path -LiteralPath $pbrInputReportPath) {
     $pbrInputReport = Get-Content -LiteralPath $pbrInputReportPath -Raw | ConvertFrom-Json
     Add-Check ($pbrInputReport.status -eq 'PASS' -and
-        $pbrInputReport.sourceLibraryVersion -eq '1.8.0' -and
+        $pbrInputReport.sourceLibraryVersion -eq '1.9.0' -and
         $pbrInputReport.functionCount -eq 4 -and
         $pbrInputReport.fixtureCount -eq 3 -and
         $pbrInputReport.maximumError -le 0.000001 -and
@@ -989,7 +1024,7 @@ if (Test-Path -LiteralPath $pbrParameterRegressionManifestPath) {
     $pbrParameterRegressionManifest = Get-Content -LiteralPath $pbrParameterRegressionManifestPath -Raw | ConvertFrom-Json
     Add-Check ($pbrParameterRegressionManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $pbrParameterRegressionManifest.version -eq '1.0.0' -and
-        $pbrParameterRegressionManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $pbrParameterRegressionManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($pbrParameterRegressionManifest.publicSymbols).Count -eq 4 -and
         @($pbrParameterRegressionManifest.fixtures).Count -eq 12 -and
         @($pbrParameterRegressionManifest.invariants).Count -eq 5) `
@@ -999,7 +1034,7 @@ if (Test-Path -LiteralPath $pbrParameterRegressionManifestPath) {
 if (Test-Path -LiteralPath $pbrParameterRegressionReportPath) {
     $pbrParameterRegressionReport = Get-Content -LiteralPath $pbrParameterRegressionReportPath -Raw | ConvertFrom-Json
     Add-Check ($pbrParameterRegressionReport.status -eq 'PASS' -and
-        $pbrParameterRegressionReport.sourceLibraryVersion -eq '1.8.0' -and
+        $pbrParameterRegressionReport.sourceLibraryVersion -eq '1.9.0' -and
         $pbrParameterRegressionReport.parameterCount -eq 4 -and
         $pbrParameterRegressionReport.fixtureCount -eq 12 -and
         $pbrParameterRegressionReport.maximumError -le 0.000001 -and
@@ -1020,7 +1055,7 @@ if (Test-Path -LiteralPath $ggxNdfManifestPath) {
     $ggxNdfManifest = Get-Content -LiteralPath $ggxNdfManifestPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $ggxNdfManifest.version -eq '1.0.0' -and
-        $ggxNdfManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $ggxNdfManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($ggxNdfManifest.publicSymbols).Count -eq 3 -and
         @($ggxNdfManifest.fixtures).Count -eq 8) `
         'GGX NDF contract fixes the alpha policy, three entry points and eight fixtures'
@@ -1034,7 +1069,7 @@ if (Test-Path -LiteralPath $ggxNdfValidationPath) {
 if (Test-Path -LiteralPath $ggxNdfReportPath) {
     $ggxNdfReport = Get-Content -LiteralPath $ggxNdfReportPath -Raw | ConvertFrom-Json
     Add-Check ($ggxNdfReport.status -eq 'PASS' -and
-        $ggxNdfReport.sourceLibraryVersion -eq '1.8.0' -and
+        $ggxNdfReport.sourceLibraryVersion -eq '1.9.0' -and
         $ggxNdfReport.functionCount -eq 3 -and
         $ggxNdfReport.fixtureCount -eq 8 -and
         $ggxNdfReport.maximumError -le 0.000001 -and
@@ -1046,7 +1081,7 @@ if (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath) {
     $ggxGeometryFresnelManifest = Get-Content -LiteralPath $ggxGeometryFresnelManifestPath -Raw | ConvertFrom-Json
     Add-Check ($ggxGeometryFresnelManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $ggxGeometryFresnelManifest.version -eq '1.0.0' -and
-        $ggxGeometryFresnelManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $ggxGeometryFresnelManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($ggxGeometryFresnelManifest.publicSymbols).Count -eq 4 -and
         @($ggxGeometryFresnelManifest.fixtures).Count -eq 10) `
         'GGX geometry and Fresnel contract fixes four entry points and ten fixtures'
@@ -1055,7 +1090,7 @@ if (Test-Path -LiteralPath $ggxGeometryFresnelManifestPath) {
 if (Test-Path -LiteralPath $ggxGeometryFresnelReportPath) {
     $ggxGeometryFresnelReport = Get-Content -LiteralPath $ggxGeometryFresnelReportPath -Raw | ConvertFrom-Json
     Add-Check ($ggxGeometryFresnelReport.status -eq 'PASS' -and
-        $ggxGeometryFresnelReport.sourceLibraryVersion -eq '1.8.0' -and
+        $ggxGeometryFresnelReport.sourceLibraryVersion -eq '1.9.0' -and
         $ggxGeometryFresnelReport.functionCount -eq 4 -and
         $ggxGeometryFresnelReport.fixtureCount -eq 10 -and
         $ggxGeometryFresnelReport.maximumError -le 0.000001 -and
@@ -1067,7 +1102,7 @@ if (Test-Path -LiteralPath $directLightPbrManifestPath) {
     $directLightPbrManifest = Get-Content -LiteralPath $directLightPbrManifestPath -Raw | ConvertFrom-Json
     Add-Check ($directLightPbrManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $directLightPbrManifest.version -eq '1.0.0' -and
-        $directLightPbrManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $directLightPbrManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($directLightPbrManifest.publicSymbols).Count -eq 2 -and
         @($directLightPbrManifest.fixtures).Count -eq 2) `
         'Direct-light PBR contract fixes the reusable entry point and two numeric fixtures'
@@ -1076,7 +1111,7 @@ if (Test-Path -LiteralPath $directLightPbrManifestPath) {
 if (Test-Path -LiteralPath $directLightPbrReportPath) {
     $directLightPbrReport = Get-Content -LiteralPath $directLightPbrReportPath -Raw | ConvertFrom-Json
     Add-Check ($directLightPbrReport.status -eq 'PASS' -and
-        $directLightPbrReport.sourceLibraryVersion -eq '1.8.0' -and
+        $directLightPbrReport.sourceLibraryVersion -eq '1.9.0' -and
         $directLightPbrReport.functionCount -eq 2 -and
         $directLightPbrReport.fixtureCount -eq 2 -and
         $directLightPbrReport.maximumError -le 0.000001 -and
@@ -1088,7 +1123,7 @@ if (Test-Path -LiteralPath $vertexDisplacementManifestPath) {
     $vertexDisplacementManifest = Get-Content -LiteralPath $vertexDisplacementManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vertexDisplacementManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $vertexDisplacementManifest.version -eq '1.0.0' -and
-        $vertexDisplacementManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $vertexDisplacementManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($vertexDisplacementManifest.publicSymbols).Count -eq 2 -and
         @($vertexDisplacementManifest.fixtures).Count -eq 8 -and
         @($vertexDisplacementManifest.invariants).Count -eq 5 -and
@@ -1099,7 +1134,7 @@ if (Test-Path -LiteralPath $vertexDisplacementManifestPath) {
 if (Test-Path -LiteralPath $vertexDisplacementReportPath) {
     $vertexDisplacementReport = Get-Content -LiteralPath $vertexDisplacementReportPath -Raw | ConvertFrom-Json
     Add-Check ($vertexDisplacementReport.status -eq 'PASS' -and
-        $vertexDisplacementReport.sourceLibraryVersion -eq '1.8.0' -and
+        $vertexDisplacementReport.sourceLibraryVersion -eq '1.9.0' -and
         $vertexDisplacementReport.functionCount -eq 2 -and
         $vertexDisplacementReport.fixtureCount -eq 8 -and
         $vertexDisplacementReport.invariantCount -eq 5 -and
@@ -1113,7 +1148,7 @@ if (Test-Path -LiteralPath $waveWindManifestPath) {
     $waveWindManifest = Get-Content -LiteralPath $waveWindManifestPath -Raw | ConvertFrom-Json
     Add-Check ($waveWindManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $waveWindManifest.version -eq '1.0.0' -and
-        $waveWindManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $waveWindManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($waveWindManifest.publicSymbols).Count -eq 3 -and
         @($waveWindManifest.fixtures).Count -eq 15 -and
         @($waveWindManifest.invariants).Count -eq 7 -and
@@ -1124,7 +1159,7 @@ if (Test-Path -LiteralPath $waveWindManifestPath) {
 if (Test-Path -LiteralPath $waveWindReportPath) {
     $waveWindReport = Get-Content -LiteralPath $waveWindReportPath -Raw | ConvertFrom-Json
     Add-Check ($waveWindReport.status -eq 'PASS' -and
-        $waveWindReport.sourceLibraryVersion -eq '1.8.0' -and
+        $waveWindReport.sourceLibraryVersion -eq '1.9.0' -and
         $waveWindReport.functionCount -eq 3 -and
         $waveWindReport.fixtureCount -eq 15 -and
         $waveWindReport.invariantCount -eq 7 -and
@@ -1138,7 +1173,7 @@ if (Test-Path -LiteralPath $vertexModularizationManifestPath) {
     $vertexModularizationManifest = Get-Content -LiteralPath $vertexModularizationManifestPath -Raw | ConvertFrom-Json
     Add-Check ($vertexModularizationManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
         $vertexModularizationManifest.version -eq '1.0.0' -and
-        $vertexModularizationManifest.sourceLibraryVersion -eq '1.8.0' -and
+        $vertexModularizationManifest.sourceLibraryVersion -eq '1.9.0' -and
         @($vertexModularizationManifest.publicSymbols).Count -eq 4 -and
         @($vertexModularizationManifest.dependencies).Count -eq 2 -and
         @($vertexModularizationManifest.fixtures).Count -eq 6 -and
@@ -1150,7 +1185,7 @@ if (Test-Path -LiteralPath $vertexModularizationManifestPath) {
 if (Test-Path -LiteralPath $vertexModularizationReportPath) {
     $vertexModularizationReport = Get-Content -LiteralPath $vertexModularizationReportPath -Raw | ConvertFrom-Json
     Add-Check ($vertexModularizationReport.status -eq 'PASS' -and
-        $vertexModularizationReport.sourceLibraryVersion -eq '1.8.0' -and
+        $vertexModularizationReport.sourceLibraryVersion -eq '1.9.0' -and
         $vertexModularizationReport.publicSymbolCount -eq 4 -and
         $vertexModularizationReport.dependencyCount -eq 2 -and
         $vertexModularizationReport.fixtureCount -eq 6 -and
@@ -1159,6 +1194,32 @@ if (Test-Path -LiteralPath $vertexModularizationReportPath) {
         $vertexModularizationReport.maximumError -le 0.000001 -and
         @($vertexModularizationReport.failures).Count -eq 0) `
         'Vertex modularization report validates structure, effect order, diagnostics and unchanged numeric output'
+}
+
+if (Test-Path -LiteralPath $normalLayerManifestPath) {
+    $normalLayerManifest = Get-Content -LiteralPath $normalLayerManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($normalLayerManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $normalLayerManifest.version -eq '1.0.0' -and
+        $normalLayerManifest.sourceLibraryVersion -eq '1.9.0' -and
+        @($normalLayerManifest.publicSymbols).Count -eq 4 -and
+        @($normalLayerManifest.dependencies).Count -eq 1 -and
+        @($normalLayerManifest.fixtures).Count -eq 7 -and
+        @($normalLayerManifest.invariants).Count -eq 6 -and
+        @($normalLayerManifest.limitations).Count -eq 3) `
+        'Normal layer blending contract fixes RNM entry points, seven fixtures and six invariants'
+}
+if (Test-Path -LiteralPath $normalLayerReportPath) {
+    $normalLayerReport = Get-Content -LiteralPath $normalLayerReportPath -Raw | ConvertFrom-Json
+    Add-Check ($normalLayerReport.status -eq 'PASS' -and
+        $normalLayerReport.sourceLibraryVersion -eq '1.9.0' -and
+        $normalLayerReport.publicSymbolCount -eq 4 -and
+        $normalLayerReport.dependencyCount -eq 1 -and
+        $normalLayerReport.fixtureCount -eq 7 -and
+        $normalLayerReport.invariantCount -eq 6 -and
+        $normalLayerReport.limitationCount -eq 3 -and
+        $normalLayerReport.maximumError -le 0.000001 -and
+        @($normalLayerReport.failures).Count -eq 0) `
+        'Normal layer blending report validates RNM composition and BasePass wiring'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

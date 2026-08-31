@@ -1,0 +1,108 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.9.0",
+    "publicSymbolCount":  4,
+    "dependencyCount":  1,
+    "fixtureCount":  7,
+    "invariantCount":  6,
+    "limitationCount":  3,
+    "tolerance":  1E-06,
+    "maximumError":  4.9486081898919565E-11,
+    "generatedAtUtc":  "2026-08-31T12:22:47.5967403Z",
+    "checks":  [
+                   {
+                       "id":  "BASE_ONLY",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DETAIL_FULL_WEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0.6, 0, 0.8",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DETAIL_HALF_WEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0.316227766016838, 0, 0.948683298050514",
+                       "maximumError":  4.9486081898919565E-11
+                   },
+                   {
+                       "id":  "MACRO_FULL_WEIGHT",
+                       "pass":  true,
+                       "detail":  "actual=0, 0.8, 0.6",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "COMBINED_LAYERS",
+                       "pass":  true,
+                       "detail":  "actual=-0.28, 0, 0.96",
+                       "maximumError":  1.1102230246251565E-16
+                   },
+                   {
+                       "id":  "WEIGHT_CLAMP",
+                       "pass":  true,
+                       "detail":  "actual=0.6, 0, 0.8",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NON_UNIT_INPUTS",
+                       "pass":  true,
+                       "detail":  "actual=0.6, 0, 0.8",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_NormalLayerTS",
+                       "pass":  true,
+                       "detail":  "TA_NormalLayerTS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_BlendNormalRNMTS",
+                       "pass":  true,
+                       "detail":  "TA_BlendNormalRNMTS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ApplyNormalLayerTS",
+                       "pass":  true,
+                       "detail":  "TA_ApplyNormalLayerTS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ComposeNormalLayersTS",
+                       "pass":  true,
+                       "detail":  "TA_ComposeNormalLayersTS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "RNM_FRAME_CONTRACT",
+                       "pass":  true,
+                       "detail":  "Stable tangent frame reorients each detail normal",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "WEIGHT_POLICY",
+                       "pass":  true,
+                       "detail":  "Layer weights are clamped before blending",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "CONSUMER_WIRING",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NO_INLINE_NORMAL_COMPOSITION",
+                       "pass":  true,
+                       "detail":  "BasePass delegates normal layer composition to TA_NormalBlend",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

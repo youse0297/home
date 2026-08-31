@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  15,
-    "passedRequiredGateCount":  15,
+    "requiredGateCount":  16,
+    "passedRequiredGateCount":  16,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-26T15:00:06.3996878Z",
+    "generatedAtUtc":  "2026-08-31T12:22:53.3662531Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -58,7 +58,7 @@
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.25 sec"
+                                         "Total Test time (real) =   0.27 sec"
                                      ]
                   },
                   {
@@ -206,6 +206,19 @@
                                      ]
                   },
                   {
+                      "name":  "Normal Layer Blending",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/NormalLayerBlendingValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_NORMAL_LAYER_BLENDING: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\NormalLayerBlendingValidation.json"
+                                     ]
+                  },
+                  {
                       "name":  "Unity Static Validation",
                       "category":  "Unity Offline",
                       "required":  true,
@@ -267,6 +280,7 @@
                       "UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json",
                       "UnityMaterialLab/Reports/WaveWindAnimationValidation.json",
                       "UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json",
+                      "UnityMaterialLab/Reports/NormalLayerBlendingValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

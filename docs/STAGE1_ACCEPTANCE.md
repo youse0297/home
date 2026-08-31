@@ -28,6 +28,7 @@
 | Unity | Vertex Displacement Basics | 8 组高度解码/对象空间位移 fixture、LOD0 与变换顺序通过 |
 | Unity | Wave and Wind Animation | 15 组固定时间正弦、高度锚定与组合偏移 fixture 通过 |
 | Unity | Vertex Displacement Modularization | 结构化单入口、2 个依赖与 6 组组合 fixture 通过 |
+| Unity | Normal Layer Blending | 切线空间 RNM、多层顺序、权重夹取与 7 组 fixture 通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁

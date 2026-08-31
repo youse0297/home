@@ -1,12 +1,12 @@
 ﻿{
     "status":  "PASS",
     "version":  "1.0.0",
-    "sourceLibraryVersion":  "1.8.0",
+    "sourceLibraryVersion":  "1.9.0",
     "functionCount":  3,
     "fixtureCount":  8,
     "tolerance":  1E-06,
     "maximumError":  8.8817841970012523E-16,
-    "generatedAtUtc":  "2026-08-26T14:58:02.0126286Z",
+    "generatedAtUtc":  "2026-08-31T12:21:38.5346073Z",
     "checks":  [
                    {
                        "id":  "GGX_ALPHA_ZERO_ROUGHNESS",

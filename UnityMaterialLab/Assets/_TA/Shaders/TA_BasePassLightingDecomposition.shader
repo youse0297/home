@@ -6,6 +6,12 @@ Shader "TA/BasePass Lighting Decomposition"
         [MainColor] _BaseColor("Base Color Tint", Color) = (1, 1, 1, 1)
         [Normal] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Scale", Range(0, 2)) = 1
+        [Normal] _DetailNormalMap("Detail Normal Map", 2D) = "bump" {}
+        _DetailNormalScale("Detail Normal Scale", Range(0, 2)) = 1
+        _DetailNormalWeight("Detail Normal Weight", Range(0, 1)) = 0
+        [Normal] _MacroNormalMap("Macro Normal Map", 2D) = "bump" {}
+        _MacroNormalScale("Macro Normal Scale", Range(0, 2)) = 1
+        _MacroNormalWeight("Macro Normal Weight", Range(0, 1)) = 0
         _ORMMap("ORM (R=AO G=Roughness B=Metallic)", 2D) = "white" {}
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _RoughnessScale("Roughness Scale", Range(0, 1)) = 1
@@ -64,6 +70,10 @@ Shader "TA/BasePass Lighting Decomposition"
             SAMPLER(sampler_BaseMap);
             TEXTURE2D(_BumpMap);
             SAMPLER(sampler_BumpMap);
+            TEXTURE2D(_DetailNormalMap);
+            SAMPLER(sampler_DetailNormalMap);
+            TEXTURE2D(_MacroNormalMap);
+            SAMPLER(sampler_MacroNormalMap);
             TEXTURE2D(_ORMMap);
             SAMPLER(sampler_ORMMap);
             TEXTURE2D(_DisplacementMap);
@@ -71,11 +81,17 @@ Shader "TA/BasePass Lighting Decomposition"
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
+                float4 _DetailNormalMap_ST;
+                float4 _MacroNormalMap_ST;
                 float4 _DisplacementMap_ST;
                 float4 _WaveDirection;
                 float4 _WindDirection;
                 half4 _BaseColor;
                 half _BumpScale;
+                half _DetailNormalScale;
+                half _DetailNormalWeight;
+                half _MacroNormalScale;
+                half _MacroNormalWeight;
                 half _AOStrength;
                 half _RoughnessScale;
                 half _MetallicScale;
@@ -190,6 +206,27 @@ Shader "TA/BasePass Lighting Decomposition"
                     TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
                     input.uv,
                     pbrConfig
+                );
+                half3 detailNormalTS = TA_SampleNormalTS(
+                    TEXTURE2D_ARGS(_DetailNormalMap, sampler_DetailNormalMap),
+                    TA_TransformUV(input.uv, _DetailNormalMap_ST),
+                    _DetailNormalScale
+                );
+                half3 macroNormalTS = TA_SampleNormalTS(
+                    TEXTURE2D_ARGS(_MacroNormalMap, sampler_MacroNormalMap),
+                    TA_TransformUV(input.uv, _MacroNormalMap_ST),
+                    _MacroNormalScale
+                );
+                TA_NormalLayerTS detailLayer;
+                detailLayer.normalTS = detailNormalTS;
+                detailLayer.weight = _DetailNormalWeight;
+                TA_NormalLayerTS macroLayer;
+                macroLayer.normalTS = macroNormalTS;
+                macroLayer.weight = _MacroNormalWeight;
+                pbrInput.normalTS = TA_ComposeNormalLayersTS(
+                    pbrInput.normalTS,
+                    detailLayer,
+                    macroLayer
                 );
                 half3 normalWS = TA_TransformTangentToWorld(
                     pbrInput.normalTS,

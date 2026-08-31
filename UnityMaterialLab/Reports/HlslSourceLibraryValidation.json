@@ -1,11 +1,11 @@
 ﻿{
     "status":  "PASS",
-    "version":  "1.8.0",
-    "moduleCount":  11,
-    "publicSymbolCount":  38,
+    "version":  "1.9.0",
+    "moduleCount":  12,
+    "publicSymbolCount":  42,
     "aggregate":  "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "consumer":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
-    "generatedAtUtc":  "2026-08-26T14:58:02.0747512Z",
+    "generatedAtUtc":  "2026-08-31T12:21:04.8620280Z",
     "checks":  [
                    {
                        "id":  "MODULE_EXISTS_types",
@@ -126,6 +126,36 @@
                        "id":  "PUBLIC_SYMBOLS_sampling",
                        "pass":  true,
                        "detail":  "TA_TransformUV, TA_SampleTexture2D, TA_SampleTexture2DLod, TA_SampleNormalTS, TA_SampleORM"
+                   },
+                   {
+                       "id":  "MODULE_EXISTS_normalBlend",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_NormalBlend.hlsl"
+                   },
+                   {
+                       "id":  "INCLUDE_GUARD_normalBlend",
+                       "pass":  true,
+                       "detail":  "TA_NORMAL_BLEND_INCLUDED"
+                   },
+                   {
+                       "id":  "NO_PACKAGE_INCLUDE_normalBlend",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_NormalBlend.hlsl"
+                   },
+                   {
+                       "id":  "DEPENDENCY_ORDER_normalBlend",
+                       "pass":  true,
+                       "detail":  "vector"
+                   },
+                   {
+                       "id":  "DECLARED_INCLUDES_normalBlend",
+                       "pass":  true,
+                       "detail":  "TA_Vector.hlsl"
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOLS_normalBlend",
+                       "pass":  true,
+                       "detail":  "TA_NormalLayerTS, TA_BlendNormalRNMTS, TA_ApplyNormalLayerTS, TA_ComposeNormalLayersTS"
                    },
                    {
                        "id":  "MODULE_EXISTS_vertexDisplacement",
@@ -350,12 +380,12 @@
                    {
                        "id":  "AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_VertexDisplacement.hlsl -\u003e TA_VertexAnimation.hlsl -\u003e TA_VertexDeformation.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_NormalBlend.hlsl -\u003e TA_VertexDisplacement.hlsl -\u003e TA_VertexAnimation.hlsl -\u003e TA_VertexDeformation.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
                    },
                    {
                        "id":  "MANIFEST_AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "types -\u003e common -\u003e vector -\u003e sampling -\u003e vertexDisplacement -\u003e vertexAnimation -\u003e vertexDeformation -\u003e pbrInput -\u003e brdf -\u003e lighting -\u003e debugViews"
+                       "detail":  "types -\u003e common -\u003e vector -\u003e sampling -\u003e normalBlend -\u003e vertexDisplacement -\u003e vertexAnimation -\u003e vertexDeformation -\u003e pbrInput -\u003e brdf -\u003e lighting -\u003e debugViews"
                    },
                    {
                        "id":  "CONSUMER_EXISTS",
@@ -365,12 +395,17 @@
                    {
                        "id":  "CONSUMER_WIRING",
                        "pass":  true,
-                       "detail":  "TA_TransformUV, TA_SampleTexture2DLod, TA_EvaluateVertexDeformationOS, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_EvaluateLighting, TA_SelectDebugView"
+                       "detail":  "TA_TransformUV, TA_SampleTexture2DLod, TA_EvaluateVertexDeformationOS, TA_SampleNormalTS, TA_ComposeNormalLayersTS, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_EvaluateLighting, TA_SelectDebugView"
                    },
                    {
                        "id":  "ADDITIVE_LIGHTING_INVARIANT",
                        "pass":  true,
                        "detail":  "FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse"
+                   },
+                   {
+                       "id":  "NORMAL_BLEND_CONTRACT",
+                       "pass":  true,
+                       "detail":  "Normal layers use RNM, bounded weights and safe renormalization"
                    }
                ],
     "failures":  [

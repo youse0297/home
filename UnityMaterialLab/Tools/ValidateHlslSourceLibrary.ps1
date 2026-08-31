@@ -161,6 +161,22 @@ Add-ValidationCheck -Id 'ADDITIVE_LIGHTING_INVARIANT' `
     -Pass ($lightingSource -match 'result\.finalLit\s*=\s*result\.directDiffuse\s*\+\s*result\.directSpecular\s*\+\s*result\.indirectDiffuse\s*;') `
     -Detail 'FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse'
 
+$normalBlendModule = @($manifest.modules | Where-Object { $_.id -eq 'normalBlend' })[0]
+if ($null -ne $normalBlendModule) {
+    $normalBlendPath = Resolve-ProjectAssetPath $normalBlendModule.file
+    $normalBlendSource = if (Test-Path -LiteralPath $normalBlendPath) {
+        Get-Content -LiteralPath $normalBlendPath -Raw
+    } else { '' }
+    Add-ValidationCheck -Id 'NORMAL_BLEND_CONTRACT' `
+        -Pass ($normalBlendSource -match 'TA_NormalLayerTS' -and
+            $normalBlendSource -match 'TA_BlendNormalRNMTS' -and
+            $normalBlendSource -match 'TA_ApplyNormalLayerTS' -and
+            $normalBlendSource -match 'TA_ComposeNormalLayersTS' -and
+            $normalBlendSource -match 'saturate\(layer\.weight\)' -and
+            $normalBlendSource -match 'TA_SafeNormalize\(lerp') `
+        -Detail 'Normal layers use RNM, bounded weights and safe renormalization'
+}
+
 $reportDirectory = Split-Path -Parent $ReportPath
 New-Item -ItemType Directory -Force -Path $reportDirectory | Out-Null
 $report = [ordered]@{
