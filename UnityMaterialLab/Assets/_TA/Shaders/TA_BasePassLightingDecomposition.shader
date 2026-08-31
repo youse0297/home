@@ -24,6 +24,14 @@ Shader "TA/BasePass Lighting Decomposition"
         _EdgeWearSoftness("Edge Wear Softness", Range(0.001, 1)) = 0.2
         _EdgeWearStrength("Edge Wear Strength", Range(0, 1)) = 0
         _EdgeWearRoughnessBoost("Edge Wear Roughness Boost", Range(0, 1)) = 0.25
+        [HDR] _SnowColor("Snow Color", Color) = (0.92, 0.96, 1, 1)
+        _SnowCoverage("Snow Coverage", Range(0, 1)) = 0
+        _SnowNormalThreshold("Snow Normal Threshold", Range(0, 1)) = 0.55
+        _SnowNormalSoftness("Snow Normal Softness", Range(0.001, 1)) = 0.2
+        _SnowRoughness("Snow Roughness", Range(0.045, 1)) = 0.82
+        _SnowHeightBlend("Snow Height Blend", Range(0, 1)) = 0
+        _SnowHeightStart("Snow Height Start", Float) = 0
+        _SnowHeightFade("Snow Height Fade", Range(0.001, 10)) = 1
         _ORMMap("ORM (R=AO G=Roughness B=Metallic)", 2D) = "white" {}
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _RoughnessScale("Roughness Scale", Range(0, 1)) = 1
@@ -101,6 +109,7 @@ Shader "TA/BasePass Lighting Decomposition"
                 float4 _ProceduralMaskScale;
                 float4 _ProceduralMaskOffset;
                 half4 _EdgeWearColor;
+                half4 _SnowColor;
                 half4 _BaseColor;
                 half _BumpScale;
                 half _DetailNormalScale;
@@ -116,6 +125,13 @@ Shader "TA/BasePass Lighting Decomposition"
                 half _EdgeWearSoftness;
                 half _EdgeWearStrength;
                 half _EdgeWearRoughnessBoost;
+                half _SnowCoverage;
+                half _SnowNormalThreshold;
+                half _SnowNormalSoftness;
+                half _SnowRoughness;
+                half _SnowHeightBlend;
+                float _SnowHeightStart;
+                float _SnowHeightFade;
                 half _AOStrength;
                 half _RoughnessScale;
                 half _MetallicScale;
@@ -297,6 +313,34 @@ Shader "TA/BasePass Lighting Decomposition"
                     pbrInput.roughness,
                     edgeWearConfig,
                     edgeWearMask
+                );
+                TA_SnowCoverConfig snowConfig;
+                snowConfig.snowColor = _SnowColor.rgb;
+                snowConfig.coverage = _SnowCoverage;
+                snowConfig.normalThreshold = _SnowNormalThreshold;
+                snowConfig.normalSoftness = _SnowNormalSoftness;
+                snowConfig.snowRoughness = _SnowRoughness;
+                snowConfig.heightBlend = _SnowHeightBlend;
+                snowConfig.heightStart = _SnowHeightStart;
+                snowConfig.heightFade = _SnowHeightFade;
+                half snowMask = TA_EvaluateSnowCover(
+                    normalWS,
+                    input.positionWS,
+                    snowConfig
+                );
+                pbrInput.baseColor = TA_ApplySnowCoverColor(
+                    pbrInput.baseColor,
+                    snowConfig.snowColor,
+                    snowMask
+                );
+                pbrInput.roughness = TA_ApplySnowCoverRoughness(
+                    pbrInput.roughness,
+                    snowConfig.snowRoughness,
+                    snowMask
+                );
+                pbrInput.metallic = TA_ApplySnowCoverMetallic(
+                    pbrInput.metallic,
+                    snowMask
                 );
                 TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
 

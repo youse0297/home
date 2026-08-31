@@ -7,6 +7,7 @@
 #include "TA_Vector.hlsl"
 #include "TA_EdgeWear.hlsl"
 #include "TA_ProceduralMask.hlsl"
+#include "TA_SnowCover.hlsl"
 #include "TA_Sampling.hlsl"
 #include "TA_NormalBlend.hlsl"
 #include "TA_VertexDisplacement.hlsl"

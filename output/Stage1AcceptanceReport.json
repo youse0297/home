@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  19,
-    "passedRequiredGateCount":  19,
+    "requiredGateCount":  20,
+    "passedRequiredGateCount":  20,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-31T13:14:30.8020116Z",
+    "generatedAtUtc":  "2026-08-31T13:45:23.4860375Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -44,13 +44,13 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "      Start  7: texture_sampling_acceptance",
-                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.02 sec",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
                                          "      Start  8: surface_attributes_acceptance",
-                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.02 sec",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
                                          "      Start  9: diffuse_exposure_acceptance",
-                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.02 sec",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.03 sec",
                                          "      Start 10: ggx_brdf_acceptance",
-                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
+                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.03 sec",
                                          "      Start 11: material_workflow_acceptance",
                                          "11/12 Test #11: material_workflow_acceptance ............   Passed    0.02 sec",
                                          "      Start 12: release_acceptance",
@@ -58,7 +58,7 @@
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.32 sec"
+                                         "Total Test time (real) =   0.35 sec"
                                      ]
                   },
                   {
@@ -258,6 +258,19 @@
                                      ]
                   },
                   {
+                      "name":  "Snow Cover",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/SnowCoverValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_SNOW_COVER: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\SnowCoverValidation.json"
+                                     ]
+                  },
+                  {
                       "name":  "Unity Static Validation",
                       "category":  "Unity Offline",
                       "required":  true,
@@ -323,6 +336,7 @@
                       "UnityMaterialLab/Reports/LayeredNormalMaterialValidation.json",
                       "UnityMaterialLab/Reports/ProceduralMaskValidation.json",
                       "UnityMaterialLab/Reports/EdgeWearValidation.json",
+                      "UnityMaterialLab/Reports/SnowCoverValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

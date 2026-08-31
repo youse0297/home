@@ -1,0 +1,91 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.12.0",
+  "source": "Assets/_TA/Shaders/Library/TA_SnowCover.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "material": "Assets/_TA/Materials/MAT_LayeredNormal.mat",
+  "profile": "Assets/_TA/Materials/Instances/MI_LayeredNormal.asset",
+  "publicSymbols": ["TA_SnowCoverConfig", "TA_EvaluateSnowCover", "TA_ApplySnowCoverColor", "TA_ApplySnowCoverRoughness", "TA_ApplySnowCoverMetallic"],
+  "dependencies": ["common", "vector"],
+  "model": {
+    "space": "World space normal and position",
+    "signal": "World-up normal dot blended with optional world-height coverage",
+    "falloff": "Thresholded smoothstep with a minimum softness",
+    "responses": "Snow color replaces base color, snow roughness replaces roughness, and snow drives metallic toward zero"
+  },
+  "fixtures": [
+    {
+      "id": "SIDE_NORMAL_ZERO",
+      "function": "TA_EvaluateSnowCover",
+      "input": { "normal": [1.0, 0.0, 0.0], "position": [0.0, 1.0, 0.0], "coverage": 1.0, "normalThreshold": 0.55, "normalSoftness": 0.2, "snowRoughness": 0.82, "heightBlend": 0.0, "heightStart": 0.0, "heightFade": 1.0 },
+      "expected": 0.0
+    },
+    {
+      "id": "UPWARD_FULL",
+      "function": "TA_EvaluateSnowCover",
+      "input": { "normal": [0.0, 1.0, 0.0], "position": [0.0, 1.0, 0.0], "coverage": 1.0, "normalThreshold": 0.55, "normalSoftness": 0.2, "snowRoughness": 0.82, "heightBlend": 0.0, "heightStart": 0.0, "heightFade": 1.0 },
+      "expected": 1.0
+    },
+    {
+      "id": "SLOPE_MIDPOINT",
+      "function": "TA_EvaluateSnowCover",
+      "input": { "normal": [0.0, 0.5, 0.8660254038], "position": [0.0, 1.0, 0.0], "coverage": 1.0, "normalThreshold": 0.5, "normalSoftness": 0.5, "snowRoughness": 0.82, "heightBlend": 0.0, "heightStart": 0.0, "heightFade": 1.0 },
+      "expected": 0.5
+    },
+    {
+      "id": "COVERAGE_HALF",
+      "function": "TA_EvaluateSnowCover",
+      "input": { "normal": [0.0, 1.0, 0.0], "position": [0.0, 1.0, 0.0], "coverage": 0.5, "normalThreshold": 0.55, "normalSoftness": 0.2, "snowRoughness": 0.82, "heightBlend": 0.0, "heightStart": 0.0, "heightFade": 1.0 },
+      "expected": 0.5
+    },
+    {
+      "id": "HEIGHT_FULL",
+      "function": "TA_EvaluateSnowCover",
+      "input": { "normal": [0.0, 1.0, 0.0], "position": [0.0, 2.0, 0.0], "coverage": 1.0, "normalThreshold": 0.55, "normalSoftness": 0.2, "snowRoughness": 0.82, "heightBlend": 1.0, "heightStart": 0.0, "heightFade": 1.0 },
+      "expected": 1.0
+    },
+    {
+      "id": "HEIGHT_PARTIAL",
+      "function": "TA_EvaluateSnowCover",
+      "input": { "normal": [0.0, 1.0, 0.0], "position": [0.0, 0.5, 0.0], "coverage": 1.0, "normalThreshold": 0.55, "normalSoftness": 0.2, "snowRoughness": 0.82, "heightBlend": 1.0, "heightStart": 0.0, "heightFade": 1.0 },
+      "expected": 0.5
+    },
+    {
+      "id": "COLOR_MIX",
+      "function": "TA_ApplySnowCoverColor",
+      "input": { "baseColor": [0.2, 0.3, 0.4], "snowColor": [0.9, 1.0, 0.95], "snowMask": 0.25 },
+      "expected": [0.375, 0.475, 0.5375]
+    },
+    {
+      "id": "ROUGHNESS_REPLACE",
+      "function": "TA_ApplySnowCoverRoughness",
+      "input": { "roughness": 0.4, "snowRoughness": 0.8, "snowMask": 1.0 },
+      "expected": 0.8
+    },
+    {
+      "id": "METALLIC_DIELECTRIC",
+      "function": "TA_ApplySnowCoverMetallic",
+      "input": { "metallic": 0.8, "snowMask": 0.5 },
+      "expected": 0.4
+    },
+    {
+      "id": "INPUT_CLAMP",
+      "function": "TA_EvaluateSnowCover",
+      "input": { "normal": [0.0, 0.0, 2.0], "position": [0.0, 0.0, 0.0], "coverage": 2.0, "normalThreshold": 2.0, "normalSoftness": 0.0, "snowRoughness": 2.0, "heightBlend": 2.0, "heightStart": 0.0, "heightFade": 0.0 },
+      "expected": 0.0
+    }
+  ],
+  "invariants": [
+    "Normal input is safely normalized before evaluating upwardness",
+    "Slope threshold, softness, coverage and height blend remain bounded",
+    "Snow coverage is a product of slope, optional height and coverage factors",
+    "Snow color and roughness responses are bounded and metallic trends toward dielectric zero",
+    "The shared snow mask drives all three material responses consistently"
+  ],
+  "limitations": [
+    "The current model uses world-up slope and height instead of curvature, wind accumulation or a snow-depth texture",
+    "Snow is consumed by the BasePass sample material; other shaders require explicit snow wiring",
+    "Visual confirmation still requires a licensed Unity Editor"
+  ]
+}

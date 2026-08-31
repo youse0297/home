@@ -75,6 +75,30 @@ namespace TA.MaterialLab
         [Range(0.0f, 1.0f)]
         public float edgeWearRoughnessBoost = 0.25f;
 
+        [Header("Snow cover")]
+        [ColorUsage(true, true)]
+        public Color snowColor = new Color(0.92f, 0.96f, 1.0f, 1.0f);
+
+        [Range(0.0f, 1.0f)]
+        public float snowCoverage;
+
+        [Range(0.0f, 1.0f)]
+        public float snowNormalThreshold = 0.55f;
+
+        [Range(0.001f, 1.0f)]
+        public float snowNormalSoftness = 0.2f;
+
+        [Range(0.045f, 1.0f)]
+        public float snowRoughness = 0.82f;
+
+        [Range(0.0f, 1.0f)]
+        public float snowHeightBlend;
+
+        public float snowHeightStart;
+
+        [Range(0.001f, 10.0f)]
+        public float snowHeightFade = 1.0f;
+
         [Range(0.0f, 1.0f)]
         public float metallic;
 
@@ -128,6 +152,14 @@ namespace TA.MaterialLab
             SetFloatIfSupported(material, "_EdgeWearSoftness", edgeWearSoftness);
             SetFloatIfSupported(material, "_EdgeWearStrength", edgeWearStrength);
             SetFloatIfSupported(material, "_EdgeWearRoughnessBoost", edgeWearRoughnessBoost);
+            SetColorIfSupported(material, "_SnowColor", snowColor);
+            SetFloatIfSupported(material, "_SnowCoverage", snowCoverage);
+            SetFloatIfSupported(material, "_SnowNormalThreshold", snowNormalThreshold);
+            SetFloatIfSupported(material, "_SnowNormalSoftness", snowNormalSoftness);
+            SetFloatIfSupported(material, "_SnowRoughness", snowRoughness);
+            SetFloatIfSupported(material, "_SnowHeightBlend", snowHeightBlend);
+            SetFloatIfSupported(material, "_SnowHeightStart", snowHeightStart);
+            SetFloatIfSupported(material, "_SnowHeightFade", snowHeightFade);
             SetFloatIfSupported(material, "_Metallic", metallic);
             SetFloatIfSupported(material, "_Smoothness", 1.0f - roughness);
             SetFloatIfSupported(material, "_OcclusionStrength", occlusionStrength);
@@ -177,6 +209,19 @@ namespace TA.MaterialLab
                    edgeWearSoftness >= 0.001f && edgeWearSoftness <= 1.0f &&
                    edgeWearStrength >= 0.0f && edgeWearStrength <= 1.0f &&
                    edgeWearRoughnessBoost >= 0.0f && edgeWearRoughnessBoost <= 1.0f &&
+                   IsFinite(snowColor.r) && IsFinite(snowColor.g) &&
+                   IsFinite(snowColor.b) && IsFinite(snowColor.a) &&
+                   IsFinite(snowCoverage) && IsFinite(snowNormalThreshold) &&
+                   IsFinite(snowNormalSoftness) && IsFinite(snowRoughness) &&
+                   IsFinite(snowHeightBlend) && IsFinite(snowHeightStart) &&
+                   IsFinite(snowHeightFade) && snowColor.r >= 0.0f &&
+                   snowColor.g >= 0.0f && snowColor.b >= 0.0f && snowColor.a >= 0.0f &&
+                   snowCoverage >= 0.0f && snowCoverage <= 1.0f &&
+                   snowNormalThreshold >= 0.0f && snowNormalThreshold <= 1.0f &&
+                   snowNormalSoftness >= 0.001f && snowNormalSoftness <= 1.0f &&
+                   snowRoughness >= 0.045f && snowRoughness <= 1.0f &&
+                   snowHeightBlend >= 0.0f && snowHeightBlend <= 1.0f &&
+                   snowHeightFade >= 0.001f && snowHeightFade <= 10.0f &&
                    metallic >= 0.0f && metallic <= 1.0f &&
                    roughness >= 0.0f && roughness <= 1.0f &&
                    occlusionStrength >= 0.0f && occlusionStrength <= 1.0f &&
@@ -207,6 +252,17 @@ namespace TA.MaterialLab
             edgeWearSoftness = ClampFinite(edgeWearSoftness, 0.001f, 1.0f, 0.2f);
             edgeWearStrength = ClampFinite(edgeWearStrength, 0.0f, 1.0f, 0.0f);
             edgeWearRoughnessBoost = ClampFinite(edgeWearRoughnessBoost, 0.0f, 1.0f, 0.25f);
+            snowColor.r = ClampFinite(snowColor.r, 0.0f, float.MaxValue, 0.92f);
+            snowColor.g = ClampFinite(snowColor.g, 0.0f, float.MaxValue, 0.96f);
+            snowColor.b = ClampFinite(snowColor.b, 0.0f, float.MaxValue, 1.0f);
+            snowColor.a = ClampFinite(snowColor.a, 0.0f, float.MaxValue, 1.0f);
+            snowCoverage = ClampFinite(snowCoverage, 0.0f, 1.0f, 0.0f);
+            snowNormalThreshold = ClampFinite(snowNormalThreshold, 0.0f, 1.0f, 0.55f);
+            snowNormalSoftness = ClampFinite(snowNormalSoftness, 0.001f, 1.0f, 0.2f);
+            snowRoughness = ClampFinite(snowRoughness, 0.045f, 1.0f, 0.82f);
+            snowHeightBlend = ClampFinite(snowHeightBlend, 0.0f, 1.0f, 0.0f);
+            snowHeightStart = ClampFinite(snowHeightStart, -4096.0f, 4096.0f, 0.0f);
+            snowHeightFade = ClampFinite(snowHeightFade, 0.001f, 10.0f, 1.0f);
             metallic = ClampFinite(metallic, 0.0f, 1.0f, 0.0f);
             roughness = ClampFinite(roughness, 0.0f, 1.0f, 0.5f);
             occlusionStrength = ClampFinite(occlusionStrength, 0.0f, 1.0f, 1.0f);

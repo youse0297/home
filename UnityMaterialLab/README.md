@@ -164,6 +164,8 @@ The source library also exposes `TA_NormalBlend.hlsl` for tangent-space RNM laye
 
 `TA_EdgeWear.hlsl` derives a view-angle grazing mask from world normal and view direction, then blends a bounded wear color and raises roughness toward one. The sample profile enables the response with threshold `0.58`, softness `0.24`, strength `0.7`, and roughness boost `0.35`; run `Tools/ValidateEdgeWear.ps1` and see `../docs/UNITY_EDGE_WEAR.md`.
 
+`TA_SnowCover.hlsl` derives a world-up slope mask with optional world-height accumulation, then blends snow color, snow roughness and dielectric metallic response. The sample profile enables coverage `0.7` with snow roughness `0.82`; run `Tools/ValidateSnowCover.ps1` and see `../docs/UNITY_SNOW_COVER.md`.
+
 ## PBR parameter regression
 
 `Tools/ValidatePbrParameterRegression.ps1` locks 12 direct-light fixtures across Metallic, Roughness, out-of-range input sanitization and a tilted normal. It complements the 11-case `MaterialBoundaryMatrix` by comparing linear HDR `DirectDiffuse`/`DirectSpecular` outputs and is included in the Stage 1 required gates.

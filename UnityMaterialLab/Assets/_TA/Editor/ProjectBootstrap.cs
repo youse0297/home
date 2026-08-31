@@ -453,6 +453,14 @@ namespace TA.MaterialLab.Editor
             profile.edgeWearSoftness = 0.24f;
             profile.edgeWearStrength = 0.7f;
             profile.edgeWearRoughnessBoost = 0.35f;
+            profile.snowColor = new Color(0.92f, 0.96f, 1.0f, 1.0f);
+            profile.snowCoverage = 0.7f;
+            profile.snowNormalThreshold = 0.55f;
+            profile.snowNormalSoftness = 0.2f;
+            profile.snowRoughness = 0.82f;
+            profile.snowHeightBlend = 0.0f;
+            profile.snowHeightStart = 0.0f;
+            profile.snowHeightFade = 1.0f;
             profile.metallic = 0.15f;
             profile.roughness = 0.42f;
             profile.occlusionStrength = 1.0f;
@@ -974,6 +982,7 @@ namespace TA.MaterialLab.Editor
                 Check(layeredNormalMaterial.HasProperty("_ProceduralMaskStrength") && layeredNormalProfile.proceduralMaskStrength > 0.0f, "Layered normal profile enables procedural mask", report);
                 Check(layeredNormalProfile.HasValidParameters(), "Layered normal procedural mask parameters are valid", report);
                 Check(layeredNormalMaterial.HasProperty("_EdgeWearStrength") && layeredNormalProfile.edgeWearStrength > 0.0f, "Layered normal profile enables edge wear", report);
+                Check(layeredNormalMaterial.HasProperty("_SnowCoverage") && layeredNormalProfile.snowCoverage > 0.0f, "Layered normal profile enables snow cover", report);
             }
             if (masterMaterial != null)
             {

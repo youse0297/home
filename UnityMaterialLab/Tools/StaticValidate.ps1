@@ -97,6 +97,8 @@ $hlslLibraryProceduralMaskPath = Join-Path $hlslLibraryRootPath 'TA_ProceduralMa
 $hlslLibraryProceduralMaskMetaPath = Join-Path $hlslLibraryRootPath 'TA_ProceduralMask.hlsl.meta'
 $hlslLibraryEdgeWearPath = Join-Path $hlslLibraryRootPath 'TA_EdgeWear.hlsl'
 $hlslLibraryEdgeWearMetaPath = Join-Path $hlslLibraryRootPath 'TA_EdgeWear.hlsl.meta'
+$hlslLibrarySnowCoverPath = Join-Path $hlslLibraryRootPath 'TA_SnowCover.hlsl'
+$hlslLibrarySnowCoverMetaPath = Join-Path $hlslLibraryRootPath 'TA_SnowCover.hlsl.meta'
 $hlslLibrarySamplingPath = Join-Path $hlslLibraryRootPath 'TA_Sampling.hlsl'
 $hlslLibraryVertexDisplacementPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl'
 $hlslLibraryVertexDisplacementMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl.meta'
@@ -201,6 +203,7 @@ Add-Check ((@(
     $hlslLibraryVectorPath,
     $hlslLibraryEdgeWearPath,
     $hlslLibraryProceduralMaskPath,
+    $hlslLibrarySnowCoverPath,
     $hlslLibrarySamplingPath,
     $hlslLibraryVertexDisplacementPath,
     $hlslLibraryVertexAnimationPath,
@@ -211,7 +214,7 @@ Add-Check ((@(
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all fourteen modules'
+    'HLSL source library contains all fifteen modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
     'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType Leaf) `
@@ -224,6 +227,8 @@ Add-Check (Test-Path -LiteralPath $hlslLibraryProceduralMaskMetaPath -PathType L
     'HLSL procedural mask module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryEdgeWearMetaPath -PathType Leaf) `
     'HLSL edge wear module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibrarySnowCoverMetaPath -PathType Leaf) `
+    'HLSL snow cover module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -318,6 +323,10 @@ $edgeWearManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\EdgeWea
 $edgeWearManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\EdgeWear.json.meta'
 $edgeWearValidationPath = Join-Path $projectPath 'Tools\ValidateEdgeWear.ps1'
 $edgeWearReportPath = Join-Path $projectPath 'Reports\EdgeWearValidation.json'
+$snowCoverManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\SnowCover.json'
+$snowCoverManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\SnowCover.json.meta'
+$snowCoverValidationPath = Join-Path $projectPath 'Tools\ValidateSnowCover.ps1'
+$snowCoverReportPath = Join-Path $projectPath 'Reports\SnowCoverValidation.json'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
     'Edge wear contract exists'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
@@ -326,6 +335,14 @@ Add-Check (Test-Path -LiteralPath $edgeWearValidationPath -PathType Leaf) `
     'Edge wear validator exists'
 Add-Check (Test-Path -LiteralPath $edgeWearReportPath -PathType Leaf) `
     'Edge wear validation report exists'
+Add-Check (Test-Path -LiteralPath $snowCoverManifestPath -PathType Leaf) `
+    'Snow cover contract exists'
+Add-Check (Test-Path -LiteralPath $snowCoverManifestMetaPath -PathType Leaf) `
+    'Snow cover contract meta exists'
+Add-Check (Test-Path -LiteralPath $snowCoverValidationPath -PathType Leaf) `
+    'Snow cover validator exists'
+Add-Check (Test-Path -LiteralPath $snowCoverReportPath -PathType Leaf) `
+    'Snow cover validation report exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -928,6 +945,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Vector\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_EdgeWear\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_ProceduralMask\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_SnowCover\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_NormalBlend\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_VertexDisplacement\.hlsl"' -and
@@ -959,6 +977,18 @@ if (Test-Path -LiteralPath $hlslLibraryProceduralMaskPath) {
         $hlslLibraryProceduralMask -match 'timeSeconds \* clamp\(config\.timeScale' -and
         $hlslLibraryProceduralMask -match 'return lerp\(1\.0h, shaped, saturate\(config\.strength\)\)') `
         'HLSL procedural mask module fixes explicit-time bounded output and identity strength'
+}
+
+if (Test-Path -LiteralPath $hlslLibrarySnowCoverPath) {
+    $hlslLibrarySnowCover = Get-Content -LiteralPath $hlslLibrarySnowCoverPath -Raw
+    Add-Check ($hlslLibrarySnowCover -match 'struct TA_SnowCoverConfig' -and
+        $hlslLibrarySnowCover -match 'TA_EvaluateSnowCover' -and
+        $hlslLibrarySnowCover -match 'TA_ApplySnowCoverColor' -and
+        $hlslLibrarySnowCover -match 'TA_ApplySnowCoverRoughness' -and
+        $hlslLibrarySnowCover -match 'TA_ApplySnowCoverMetallic' -and
+        $hlslLibrarySnowCover -match 'positionWS\.y - config\.heightStart' -and
+        $hlslLibrarySnowCover -match 'half3\(0\.0h, 1\.0h, 0\.0h\)') `
+        'HLSL snow cover module fixes world-up slope, height blend and bounded material responses'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryNormalBlendPath) {
@@ -1064,20 +1094,20 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.11.0' -and
+        $hlslLibraryManifest.version -eq '1.12.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 14 -and
-        @($hlslLibraryManifest.invariants).Count -eq 17) `
+        @($hlslLibraryManifest.modules).Count -eq 15 -and
+        @($hlslLibraryManifest.invariants).Count -eq 18) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 14 -and
-        $hlslLibraryReport.publicSymbolCount -eq 49 -and
+        $hlslLibraryReport.moduleCount -eq 15 -and
+        $hlslLibraryReport.publicSymbolCount -eq 54 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-    'HLSL source library report validates fourteen modules and forty-nine public symbols'
+    'HLSL source library report validates fifteen modules and fifty-four public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
@@ -1364,6 +1394,31 @@ if (Test-Path -LiteralPath $edgeWearReportPath) {
         $edgeWearReport.maximumError -le 0.000001 -and
         @($edgeWearReport.failures).Count -eq 0) `
         'Edge wear report validates grazing, color, roughness and clamping fixtures'
+}
+if (Test-Path -LiteralPath $snowCoverManifestPath) {
+    $snowCoverManifest = Get-Content -LiteralPath $snowCoverManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($snowCoverManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $snowCoverManifest.version -eq '1.0.0' -and
+        $snowCoverManifest.sourceLibraryVersion -eq '1.12.0' -and
+        @($snowCoverManifest.publicSymbols).Count -eq 5 -and
+        @($snowCoverManifest.dependencies).Count -eq 2 -and
+        @($snowCoverManifest.fixtures).Count -eq 10 -and
+        @($snowCoverManifest.invariants).Count -eq 5 -and
+        @($snowCoverManifest.limitations).Count -eq 3) `
+        'Snow cover contract fixes five entry points, ten fixtures and explicit response policies'
+}
+if (Test-Path -LiteralPath $snowCoverReportPath) {
+    $snowCoverReport = Get-Content -LiteralPath $snowCoverReportPath -Raw | ConvertFrom-Json
+    Add-Check ($snowCoverReport.status -eq 'PASS' -and
+        $snowCoverReport.sourceLibraryVersion -eq '1.12.0' -and
+        $snowCoverReport.publicSymbolCount -eq 5 -and
+        $snowCoverReport.dependencyCount -eq 2 -and
+        $snowCoverReport.fixtureCount -eq 10 -and
+        $snowCoverReport.invariantCount -eq 5 -and
+        $snowCoverReport.limitationCount -eq 3 -and
+        $snowCoverReport.maximumError -le 0.000001 -and
+        @($snowCoverReport.failures).Count -eq 0) `
+        'Snow cover report validates slope, height, color, roughness, metallic and clamping fixtures'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

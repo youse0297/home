@@ -1,0 +1,144 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.12.0",
+    "publicSymbolCount":  5,
+    "dependencyCount":  2,
+    "fixtureCount":  10,
+    "invariantCount":  5,
+    "limitationCount":  3,
+    "tolerance":  1E-06,
+    "maximumError":  1.0107470416187425E-11,
+    "generatedAtUtc":  "2026-08-31T13:45:17.6861046Z",
+    "checks":  [
+                   {
+                       "id":  "SIDE_NORMAL_ZERO",
+                       "pass":  true,
+                       "detail":  "actual=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "UPWARD_FULL",
+                       "pass":  true,
+                       "detail":  "actual=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SLOPE_MIDPOINT",
+                       "pass":  true,
+                       "detail":  "actual=0.499999999989893",
+                       "maximumError":  1.0107470416187425E-11
+                   },
+                   {
+                       "id":  "COVERAGE_HALF",
+                       "pass":  true,
+                       "detail":  "actual=0.5",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_FULL",
+                       "pass":  true,
+                       "detail":  "actual=1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_PARTIAL",
+                       "pass":  true,
+                       "detail":  "actual=0.5",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "COLOR_MIX",
+                       "pass":  true,
+                       "detail":  "actual=0.375, 0.475, 0.5375",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ROUGHNESS_REPLACE",
+                       "pass":  true,
+                       "detail":  "actual=0.8",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "METALLIC_DIELECTRIC",
+                       "pass":  true,
+                       "detail":  "actual=0.4",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "INPUT_CLAMP",
+                       "pass":  true,
+                       "detail":  "actual=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_SnowCoverConfig",
+                       "pass":  true,
+                       "detail":  "TA_SnowCoverConfig",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateSnowCover",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateSnowCover",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ApplySnowCoverColor",
+                       "pass":  true,
+                       "detail":  "TA_ApplySnowCoverColor",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ApplySnowCoverRoughness",
+                       "pass":  true,
+                       "detail":  "TA_ApplySnowCoverRoughness",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ApplySnowCoverMetallic",
+                       "pass":  true,
+                       "detail":  "TA_ApplySnowCoverMetallic",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "UPWARDNESS_SIGNAL",
+                       "pass":  true,
+                       "detail":  "Snow mask derives world-up normal coverage",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HEIGHT_BLEND",
+                       "pass":  true,
+                       "detail":  "Snow mask supports optional world-height accumulation",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BOUNDED_RESPONSES",
+                       "pass":  true,
+                       "detail":  "Snow material responses remain bounded",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "CONSUMER_WIRING",
+                       "pass":  true,
+                       "detail":  "BasePass applies snow to color, roughness and metallic",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "MATERIAL_PARAMETERS",
+                       "pass":  true,
+                       "detail":  "Material serializes snow cover parameters",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PROFILE_PARAMETERS",
+                       "pass":  true,
+                       "detail":  "Profile serializes snow cover parameters",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

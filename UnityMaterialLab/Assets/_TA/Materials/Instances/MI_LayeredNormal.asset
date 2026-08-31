@@ -35,6 +35,14 @@ MonoBehaviour:
   edgeWearSoftness: 0.24
   edgeWearStrength: 0.7
   edgeWearRoughnessBoost: 0.35
+  snowColor: {r: 0.92, g: 0.96, b: 1, a: 1}
+  snowCoverage: 0.7
+  snowNormalThreshold: 0.55
+  snowNormalSoftness: 0.2
+  snowRoughness: 0.82
+  snowHeightBlend: 0
+  snowHeightStart: 0
+  snowHeightFade: 1
   metallic: 0.15
   roughness: 0.42
   occlusionStrength: 1
