@@ -1,11 +1,11 @@
 ﻿{
     "status":  "PASS",
-    "version":  "1.9.0",
-    "moduleCount":  12,
-    "publicSymbolCount":  42,
+    "version":  "1.10.0",
+    "moduleCount":  13,
+    "publicSymbolCount":  45,
     "aggregate":  "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "consumer":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
-    "generatedAtUtc":  "2026-08-31T12:21:04.8620280Z",
+    "generatedAtUtc":  "2026-08-31T12:58:02.1439448Z",
     "checks":  [
                    {
                        "id":  "MODULE_EXISTS_types",
@@ -96,6 +96,36 @@
                        "id":  "PUBLIC_SYMBOLS_vector",
                        "pass":  true,
                        "detail":  "TA_SafeNormalize, TA_EncodeNormalWS, TA_BuildBitangentWS, TA_BuildTangentToWorld, TA_TransformTangentToWorld"
+                   },
+                   {
+                       "id":  "MODULE_EXISTS_proceduralMask",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_ProceduralMask.hlsl"
+                   },
+                   {
+                       "id":  "INCLUDE_GUARD_proceduralMask",
+                       "pass":  true,
+                       "detail":  "TA_PROCEDURAL_MASK_INCLUDED"
+                   },
+                   {
+                       "id":  "NO_PACKAGE_INCLUDE_proceduralMask",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_ProceduralMask.hlsl"
+                   },
+                   {
+                       "id":  "DEPENDENCY_ORDER_proceduralMask",
+                       "pass":  true,
+                       "detail":  "common"
+                   },
+                   {
+                       "id":  "DECLARED_INCLUDES_proceduralMask",
+                       "pass":  true,
+                       "detail":  "TA_Common.hlsl"
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOLS_proceduralMask",
+                       "pass":  true,
+                       "detail":  "TA_ProceduralMaskConfig, TA_EvaluateProceduralMask, TA_ApplyProceduralMask"
                    },
                    {
                        "id":  "MODULE_EXISTS_sampling",
@@ -380,12 +410,12 @@
                    {
                        "id":  "AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_NormalBlend.hlsl -\u003e TA_VertexDisplacement.hlsl -\u003e TA_VertexAnimation.hlsl -\u003e TA_VertexDeformation.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_ProceduralMask.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_NormalBlend.hlsl -\u003e TA_VertexDisplacement.hlsl -\u003e TA_VertexAnimation.hlsl -\u003e TA_VertexDeformation.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
                    },
                    {
                        "id":  "MANIFEST_AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "types -\u003e common -\u003e vector -\u003e sampling -\u003e normalBlend -\u003e vertexDisplacement -\u003e vertexAnimation -\u003e vertexDeformation -\u003e pbrInput -\u003e brdf -\u003e lighting -\u003e debugViews"
+                       "detail":  "types -\u003e common -\u003e vector -\u003e proceduralMask -\u003e sampling -\u003e normalBlend -\u003e vertexDisplacement -\u003e vertexAnimation -\u003e vertexDeformation -\u003e pbrInput -\u003e brdf -\u003e lighting -\u003e debugViews"
                    },
                    {
                        "id":  "CONSUMER_EXISTS",
@@ -395,7 +425,7 @@
                    {
                        "id":  "CONSUMER_WIRING",
                        "pass":  true,
-                       "detail":  "TA_TransformUV, TA_SampleTexture2DLod, TA_EvaluateVertexDeformationOS, TA_SampleNormalTS, TA_ComposeNormalLayersTS, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_EvaluateLighting, TA_SelectDebugView"
+                       "detail":  "TA_TransformUV, TA_EvaluateProceduralMask, TA_ApplyProceduralMask, TA_SampleTexture2DLod, TA_EvaluateVertexDeformationOS, TA_SampleNormalTS, TA_ComposeNormalLayersTS, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_EvaluateLighting, TA_SelectDebugView"
                    },
                    {
                        "id":  "ADDITIVE_LIGHTING_INVARIANT",

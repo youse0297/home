@@ -1,19 +1,21 @@
 {
   "status": "STATIC_LIBRARY_VALIDATED",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "root": "Assets/_TA/Shaders/Library",
   "namespacePrefix": "TA_",
   "precisionPolicy": "Renderer-facing calculations use half precision unless Unity requires float inputs",
   "aggregate": {
     "file": "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "includeGuard": "TA_SHADER_LIBRARY_INCLUDED",
-    "modules": ["types", "common", "vector", "sampling", "normalBlend", "vertexDisplacement", "vertexAnimation", "vertexDeformation", "pbrInput", "brdf", "lighting", "debugViews"]
+    "modules": ["types", "common", "vector", "proceduralMask", "sampling", "normalBlend", "vertexDisplacement", "vertexAnimation", "vertexDeformation", "pbrInput", "brdf", "lighting", "debugViews"]
   },
   "consumer": {
     "file": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
     "include": "Library/TA_ShaderLibrary.hlsl",
     "entryPoints": [
       "TA_TransformUV",
+      "TA_EvaluateProceduralMask",
+      "TA_ApplyProceduralMask",
       "TA_SampleTexture2DLod",
       "TA_EvaluateVertexDeformationOS",
       "TA_SampleNormalTS",
@@ -55,6 +57,14 @@
         "TA_BuildTangentToWorld",
         "TA_TransformTangentToWorld"
       ]
+    },
+    {
+      "id": "proceduralMask",
+      "file": "Assets/_TA/Shaders/Library/TA_ProceduralMask.hlsl",
+      "role": "Deterministic UV-space procedural mask with explicit time, phase, contrast and strength",
+      "includeGuard": "TA_PROCEDURAL_MASK_INCLUDED",
+      "dependencies": ["common"],
+      "publicSymbols": ["TA_ProceduralMaskConfig", "TA_EvaluateProceduralMask", "TA_ApplyProceduralMask"]
     },
     {
       "id": "sampling",
@@ -180,6 +190,7 @@
     "Wave and height-weighted wind offsets combine additively in object space before Unity position transforms",
     "High-level vertex deformation owns the fixed height then wave and wind orchestration order",
     "Renderer consumers provide sampled resources and configuration through one structured deformation entry point",
-    "Normal layers are composed in tangent space with RNM, clamped weights and final safe renormalization"
+    "Normal layers are composed in tangent space with RNM, clamped weights and final safe renormalization",
+    "Procedural masks are deterministic, bounded to [0,1], and strength zero is an identity"
   ]
 }

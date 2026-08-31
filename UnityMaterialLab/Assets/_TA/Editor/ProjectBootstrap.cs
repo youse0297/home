@@ -441,6 +441,13 @@ namespace TA.MaterialLab.Editor
             profile.detailNormalWeight = 0.65f;
             profile.macroNormalScale = 0.5f;
             profile.macroNormalWeight = 0.35f;
+            profile.proceduralMaskScale = new Vector2(6.0f, 6.0f);
+            profile.proceduralMaskOffset = Vector2.zero;
+            profile.proceduralMaskRotation = 0.25f;
+            profile.proceduralMaskTimeScale = 0.15f;
+            profile.proceduralMaskPhase = 0.0f;
+            profile.proceduralMaskContrast = 1.4f;
+            profile.proceduralMaskStrength = 0.75f;
             profile.metallic = 0.15f;
             profile.roughness = 0.42f;
             profile.occlusionStrength = 1.0f;
@@ -959,6 +966,8 @@ namespace TA.MaterialLab.Editor
                 Check(layeredNormalMaterial.GetTexture("_DetailNormalMap") == layeredNormalProfile.detailNormal, "Layered detail normal matches profile", report);
                 Check(layeredNormalMaterial.GetTexture("_MacroNormalMap") == layeredNormalProfile.macroNormal, "Layered macro normal matches profile", report);
                 Check(layeredNormalProfile.detailNormalWeight > 0.0f && layeredNormalProfile.macroNormalWeight > 0.0f, "Layered normal profile enables both layers", report);
+                Check(layeredNormalMaterial.HasProperty("_ProceduralMaskStrength") && layeredNormalProfile.proceduralMaskStrength > 0.0f, "Layered normal profile enables procedural mask", report);
+                Check(layeredNormalProfile.HasValidParameters(), "Layered normal procedural mask parameters are valid", report);
             }
             if (masterMaterial != null)
             {

@@ -23,6 +23,13 @@ MonoBehaviour:
   detailNormalWeight: 0.65
   macroNormalScale: 0.5
   macroNormalWeight: 0.35
+  proceduralMaskScale: {x: 6, y: 6}
+  proceduralMaskOffset: {x: 0, y: 0}
+  proceduralMaskRotation: 0.25
+  proceduralMaskTimeScale: 0.15
+  proceduralMaskPhase: 0
+  proceduralMaskContrast: 1.4
+  proceduralMaskStrength: 0.75
   metallic: 0.15
   roughness: 0.42
   occlusionStrength: 1

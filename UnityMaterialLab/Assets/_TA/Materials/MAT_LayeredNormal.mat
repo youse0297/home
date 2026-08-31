@@ -51,6 +51,11 @@ Material:
     - _DetailNormalWeight: 0.65
     - _MacroNormalScale: 0.5
     - _MacroNormalWeight: 0.35
+    - _ProceduralMaskRotation: 0.25
+    - _ProceduralMaskTimeScale: 0.15
+    - _ProceduralMaskPhase: 0
+    - _ProceduralMaskContrast: 1.4
+    - _ProceduralMaskStrength: 0.75
     - _AOStrength: 1
     - _RoughnessScale: 1
     - _MetallicScale: 1
@@ -60,4 +65,6 @@ Material:
     - _Surface: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ProceduralMaskScale: {r: 6, g: 6, b: 0, a: 0}
+    - _ProceduralMaskOffset: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

@@ -93,6 +93,8 @@ $hlslLibraryAggregatePath = Join-Path $hlslLibraryRootPath 'TA_ShaderLibrary.hls
 $hlslLibraryTypesPath = Join-Path $hlslLibraryRootPath 'TA_ShaderTypes.hlsl'
 $hlslLibraryCommonPath = Join-Path $hlslLibraryRootPath 'TA_Common.hlsl'
 $hlslLibraryVectorPath = Join-Path $hlslLibraryRootPath 'TA_Vector.hlsl'
+$hlslLibraryProceduralMaskPath = Join-Path $hlslLibraryRootPath 'TA_ProceduralMask.hlsl'
+$hlslLibraryProceduralMaskMetaPath = Join-Path $hlslLibraryRootPath 'TA_ProceduralMask.hlsl.meta'
 $hlslLibrarySamplingPath = Join-Path $hlslLibraryRootPath 'TA_Sampling.hlsl'
 $hlslLibraryVertexDisplacementPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl'
 $hlslLibraryVertexDisplacementMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl.meta'
@@ -148,6 +150,10 @@ $layeredNormalMaterialManifestPath = Join-Path $projectPath 'Assets\_TA\Document
 $layeredNormalMaterialManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\LayeredNormalMaterial.json.meta'
 $layeredNormalMaterialValidationPath = Join-Path $projectPath 'Tools\ValidateLayeredNormalMaterial.ps1'
 $layeredNormalMaterialReportPath = Join-Path $projectPath 'Reports\LayeredNormalMaterialValidation.json'
+$proceduralMaskManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\ProceduralMask.json'
+$proceduralMaskManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\ProceduralMask.json.meta'
+$proceduralMaskValidationPath = Join-Path $projectPath 'Tools\ValidateProceduralMask.ps1'
+$proceduralMaskReportPath = Join-Path $projectPath 'Reports\ProceduralMaskValidation.json'
 
 Add-Check (Test-Path -LiteralPath $projectVersionPath -PathType Leaf) `
     'ProjectVersion.txt exists'
@@ -191,6 +197,7 @@ Add-Check ((@(
     $hlslLibraryTypesPath,
     $hlslLibraryCommonPath,
     $hlslLibraryVectorPath,
+    $hlslLibraryProceduralMaskPath,
     $hlslLibrarySamplingPath,
     $hlslLibraryVertexDisplacementPath,
     $hlslLibraryVertexAnimationPath,
@@ -201,7 +208,7 @@ Add-Check ((@(
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all eleven modules'
+    'HLSL source library contains all thirteen modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
     'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType Leaf) `
@@ -210,6 +217,8 @@ Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDeformationMetaPath -PathTyp
     'HLSL vertex deformation module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryNormalBlendMetaPath -PathType Leaf) `
     'HLSL normal blend module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryProceduralMaskMetaPath -PathType Leaf) `
+    'HLSL procedural mask module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -292,6 +301,14 @@ Add-Check (Test-Path -LiteralPath $layeredNormalMaterialValidationPath -PathType
     'Layered normal material validator exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialReportPath -PathType Leaf) `
     'Layered normal material validation report exists'
+Add-Check (Test-Path -LiteralPath $proceduralMaskManifestPath -PathType Leaf) `
+    'Procedural mask contract exists'
+Add-Check (Test-Path -LiteralPath $proceduralMaskManifestMetaPath -PathType Leaf) `
+    'Procedural mask contract meta exists'
+Add-Check (Test-Path -LiteralPath $proceduralMaskValidationPath -PathType Leaf) `
+    'Procedural mask validator exists'
+Add-Check (Test-Path -LiteralPath $proceduralMaskReportPath -PathType Leaf) `
+    'Procedural mask validation report exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -309,6 +326,11 @@ if ((Test-Path -LiteralPath $layeredNormalMaterialPath) -and (Test-Path -Literal
         $layeredNormalMaterial -match '_DetailNormalWeight: 0\.65' -and
         $layeredNormalMaterial -match '_MacroNormalWeight: 0\.35') `
         'Layered normal material binds both normal layers with non-zero weights'
+    Add-Check ($layeredNormalMaterial -match '_ProceduralMaskScale:' -and
+        $layeredNormalMaterial -match '_ProceduralMaskStrength: 0\.75' -and
+        $layeredNormalProfile -match 'proceduralMaskScale:' -and
+        $layeredNormalProfile -match 'proceduralMaskStrength: 0\.75') `
+        'Layered normal material binds the procedural mask contract'
     Add-Check ($layeredNormalProfile -match 'm_Name: MI_LayeredNormal' -and
         $layeredNormalProfile -match 'detailNormal:' -and
         $layeredNormalProfile -match 'macroNormal:' -and
@@ -887,6 +909,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
     Add-Check ($hlslLibraryAggregate -match '#include "TA_ShaderTypes\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Common\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Vector\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_ProceduralMask\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Sampling\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_NormalBlend\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_VertexDisplacement\.hlsl"' -and
@@ -897,6 +920,16 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryProceduralMaskPath) {
+    $hlslLibraryProceduralMask = Get-Content -LiteralPath $hlslLibraryProceduralMaskPath -Raw
+    Add-Check ($hlslLibraryProceduralMask -match 'struct TA_ProceduralMaskConfig' -and
+        $hlslLibraryProceduralMask -match 'TA_EvaluateProceduralMask' -and
+        $hlslLibraryProceduralMask -match 'TA_ApplyProceduralMask' -and
+        $hlslLibraryProceduralMask -match 'timeSeconds \* clamp\(config\.timeScale' -and
+        $hlslLibraryProceduralMask -match 'return lerp\(1\.0h, shaped, saturate\(config\.strength\)\)') `
+        'HLSL procedural mask module fixes explicit-time bounded output and identity strength'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryNormalBlendPath) {
@@ -1002,20 +1035,20 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.9.0' -and
+        $hlslLibraryManifest.version -eq '1.10.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 12 -and
-        @($hlslLibraryManifest.invariants).Count -eq 15) `
+        @($hlslLibraryManifest.modules).Count -eq 13 -and
+        @($hlslLibraryManifest.invariants).Count -eq 16) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 12 -and
-        $hlslLibraryReport.publicSymbolCount -eq 42 -and
+        $hlslLibraryReport.moduleCount -eq 13 -and
+        $hlslLibraryReport.publicSymbolCount -eq 45 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-        'HLSL source library report validates twelve modules and forty-two public symbols'
+    'HLSL source library report validates thirteen modules and forty-five public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {

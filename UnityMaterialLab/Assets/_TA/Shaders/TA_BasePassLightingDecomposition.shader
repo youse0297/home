@@ -12,6 +12,13 @@ Shader "TA/BasePass Lighting Decomposition"
         [Normal] _MacroNormalMap("Macro Normal Map", 2D) = "bump" {}
         _MacroNormalScale("Macro Normal Scale", Range(0, 2)) = 1
         _MacroNormalWeight("Macro Normal Weight", Range(0, 1)) = 0
+        _ProceduralMaskScale("Procedural Mask Scale", Vector) = (4, 4, 0, 0)
+        _ProceduralMaskOffset("Procedural Mask Offset", Vector) = (0, 0, 0, 0)
+        _ProceduralMaskRotation("Procedural Mask Rotation", Range(-3.1415927, 3.1415927)) = 0
+        _ProceduralMaskTimeScale("Procedural Mask Time Scale", Range(-16, 16)) = 0
+        _ProceduralMaskPhase("Procedural Mask Phase", Range(-6.2831853, 6.2831853)) = 0
+        _ProceduralMaskContrast("Procedural Mask Contrast", Range(0, 4)) = 1
+        _ProceduralMaskStrength("Procedural Mask Strength", Range(0, 1)) = 0
         _ORMMap("ORM (R=AO G=Roughness B=Metallic)", 2D) = "white" {}
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _RoughnessScale("Roughness Scale", Range(0, 1)) = 1
@@ -86,12 +93,19 @@ Shader "TA/BasePass Lighting Decomposition"
                 float4 _DisplacementMap_ST;
                 float4 _WaveDirection;
                 float4 _WindDirection;
+                float4 _ProceduralMaskScale;
+                float4 _ProceduralMaskOffset;
                 half4 _BaseColor;
                 half _BumpScale;
                 half _DetailNormalScale;
                 half _DetailNormalWeight;
                 half _MacroNormalScale;
                 half _MacroNormalWeight;
+                half _ProceduralMaskRotation;
+                half _ProceduralMaskTimeScale;
+                half _ProceduralMaskPhase;
+                half _ProceduralMaskContrast;
+                half _ProceduralMaskStrength;
                 half _AOStrength;
                 half _RoughnessScale;
                 half _MetallicScale;
@@ -217,12 +231,31 @@ Shader "TA/BasePass Lighting Decomposition"
                     TA_TransformUV(input.uv, _MacroNormalMap_ST),
                     _MacroNormalScale
                 );
+                TA_ProceduralMaskConfig proceduralMaskConfig;
+                proceduralMaskConfig.uvScale = _ProceduralMaskScale.xy;
+                proceduralMaskConfig.uvOffset = _ProceduralMaskOffset.xy;
+                proceduralMaskConfig.rotationRadians = _ProceduralMaskRotation;
+                proceduralMaskConfig.timeScale = _ProceduralMaskTimeScale;
+                proceduralMaskConfig.phase = _ProceduralMaskPhase;
+                proceduralMaskConfig.contrast = _ProceduralMaskContrast;
+                proceduralMaskConfig.strength = _ProceduralMaskStrength;
+                half proceduralMask = TA_EvaluateProceduralMask(
+                    input.uv,
+                    _Time.y,
+                    proceduralMaskConfig
+                );
                 TA_NormalLayerTS detailLayer;
                 detailLayer.normalTS = detailNormalTS;
-                detailLayer.weight = _DetailNormalWeight;
+                detailLayer.weight = TA_ApplyProceduralMask(
+                    _DetailNormalWeight,
+                    proceduralMask
+                );
                 TA_NormalLayerTS macroLayer;
                 macroLayer.normalTS = macroNormalTS;
-                macroLayer.weight = _MacroNormalWeight;
+                macroLayer.weight = TA_ApplyProceduralMask(
+                    _MacroNormalWeight,
+                    proceduralMask
+                );
                 pbrInput.normalTS = TA_ComposeNormalLayersTS(
                     pbrInput.normalTS,
                     detailLayer,

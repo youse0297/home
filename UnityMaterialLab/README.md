@@ -107,9 +107,9 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## HLSL 源码库
 
-- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按依赖顺序装配 12 个模块；`TA_NormalBlend.hlsl` 负责切线空间 RNM 多层法线组合，`TA_VertexDeformation.hlsl` 位于低层位移/动画与 PBR 输入之间。
+- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按依赖顺序装配 13 个模块；`TA_NormalBlend.hlsl` 负责切线空间 RNM 多层法线组合，`TA_ProceduralMask.hlsl` 提供显式时间驱动的 UV 程序化遮罩，`TA_VertexDeformation.hlsl` 位于低层位移/动画与 PBR 输入之间。
 - BasePass 通过 `TA_PBRInputConfig`、`TA_SamplePBRInput` 和 `TA_BuildSurfaceData` 组装表面数据，再调用 `TA_EvaluateLighting` 与 `TA_SelectDebugView`；采样、材质边界、GGX 和调试选择不再内联重复。
-- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 42 个公共符号；多层法线由 `Tools/ValidateNormalLayerBlending.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md` 和 `../docs/UNITY_NORMAL_LAYER_BLENDING.md`。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 45 个公共符号；多层法线由 `Tools/ValidateNormalLayerBlending.ps1` 验证，程序化遮罩由 `Tools/ValidateProceduralMask.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_NORMAL_LAYER_BLENDING.md` 和 `../docs/UNITY_PROCEDURAL_MASK.md`。
 
 ## 顶点位移基础
 
@@ -156,9 +156,11 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
 ## Direct-light PBR integration
 
-The renderer-facing HLSL source library is v1.9.0. BasePass consumes vertex deformation through one structured entry point; low-level height, wave and wind modules remain independently validated and default to zero amplitude.
+The renderer-facing HLSL source library is v1.10.0. BasePass consumes vertex deformation through one structured entry point; low-level height, wave and wind modules remain independently validated and default to zero amplitude.
 
 The source library also exposes `TA_NormalBlend.hlsl` for tangent-space RNM layering. BasePass samples optional detail and macro normal maps, composes them in `base → detail → macro` order, and clamps each layer weight; zero weights preserve the established normal baseline. See `../docs/UNITY_NORMAL_LAYER_BLENDING.md` and `Reports/NormalLayerBlendingValidation.json`.
+
+`TA_ProceduralMask.hlsl` evaluates a bounded sinusoidal field from Base UV, rotation, phase and explicit `_Time.y`; `strength=0` returns identity `1`, while the enabled sample profile multiplies the mask into both optional normal-layer weights. Run `Tools/ValidateProceduralMask.ps1` for the eight fixed fixtures and material/profile wiring report; see `../docs/UNITY_PROCEDURAL_MASK.md`.
 
 ## PBR parameter regression
 

@@ -1,0 +1,80 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.10.0",
+  "source": "Assets/_TA/Shaders/Library/TA_ProceduralMask.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "material": "Assets/_TA/Materials/MAT_LayeredNormal.mat",
+  "profile": "Assets/_TA/Materials/Instances/MI_LayeredNormal.asset",
+  "publicSymbols": ["TA_ProceduralMaskConfig", "TA_EvaluateProceduralMask", "TA_ApplyProceduralMask"],
+  "dependencies": ["common"],
+  "model": {
+    "space": "Base UV space",
+    "signal": "Bounded sinusoidal field with explicit UV transform, rotation, phase and time",
+    "range": "Mask output is saturated to [0,1]",
+    "strength": "Strength blends the generated mask against identity one",
+    "consumerPolicy": "The same mask multiplies detail and macro tangent-space normal layer weights"
+  },
+  "fixtures": [
+    {
+      "id": "IDENTITY_STRENGTH_ZERO",
+      "function": "TA_EvaluateProceduralMask",
+      "input": { "uv": [0.37, 0.61], "timeSeconds": 12.0, "uvScale": [4.0, 7.0], "uvOffset": [1.0, -2.0], "rotationRadians": 1.2, "timeScale": 0.5, "phase": -0.7, "contrast": 2.0, "strength": 0.0 },
+      "expected": 1.0
+    },
+    {
+      "id": "SINE_CENTER",
+      "function": "TA_EvaluateProceduralMask",
+      "input": { "uv": [0.0, 0.0], "timeSeconds": 0.0, "uvScale": [0.0, 0.0], "uvOffset": [0.0, 0.0], "rotationRadians": 0.0, "timeScale": 0.0, "phase": 0.0, "contrast": 1.0, "strength": 1.0 },
+      "expected": 0.5
+    },
+    {
+      "id": "SINE_CREST",
+      "function": "TA_EvaluateProceduralMask",
+      "input": { "uv": [0.0, 0.0], "timeSeconds": 0.0, "uvScale": [0.0, 0.0], "uvOffset": [0.0, 0.0], "rotationRadians": 0.0, "timeScale": 0.0, "phase": 1.5707963268, "contrast": 1.0, "strength": 1.0 },
+      "expected": 1.0
+    },
+    {
+      "id": "SINE_TROUGH",
+      "function": "TA_EvaluateProceduralMask",
+      "input": { "uv": [0.0, 0.0], "timeSeconds": 0.0, "uvScale": [0.0, 0.0], "uvOffset": [0.0, 0.0], "rotationRadians": 0.0, "timeScale": 0.0, "phase": -1.5707963268, "contrast": 1.0, "strength": 1.0 },
+      "expected": 0.0
+    },
+    {
+      "id": "PARTIAL_STRENGTH",
+      "function": "TA_EvaluateProceduralMask",
+      "input": { "uv": [0.0, 0.0], "timeSeconds": 0.0, "uvScale": [0.0, 0.0], "uvOffset": [0.0, 0.0], "rotationRadians": 0.0, "timeScale": 0.0, "phase": -1.5707963268, "contrast": 1.0, "strength": 0.5 },
+      "expected": 0.5
+    },
+    {
+      "id": "CONTRAST_ZERO",
+      "function": "TA_EvaluateProceduralMask",
+      "input": { "uv": [0.0, 0.0], "timeSeconds": 0.0, "uvScale": [0.0, 0.0], "uvOffset": [0.0, 0.0], "rotationRadians": 0.0, "timeScale": 0.0, "phase": -1.5707963268, "contrast": 0.0, "strength": 1.0 },
+      "expected": 0.5
+    },
+    {
+      "id": "LAYER_WEIGHT_MULTIPLY",
+      "function": "TA_ApplyProceduralMask",
+      "input": { "layerWeight": 0.8, "proceduralMask": 0.25 },
+      "expected": 0.2
+    },
+    {
+      "id": "LAYER_WEIGHT_CLAMP",
+      "function": "TA_ApplyProceduralMask",
+      "input": { "layerWeight": 2.0, "proceduralMask": -1.0 },
+      "expected": 0.0
+    }
+  ],
+  "invariants": [
+    "Procedural evaluation has no texture or hidden global resource dependency",
+    "UV scale, rotation, phase and time scale are bounded at evaluation",
+    "Contrast and strength are saturated through the material profile contract",
+    "Strength zero returns identity one",
+    "Layer weights are multiplied by a saturated mask before normal composition"
+  ],
+  "limitations": [
+    "The signal is intentionally a lightweight sinusoidal field rather than blue-noise or texture-backed noise",
+    "The current BasePass applies the mask to normal layer weights; other material channels require explicit consumers",
+    "Time animation depends on Unity _Time.y supplied by the renderer"
+  ]
+}

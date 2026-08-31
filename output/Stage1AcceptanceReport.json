@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  17,
-    "passedRequiredGateCount":  17,
+    "requiredGateCount":  18,
+    "passedRequiredGateCount":  18,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-31T12:40:50.5233960Z",
+    "generatedAtUtc":  "2026-08-31T12:55:55.4915352Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -44,21 +44,21 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "      Start  7: texture_sampling_acceptance",
-                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.08 sec",
                                          "      Start  8: surface_attributes_acceptance",
-                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.06 sec",
                                          "      Start  9: diffuse_exposure_acceptance",
-                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.04 sec",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.07 sec",
                                          "      Start 10: ggx_brdf_acceptance",
-                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
+                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.06 sec",
                                          "      Start 11: material_workflow_acceptance",
-                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.07 sec",
                                          "      Start 12: release_acceptance",
-                                         "12/12 Test #12: release_acceptance ......................   Passed    0.04 sec",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.08 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.39 sec"
+                                         "Total Test time (real) =   1.24 sec"
                                      ]
                   },
                   {
@@ -232,6 +232,19 @@
                                      ]
                   },
                   {
+                      "name":  "Procedural Mask",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/ProceduralMaskValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_PROCEDURAL_MASK: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\ProceduralMaskValidation.json"
+                                     ]
+                  },
+                  {
                       "name":  "Unity Static Validation",
                       "category":  "Unity Offline",
                       "required":  true,
@@ -295,6 +308,7 @@
                       "UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json",
                       "UnityMaterialLab/Reports/NormalLayerBlendingValidation.json",
                       "UnityMaterialLab/Reports/LayeredNormalMaterialValidation.json",
+                      "UnityMaterialLab/Reports/ProceduralMaskValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }
