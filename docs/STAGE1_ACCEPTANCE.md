@@ -34,6 +34,7 @@
 | Unity | Edge Wear | 视角掠射边缘磨损、颜色/粗糙度响应与参数夹取通过 |
 | Unity | Snow Cover | 世界向上积雪覆盖、坡度/高度混合及材质响应通过 |
 | Unity | Anisotropy Basics | 正交切线框架、旋转方向、各向异性 GGX 与零值回退通过 |
+| Unity | Anisotropic PBR Integration | 统一镜面项入口、金属工作流与 12 组最终直接光 RGB 通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁
@@ -67,4 +68,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 3. 安装 RenderDoc，运行 `UnityMaterialLab/Tools/RenderDocCaptureCheck.ps1`，要求状态变为 `READY_TO_CAPTURE`。
 4. 捕获稳定帧并保存为 `UnityMaterialLab/Reports/RenderDoc/MaterialLab_Frame_0001.rdc`。
 5. 重新运行阶段 1 总验收，并人工确认外部运行证据。
-阶段 1 离线门禁包含直接光 PBR、PBR 参数、顶点位移/动画、模块化和各向异性专项回归，再执行聚合静态门禁；所有 21 条必过门禁均通过后，才会根据 Unity/RenderDoc 外部状态给出 `PASS` 或 `CONDITIONAL_PASS`。
+阶段 1 离线门禁包含直接光 PBR、PBR 参数、顶点位移/动画、模块化和各向异性专项回归，再执行聚合静态门禁；所有 22 条必过门禁均通过后，才会根据 Unity/RenderDoc 外部状态给出 `PASS` 或 `CONDITIONAL_PASS`。

@@ -27,9 +27,7 @@ TA_DirectLightingBreakdown TA_EvaluateDirectLighting(
     }
 
     half3 halfDirectionWS = TA_SafeNormalize(lightDirectionWS + viewDirectionWS);
-    half normalDotHalf = saturate(dot(normalWS, halfDirectionWS));
     half viewDotHalf = saturate(dot(viewDirectionWS, halfDirectionWS));
-    half roughness = TA_SanitizePerceptualRoughness(surface.roughness);
     half metallic = saturate(surface.metallic);
     half3 baseColor = saturate(surface.baseColor);
     half3 radiance = max(lightingInput.lightColor, 0.0h) *
@@ -37,40 +35,14 @@ TA_DirectLightingBreakdown TA_EvaluateDirectLighting(
 
     half3 reflectanceAtNormal = lerp(half3(0.04h, 0.04h, 0.04h), baseColor, metallic);
     half3 fresnel = TA_FresnelSchlick(viewDotHalf, reflectanceAtNormal);
-    half distribution = TA_DistributionGGX(normalDotHalf, roughness);
-    half visibility = TA_VisibilitySmithGGXCorrelated(
-        normalDotView,
-        normalDotLight,
-        roughness
+    TA_GGXSpecularTerms specularTerms = TA_EvaluateGGXSpecularTerms(
+        surface,
+        viewDirectionWS,
+        lightDirectionWS,
+        halfDirectionWS
     );
-    if (abs(surface.anisotropy) > TA_MIN_DENOMINATOR)
-    {
-        half tangentDotHalf = dot(surface.tangentWS, halfDirectionWS);
-        half bitangentDotHalf = dot(surface.bitangentWS, halfDirectionWS);
-        half tangentDotView = dot(surface.tangentWS, viewDirectionWS);
-        half bitangentDotView = dot(surface.bitangentWS, viewDirectionWS);
-        half tangentDotLight = dot(surface.tangentWS, lightDirectionWS);
-        half bitangentDotLight = dot(surface.bitangentWS, lightDirectionWS);
-        half2 alphaTB = TA_AnisotropicAlphaFromRoughness(
-            roughness,
-            surface.anisotropy
-        );
-        distribution = TA_DistributionGGXAnisotropic(
-            normalDotHalf,
-            tangentDotHalf,
-            bitangentDotHalf,
-            alphaTB
-        );
-        visibility = TA_VisibilitySmithGGXAnisotropic(
-            normalDotView,
-            normalDotLight,
-            tangentDotView,
-            bitangentDotView,
-            tangentDotLight,
-            bitangentDotLight,
-            alphaTB
-        );
-    }
+    half distribution = specularTerms.distribution;
+    half visibility = specularTerms.visibility;
     half3 diffuseWeight = (1.0h - metallic) * (1.0h - fresnel);
 
     result.directDiffuse = diffuseWeight * baseColor * TA_INV_PI *

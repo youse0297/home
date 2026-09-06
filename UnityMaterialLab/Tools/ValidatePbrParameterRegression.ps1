@@ -185,9 +185,11 @@ Add-Check -Id 'FINITE_NON_NEGATIVE_OUTPUTS' `
 
 $inputSourcePath = Join-Path $projectPath ($manifest.inputSource -replace '/', '\')
 $lightingSourcePath = Join-Path $projectPath ($manifest.lightingSource -replace '/', '\')
+$anisotropySourcePath = Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_Anisotropy.hlsl'
 $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
 $inputSource = Get-Content -LiteralPath $inputSourcePath -Raw
 $lightingSource = Get-Content -LiteralPath $lightingSourcePath -Raw
+$anisotropySource = Get-Content -LiteralPath $anisotropySourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     $symbolSource = if ($symbol -in @('TA_SamplePBRInput','TA_BuildSurfaceData')) { $inputSource } else { $lightingSource }
@@ -203,9 +205,10 @@ Add-Check -Id 'INPUT_POLICY_WIRING' `
 Add-Check -Id 'LIGHTING_POLICY_WIRING' `
     -Pass ($lightingSource -match 'TA_EvaluateDirectLighting' -and
         $lightingSource -match 'TA_EvaluateLighting' -and
-        $lightingSource -match 'TA_DistributionGGX' -and
-        $lightingSource -match 'TA_VisibilitySmithGGXCorrelated' -and
-        $lightingSource -match 'TA_FresnelSchlick') `
+        $lightingSource -match 'TA_EvaluateGGXSpecularTerms' -and
+        $lightingSource -match 'TA_FresnelSchlick' -and
+        $anisotropySource -match 'TA_DistributionGGX' -and
+        $anisotropySource -match 'TA_VisibilitySmithGGXCorrelated') `
     -Detail 'Lighting layer consumes the integrated direct-light PBR components'
 Add-Check -Id 'BASEPASS_PARAMETER_WIRING' `
     -Pass ($consumer -match 'TA_SamplePBRInput\s*\(' -and

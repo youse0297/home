@@ -299,6 +299,11 @@ Add-ScriptGate -Name 'Anisotropy Basics' `
     -ExpectedPattern 'UNITY_ANISOTROPY_BASICS: PASS' `
     -Evidence 'UnityMaterialLab/Reports/AnisotropyBasicsValidation.json' `
     -ReportName 'AnisotropyBasicsValidation.json'
+Add-ScriptGate -Name 'Anisotropic PBR Integration' `
+    -ScriptName 'ValidateAnisotropicPbrIntegration.ps1' `
+    -ExpectedPattern 'UNITY_ANISOTROPIC_PBR_INTEGRATION: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/AnisotropicPbrIntegrationValidation.json' `
+    -ReportName 'AnisotropicPbrIntegrationValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `

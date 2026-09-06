@@ -150,8 +150,10 @@ foreach ($fixture in @($manifest.fixtures)) {
 }
 
 $sourcePath = Join-Path $projectPath ($manifest.source -replace '/', '\')
+$anisotropySourcePath = Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_Anisotropy.hlsl'
 $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
 $source = Get-Content -LiteralPath $sourcePath -Raw
+$anisotropySource = Get-Content -LiteralPath $anisotropySourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) `
@@ -167,11 +169,12 @@ Add-Check -Id 'ENERGY_CONSERVING_DIFFUSE' `
         $source -match 'result\.directDiffuse\s*=\s*diffuseWeight\s*\*\s*baseColor\s*\*\s*TA_INV_PI') `
     -Detail '(1-F_Schlick) * (1-metallic) * BaseColor / PI'
 Add-Check -Id 'BRDF_COMPONENT_INTEGRATION' `
-    -Pass ($source -match 'TA_DistributionGGX\(' -and
-        $source -match 'TA_VisibilitySmithGGXCorrelated\(' -and
+    -Pass ($source -match 'TA_EvaluateGGXSpecularTerms\(' -and
         $source -match 'TA_FresnelSchlick\(' -and
-        $source -match 'result\.directSpecular\s*=\s*distribution\s*\*\s*visibility\s*\*\s*fresnel') `
-    -Detail 'Direct specular composes GGX distribution, correlated Smith visibility and Schlick Fresnel'
+        $source -match 'result\.directSpecular\s*=\s*distribution\s*\*\s*visibility\s*\*\s*fresnel' -and
+        $anisotropySource -match 'TA_DistributionGGX\(' -and
+        $anisotropySource -match 'TA_VisibilitySmithGGXCorrelated\(') `
+    -Detail 'Direct specular consumes shared GGX terms and composes them with Schlick Fresnel'
 Add-Check -Id 'BACKFACE_GUARD' `
     -Pass ($source -match 'normalDotLight\s*<=\s*0\.0h' -and
         $source -match 'normalDotView\s*<=\s*0\.0h') `

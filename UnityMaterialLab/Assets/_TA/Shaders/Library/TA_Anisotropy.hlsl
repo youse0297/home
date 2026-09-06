@@ -7,6 +7,12 @@
 #include "TA_Vector.hlsl"
 #include "TA_BRDF.hlsl"
 
+struct TA_GGXSpecularTerms
+{
+    half distribution;
+    half visibility;
+};
+
 half3 TA_OrthogonalizeTangentWS(half3 normalWS, half3 tangentWS)
 {
     half3 normal = TA_SafeNormalize(normalWS);
@@ -118,6 +124,58 @@ half TA_VisibilitySmithGGXAnisotropic(
     ));
     half denominator = normalLight * viewLength + normalView * lightLength;
     return 0.5h / max(denominator, TA_MIN_DENOMINATOR);
+}
+
+TA_GGXSpecularTerms TA_EvaluateGGXSpecularTerms(
+    TA_SurfaceData surface,
+    half3 viewDirectionWS,
+    half3 lightDirectionWS,
+    half3 halfDirectionWS)
+{
+    half3 normalWS = TA_SafeNormalize(surface.normalWS);
+    half normalDotHalf = saturate(dot(normalWS, halfDirectionWS));
+    half normalDotView = saturate(dot(normalWS, viewDirectionWS));
+    half normalDotLight = saturate(dot(normalWS, lightDirectionWS));
+    half roughness = TA_SanitizePerceptualRoughness(surface.roughness);
+
+    TA_GGXSpecularTerms result;
+    result.distribution = TA_DistributionGGX(normalDotHalf, roughness);
+    result.visibility = TA_VisibilitySmithGGXCorrelated(
+        normalDotView,
+        normalDotLight,
+        roughness
+    );
+    if (abs(surface.anisotropy) <= TA_MIN_DENOMINATOR)
+    {
+        return result;
+    }
+
+    half tangentDotHalf = dot(surface.tangentWS, halfDirectionWS);
+    half bitangentDotHalf = dot(surface.bitangentWS, halfDirectionWS);
+    half tangentDotView = dot(surface.tangentWS, viewDirectionWS);
+    half bitangentDotView = dot(surface.bitangentWS, viewDirectionWS);
+    half tangentDotLight = dot(surface.tangentWS, lightDirectionWS);
+    half bitangentDotLight = dot(surface.bitangentWS, lightDirectionWS);
+    half2 alphaTB = TA_AnisotropicAlphaFromRoughness(
+        roughness,
+        surface.anisotropy
+    );
+    result.distribution = TA_DistributionGGXAnisotropic(
+        normalDotHalf,
+        tangentDotHalf,
+        bitangentDotHalf,
+        alphaTB
+    );
+    result.visibility = TA_VisibilitySmithGGXAnisotropic(
+        normalDotView,
+        normalDotLight,
+        tangentDotView,
+        bitangentDotView,
+        tangentDotLight,
+        bitangentDotLight,
+        alphaTB
+    );
+    return result;
 }
 
 #endif

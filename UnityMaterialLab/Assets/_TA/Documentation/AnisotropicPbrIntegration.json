@@ -1,0 +1,67 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.14.0",
+  "anisotropySource": "Assets/_TA/Shaders/Library/TA_Anisotropy.hlsl",
+  "lightingSource": "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+  "debugSource": "Assets/_TA/Shaders/Library/TA_DebugViews.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "publicSymbols": [
+    "TA_GGXSpecularTerms",
+    "TA_EvaluateGGXSpecularTerms",
+    "TA_EvaluateDirectLighting",
+    "TA_EvaluateLighting"
+  ],
+  "defaults": {
+    "baseColor": [0.56, 0.13, 0.06],
+    "normalWS": [0.0, 0.0, 1.0],
+    "tangentWS": [1.0, 0.0, 0.0, 1.0],
+    "viewDirectionWS": [0.25, -0.1, 0.9630680142129111],
+    "lightDirectionWS": [0.55, 0.25, 0.7968688725254613],
+    "lightColor": [3.0, 2.76, 2.46],
+    "lightAttenuation": 0.8,
+    "roughness": 0.45,
+    "metallic": 0.35,
+    "anisotropy": 0.65,
+    "rotation": 0.0,
+    "snowMask": 0.0
+  },
+  "policies": {
+    "specularTerms": "TA_EvaluateGGXSpecularTerms selects isotropic or anisotropic GGX D and correlated Smith V",
+    "fresnel": "F0 = lerp(0.04, BaseColor, Metallic), then Schlick Fresnel",
+    "diffuse": "(1-F) * (1-Metallic) * BaseColor / PI",
+    "specular": "D * V * F * NdotL * radiance",
+    "rotation": "Tangent and bitangent rotate around the final normal before directional dot products",
+    "snow": "effectiveAnisotropy = Anisotropy * (1-SnowMask)",
+    "debug": "DirectSpecular debug view displays the integrated anisotropic PBR result"
+  },
+  "fixtures": [
+    { "id": "ISOTROPIC_REFERENCE", "inputs": { "anisotropy": 0.0 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.04067198, 0.01205137, 0.00706080] } },
+    { "id": "ANISOTROPY_POSITIVE", "inputs": {}, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.12609049, 0.03736142, 0.02188977] } },
+    { "id": "ANISOTROPY_NEGATIVE", "inputs": { "anisotropy": -0.65 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.00901324, 0.00267068, 0.00156473] } },
+    { "id": "ROTATION_QUARTER_TURN", "inputs": { "rotation": 1.5707963267948966 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.00901324, 0.00267068, 0.00156473] } },
+    { "id": "ROTATION_HALF_TURN", "inputs": { "rotation": 3.141592653589793 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.12609049, 0.03736142, 0.02188977] } },
+    { "id": "DIELECTRIC", "inputs": { "metallic": 0.0 }, "expected": { "directDiffuse": [0.32727097, 0.06989573, 0.02875309], "directSpecular": [0.02271902, 0.02090150, 0.01862960] } },
+    { "id": "PURE_METAL", "inputs": { "metallic": 1.0 }, "expected": { "directDiffuse": [0.0, 0.0, 0.0], "directSpecular": [0.31806609, 0.06792984, 0.02794439] } },
+    { "id": "ROUGHNESS_LOW", "inputs": { "roughness": 0.25 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.02203812, 0.00653004, 0.00382590] } },
+    { "id": "ROUGHNESS_HIGH", "inputs": { "roughness": 0.75 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.10599436, 0.03140680, 0.01840101] } },
+    { "id": "ANISOTROPY_CLAMP", "inputs": { "anisotropy": 2.0 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.18412448, 0.05455726, 0.03196469] } },
+    { "id": "SNOW_ATTENUATED", "inputs": { "snowMask": 0.5 }, "expected": { "directDiffuse": [0.17239680, 0.04394148, 0.01855323], "directSpecular": [0.06764188, 0.02004272, 0.01174288] } },
+    { "id": "BACKFACE_GUARD", "inputs": { "viewDirectionWS": [0.0, 0.0, -1.0] }, "expected": { "directDiffuse": [0.0, 0.0, 0.0], "directSpecular": [0.0, 0.0, 0.0] } }
+  ],
+  "invariants": [
+    "Anisotropy zero is numerically equal to the established isotropic direct-light model",
+    "Anisotropy changes specular directionality without changing the energy-conserving diffuse term",
+    "Positive anisotropy rotated by ninety degrees equals negative anisotropy with the unrotated frame",
+    "A half-turn rotation preserves the anisotropic highlight response",
+    "Metallic one has zero direct diffuse while retaining colored specular",
+    "Snow coverage attenuates substrate anisotropy before direct-light evaluation",
+    "Back-facing view or light directions return zero direct components",
+    "All final direct-light channels are finite and non-negative"
+  ],
+  "limitations": [
+    "This integration covers the primary direct light and SH indirect diffuse, not anisotropic image-based lighting",
+    "Direction comes from mesh tangents plus scalar rotation; flow-map direction remains a later extension",
+    "Runtime shader import and visual highlight confirmation require a licensed Unity Editor"
+  ]
+}

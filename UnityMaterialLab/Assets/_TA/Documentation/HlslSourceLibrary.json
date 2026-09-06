@@ -1,6 +1,6 @@
 {
   "status": "STATIC_LIBRARY_VALIDATED",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "root": "Assets/_TA/Shaders/Library",
   "namespacePrefix": "TA_",
   "precisionPolicy": "Renderer-facing calculations use half precision unless Unity requires float inputs",
@@ -193,7 +193,9 @@
         "TA_ApplyAnisotropyToSurface",
         "TA_AnisotropicAlphaFromRoughness",
         "TA_DistributionGGXAnisotropic",
-        "TA_VisibilitySmithGGXAnisotropic"
+        "TA_VisibilitySmithGGXAnisotropic",
+        "TA_GGXSpecularTerms",
+        "TA_EvaluateGGXSpecularTerms"
       ]
     },
     {
@@ -232,6 +234,7 @@
     "Procedural masks are deterministic, bounded to [0,1], and strength zero is an identity",
     "Edge wear derives a bounded grazing-angle mask and applies it consistently to color and roughness",
     "Snow cover derives a bounded world-up slope and height mask and applies dielectric snow responses",
-    "Anisotropy zero preserves the isotropic GGX path while nonzero values use a rotated orthonormal tangent frame and directional roughness"
+    "Anisotropy zero preserves the isotropic GGX path while nonzero values use a rotated orthonormal tangent frame and directional roughness",
+    "Direct lighting consumes isotropic and anisotropic GGX distribution and visibility through one shared specular-terms entry point"
   ]
 }

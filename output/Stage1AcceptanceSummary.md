@@ -1,9 +1,9 @@
 ﻿# Stage 1 Acceptance
 
 - Overall status: `CONDITIONAL_PASS`
-- Required offline gates: `21/21`
+- Required offline gates: `22/22`
 - External runtime acceptance: `BLOCKED`
-- Generated at (UTC): `2026-09-06T10:48:15.5446289Z`
+- Generated at (UTC): `2026-09-06T11:22:24.1114241Z`
 
 ## Gate Results
 
@@ -29,6 +29,7 @@
 | Edge Wear | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/EdgeWearValidation.json` |
 | Snow Cover | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/SnowCoverValidation.json` |
 | Anisotropy Basics | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/AnisotropyBasicsValidation.json` |
+| Anisotropic PBR Integration | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/AnisotropicPbrIntegrationValidation.json` |
 | Unity Static Validation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/StaticValidation.json` |
 | RenderDoc Capture Readiness | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/RenderDocCaptureReadiness.json` |
 | Unity Editor Runtime Validation | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md` |

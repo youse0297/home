@@ -336,6 +336,10 @@ $anisotropyManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\Aniso
 $anisotropyManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\AnisotropyBasics.json.meta'
 $anisotropyValidationPath = Join-Path $projectPath 'Tools\ValidateAnisotropyBasics.ps1'
 $anisotropyReportPath = Join-Path $projectPath 'Reports\AnisotropyBasicsValidation.json'
+$anisotropicPbrManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\AnisotropicPbrIntegration.json'
+$anisotropicPbrManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\AnisotropicPbrIntegration.json.meta'
+$anisotropicPbrValidationPath = Join-Path $projectPath 'Tools\ValidateAnisotropicPbrIntegration.ps1'
+$anisotropicPbrReportPath = Join-Path $projectPath 'Reports\AnisotropicPbrIntegrationValidation.json'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
     'Edge wear contract exists'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
@@ -360,6 +364,14 @@ Add-Check (Test-Path -LiteralPath $anisotropyValidationPath -PathType Leaf) `
     'Anisotropy basics validator exists'
 Add-Check (Test-Path -LiteralPath $anisotropyReportPath -PathType Leaf) `
     'Anisotropy basics validation report exists'
+Add-Check (Test-Path -LiteralPath $anisotropicPbrManifestPath -PathType Leaf) `
+    'Anisotropic PBR integration contract exists'
+Add-Check (Test-Path -LiteralPath $anisotropicPbrManifestMetaPath -PathType Leaf) `
+    'Anisotropic PBR integration contract meta exists'
+Add-Check (Test-Path -LiteralPath $anisotropicPbrValidationPath -PathType Leaf) `
+    'Anisotropic PBR integration validator exists'
+Add-Check (Test-Path -LiteralPath $anisotropicPbrReportPath -PathType Leaf) `
+    'Anisotropic PBR integration validation report exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -1022,8 +1034,10 @@ if (Test-Path -LiteralPath $hlslLibraryAnisotropyPath) {
         $hlslLibraryAnisotropy -match 'TA_AnisotropicAlphaFromRoughness' -and
         $hlslLibraryAnisotropy -match 'TA_DistributionGGXAnisotropic' -and
         $hlslLibraryAnisotropy -match 'TA_VisibilitySmithGGXAnisotropic' -and
+        $hlslLibraryAnisotropy -match 'struct TA_GGXSpecularTerms' -and
+        $hlslLibraryAnisotropy -match 'TA_EvaluateGGXSpecularTerms' -and
         $hlslLibraryAnisotropy -match 'clamp\(anisotropy, -0\.9h, 0\.9h\)') `
-        'HLSL anisotropy module fixes tangent frame, directional alpha, distribution and visibility'
+        'HLSL anisotropy module fixes tangent frame, directional GGX and unified specular terms'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryNormalBlendPath) {
@@ -1118,6 +1132,7 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
     Add-Check ($hlslLibraryLighting -match 'TA_DirectLightingBreakdown' -and
         $hlslLibraryLighting -match 'TA_EvaluateDirectLighting' -and
         $hlslLibraryLighting -match 'TA_EvaluateLighting' -and
+        $hlslLibraryLighting -match 'TA_EvaluateGGXSpecularTerms' -and
         $hlslLibraryLighting -match 'result\.finalLit = result\.directDiffuse \+ result\.directSpecular \+ result\.indirectDiffuse') `
         'HLSL lighting module exposes direct PBR integration and preserves the additive invariant'
     Add-Check ($hlslLibraryDebug -match 'TA_SelectDebugView' -and
@@ -1129,10 +1144,10 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.13.0' -and
+        $hlslLibraryManifest.version -eq '1.14.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
         @($hlslLibraryManifest.modules).Count -eq 16 -and
-        @($hlslLibraryManifest.invariants).Count -eq 19) `
+        @($hlslLibraryManifest.invariants).Count -eq 20) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
@@ -1140,9 +1155,9 @@ if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
         $hlslLibraryReport.moduleCount -eq 16 -and
-        $hlslLibraryReport.publicSymbolCount -eq 59 -and
+        $hlslLibraryReport.publicSymbolCount -eq 61 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-    'HLSL source library report validates sixteen modules and fifty-nine public symbols'
+    'HLSL source library report validates sixteen modules and sixty-one public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
@@ -1479,6 +1494,29 @@ if (Test-Path -LiteralPath $anisotropyReportPath) {
         $anisotropyReport.maximumError -le 0.000001 -and
         @($anisotropyReport.failures).Count -eq 0) `
         'Anisotropy basics report validates frame, rotation, directional GGX and isotropic fallback wiring'
+}
+if (Test-Path -LiteralPath $anisotropicPbrManifestPath) {
+    $anisotropicPbrManifest = Get-Content -LiteralPath $anisotropicPbrManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($anisotropicPbrManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $anisotropicPbrManifest.version -eq '1.0.0' -and
+        $anisotropicPbrManifest.sourceLibraryVersion -eq '1.14.0' -and
+        @($anisotropicPbrManifest.publicSymbols).Count -eq 4 -and
+        @($anisotropicPbrManifest.fixtures).Count -eq 12 -and
+        @($anisotropicPbrManifest.invariants).Count -eq 8 -and
+        @($anisotropicPbrManifest.limitations).Count -eq 3) `
+        'Anisotropic PBR integration contract fixes four entry points, twelve outputs and eight invariants'
+}
+if (Test-Path -LiteralPath $anisotropicPbrReportPath) {
+    $anisotropicPbrReport = Get-Content -LiteralPath $anisotropicPbrReportPath -Raw | ConvertFrom-Json
+    Add-Check ($anisotropicPbrReport.status -eq 'PASS' -and
+        $anisotropicPbrReport.sourceLibraryVersion -eq '1.14.0' -and
+        $anisotropicPbrReport.publicSymbolCount -eq 4 -and
+        $anisotropicPbrReport.fixtureCount -eq 12 -and
+        $anisotropicPbrReport.invariantCount -eq 8 -and
+        $anisotropicPbrReport.limitationCount -eq 3 -and
+        $anisotropicPbrReport.maximumError -le 0.000001 -and
+        @($anisotropicPbrReport.failures).Count -eq 0) `
+        'Anisotropic PBR integration report validates final direct-light RGB and structural delegation'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

@@ -6,7 +6,7 @@
     "fixtureCount":  2,
     "tolerance":  1E-06,
     "maximumError":  4.5131263171072078E-09,
-    "generatedAtUtc":  "2026-09-06T10:47:59.7559884Z",
+    "generatedAtUtc":  "2026-09-06T11:22:07.2700770Z",
     "checks":  [
                    {
                        "id":  "DIRECT_LIGHT_BASEPASS_FIXTURE_DIFFUSE",
@@ -59,7 +59,7 @@
                    {
                        "id":  "BRDF_COMPONENT_INTEGRATION",
                        "pass":  true,
-                       "detail":  "Direct specular composes GGX distribution, correlated Smith visibility and Schlick Fresnel",
+                       "detail":  "Direct specular consumes shared GGX terms and composes them with Schlick Fresnel",
                        "maximumError":  0
                    },
                    {

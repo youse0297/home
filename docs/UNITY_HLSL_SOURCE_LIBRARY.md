@@ -26,7 +26,7 @@
 
 ## 公共接口
 
-v1.13 固定 59 个公共符号，全部使用 `TA_` 前缀：
+v1.14 固定 61 个公共符号，全部使用 `TA_` 前缀：
 
 - 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_DirectLightingBreakdown`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
@@ -37,7 +37,7 @@ v1.13 固定 59 个公共符号，全部使用 `TA_` 前缀：
 - 顶点变形：`TA_VertexDeformationInput`、`TA_VertexDeformationConfig`、`TA_VertexDeformationResult`、`TA_EvaluateVertexDeformationOS`
 - PBR 输入：`TA_PBRInputConfig`、`TA_PBRInputData`、`TA_SamplePBRInput`、`TA_BuildSurfaceData`
 - BRDF：`TA_FresnelSchlickScalar`、`TA_FresnelSchlick`、`TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、`TA_DistributionGGX`、`TA_SmithGGXLambdaTerm`、`TA_VisibilitySmithGGXCorrelated`
-- 各向异性：`TA_OrthogonalizeTangentWS`、`TA_ApplyAnisotropyToSurface`、`TA_AnisotropicAlphaFromRoughness`、`TA_DistributionGGXAnisotropic`、`TA_VisibilitySmithGGXAnisotropic`
+- 各向异性：`TA_OrthogonalizeTangentWS`、`TA_ApplyAnisotropyToSurface`、`TA_AnisotropicAlphaFromRoughness`、`TA_DistributionGGXAnisotropic`、`TA_VisibilitySmithGGXAnisotropic`、`TA_GGXSpecularTerms`、`TA_EvaluateGGXSpecularTerms`
 - 流程入口：`TA_EvaluateDirectLighting`、`TA_EvaluateLighting`、`TA_SelectDebugView`
 
 Renderer Shader 应只包含聚合头：
@@ -77,12 +77,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDispla
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateWaveWindAnimation.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementModularization.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropyBasics.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropicPbrIntegration.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
 专项脚本读取 `Assets/_TA/Documentation/HlslSourceLibrary.json`，检查文件存在性、include guard、包依赖隔离、模块依赖顺序、公共前缀和唯一性、聚合顺序、BasePass 接线及最终光照加法不变量，输出 `Reports/HlslSourceLibraryValidation.json`。项目级静态验收会再次检查关键源码和专项报告。
 
 当前机器若被 Unity 许可证阻塞，离线 `PASS` 不等于 Editor shader 编译成功。最终运行验收仍需在 Unity `2022.3.62f3c1` 中打开 BasePass 对照场景，确认 Shader 无编译错误且 10 档视图可切换。
-## v1.13 更新
+## v1.14 更新
 
-当前契约为 v1.13.0、16 个模块和 59 个公共符号。v1.13 新增 `TA_Anisotropy.hlsl`，以最终法线、网格切线、手性和旋转构建方向基，并为直接光提供各向异性 GGX 分布与 Smith 可见性；参数为零时保留既有各向同性分支。
+当前契约为 v1.14.0、16 个模块和 61 个公共符号。v1.14 新增 `TA_GGXSpecularTerms` 与 `TA_EvaluateGGXSpecularTerms`，把各向同性/各向异性 GGX D/V 选择收口为光照层的单一镜面项边界，并以 12 组最终直接光 RGB 固定金属工作流、方向性、旋转、积雪衰减和背面保护。

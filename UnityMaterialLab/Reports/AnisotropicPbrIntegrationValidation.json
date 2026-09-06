@@ -1,0 +1,221 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.14.0",
+    "publicSymbolCount":  4,
+    "fixtureCount":  12,
+    "invariantCount":  8,
+    "limitationCount":  3,
+    "tolerance":  1E-06,
+    "maximumError":  4.6759582421340706E-09,
+    "generatedAtUtc":  "2026-09-06T11:22:18.0486895Z",
+    "checks":  [
+                   {
+                       "id":  "ISOTROPIC_REFERENCE_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ISOTROPIC_REFERENCE_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0406719757775213, 0.0120513659187035, 0.00706080467595824 expected=0.04067198, 0.01205137, 0.00706080",
+                       "maximumError":  4.6759582421340706E-09
+                   },
+                   {
+                       "id":  "ANISOTROPY_POSITIVE_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ANISOTROPY_POSITIVE_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.126090493962022, 0.0373614178450175, 0.0218897737899664 expected=0.12609049, 0.03736142, 0.02188977",
+                       "maximumError":  3.9620224601133458E-09
+                   },
+                   {
+                       "id":  "ANISOTROPY_NEGATIVE_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ANISOTROPY_NEGATIVE_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.00901323588313147, 0.00267067929852671, 0.00156473091981684 expected=0.00901324, 0.00267068, 0.00156473",
+                       "maximumError":  4.1168685283726747E-09
+                   },
+                   {
+                       "id":  "ROTATION_QUARTER_TURN_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ROTATION_QUARTER_TURN_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.00901323588313147, 0.00267067929852671, 0.00156473091981684 expected=0.00901324, 0.00267068, 0.00156473",
+                       "maximumError":  4.1168685283726747E-09
+                   },
+                   {
+                       "id":  "ROTATION_HALF_TURN_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ROTATION_HALF_TURN_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.126090493962022, 0.0373614178450175, 0.0218897737899664 expected=0.12609049, 0.03736142, 0.02188977",
+                       "maximumError":  3.9620224601133458E-09
+                   },
+                   {
+                       "id":  "DIELECTRIC_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.327270967439266, 0.0698957280459575, 0.028753092139307 expected=0.32727097, 0.06989573, 0.02875309",
+                       "maximumError":  2.5607337916788708E-09
+                   },
+                   {
+                       "id":  "DIELECTRIC_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0227190201702569, 0.0209014985566364, 0.0186295965396107 expected=0.02271902, 0.02090150, 0.01862960",
+                       "maximumError":  3.4603893223073E-09
+                   },
+                   {
+                       "id":  "PURE_METAL_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0.0, 0.0, 0.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PURE_METAL_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.31806608814673, 0.0679298393805824, 0.0279443886834841 expected=0.31806609, 0.06792984, 0.02794439",
+                       "maximumError":  1.8532700374329636E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_LOW_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_LOW_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.022038123337569, 0.00653003655281849, 0.00382589931609009 expected=0.02203812, 0.00653004, 0.00382590",
+                       "maximumError":  3.4471815098593983E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_HIGH_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ROUGHNESS_HIGH_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.105994358132392, 0.0314068045810931, 0.0184010106521557 expected=0.10599436, 0.03140680, 0.01840101",
+                       "maximumError":  4.5810930743295231E-09
+                   },
+                   {
+                       "id":  "ANISOTROPY_CLAMP_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ANISOTROPY_CLAMP_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.184124484226288, 0.0545572594294748, 0.0319646880764986 expected=0.18412448, 0.05455726, 0.03196469",
+                       "maximumError":  4.226288180531057E-09
+                   },
+                   {
+                       "id":  "SNOW_ATTENUATED_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "SNOW_ATTENUATED_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.0676418786506617, 0.0200427202137103, 0.0117428790693556 expected=0.06764188, 0.02004272, 0.01174288",
+                       "maximumError":  1.3493383493878852E-09
+                   },
+                   {
+                       "id":  "BACKFACE_GUARD_DIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0.0, 0.0, 0.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BACKFACE_GUARD_SPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 0 expected=0.0, 0.0, 0.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NEGATIVE_EQUALS_QUARTER_ROTATION",
+                       "pass":  true,
+                       "detail":  "actual=0.00901323588313147, 0.00267067929852671, 0.00156473091981684 expected=0.00901323588313147, 0.00267067929852671, 0.00156473091981684",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "HALF_TURN_PERIODICITY",
+                       "pass":  true,
+                       "detail":  "actual=0.126090493962022, 0.0373614178450175, 0.0218897737899664 expected=0.126090493962022, 0.0373614178450175, 0.0218897737899664",
+                       "maximumError":  6.9388939039072284E-18
+                   },
+                   {
+                       "id":  "PURE_METAL_DIFFUSE_ZERO",
+                       "pass":  true,
+                       "detail":  "Metallic one has no direct diffuse",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SNOW_ATTENUATION_BETWEEN_ENDPOINTS",
+                       "pass":  true,
+                       "detail":  "Half snow coverage produces a response between isotropic and full anisotropy for the fixed fixture",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FINITE_NON_NEGATIVE_OUTPUTS",
+                       "pass":  true,
+                       "detail":  "All final direct-light channels are finite and non-negative",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SPECULAR_TERMS_ENTRY",
+                       "pass":  true,
+                       "detail":  "One entry point selects isotropic or anisotropic GGX terms",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "LIGHTING_LAYER_DELEGATION",
+                       "pass":  true,
+                       "detail":  "Lighting composes shared GGX terms with Fresnel and radiance without duplicating directional formulas",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ENERGY_CONSERVING_METALLIC_WORKFLOW",
+                       "pass":  true,
+                       "detail":  "F0 and diffuse energy use the metallic workflow",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "BASEPASS_SURFACE_WIRING",
+                       "pass":  true,
+                       "detail":  "BasePass applies anisotropy and snow attenuation before lighting",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DIRECT_SPECULAR_DEBUG_VIEW",
+                       "pass":  true,
+                       "detail":  "Existing debug ID 7 displays integrated anisotropic specular",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

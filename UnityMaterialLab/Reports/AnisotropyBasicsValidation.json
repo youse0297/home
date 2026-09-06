@@ -9,7 +9,7 @@
     "limitationCount":  3,
     "tolerance":  1E-06,
     "maximumError":  1.0658141036401503E-14,
-    "generatedAtUtc":  "2026-09-06T10:48:09.5219706Z",
+    "generatedAtUtc":  "2026-09-06T11:22:16.9824964Z",
     "checks":  [
                    {
                        "id":  "ALPHA_ISOTROPIC",
@@ -128,7 +128,7 @@
                    {
                        "id":  "ANISOTROPIC_LIGHTING",
                        "pass":  true,
-                       "detail":  "Direct light consumes anisotropic alpha, distribution and visibility",
+                       "detail":  "Direct light consumes anisotropic alpha, distribution and visibility through one shared entry point",
                        "maximumError":  0
                    },
                    {
