@@ -237,19 +237,21 @@ Shader "TA/BasePass Lighting Decomposition"
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                TA_PBRInputConfig pbrConfig;
-                pbrConfig.baseColorTint = _BaseColor;
-                pbrConfig.normalScale = _BumpScale;
-                pbrConfig.ambientOcclusionStrength = _AOStrength;
-                pbrConfig.roughnessScale = _RoughnessScale;
-                pbrConfig.metallicScale = _MetallicScale;
+                TA_MaterialConfig materialConfig;
+                materialConfig.baseColorTint = _BaseColor;
+                materialConfig.normalScale = _BumpScale;
+                materialConfig.ambientOcclusionStrength = _AOStrength;
+                materialConfig.roughnessScale = _RoughnessScale;
+                materialConfig.metallicScale = _MetallicScale;
+                materialConfig.anisotropy = _Anisotropy;
+                materialConfig.anisotropyRotation = _AnisotropyRotation;
 
-                TA_PBRInputData pbrInput = TA_SamplePBRInput(
+                TA_MaterialInputData materialInput = TA_SampleMaterial(
                     TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap),
                     TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap),
                     TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
                     input.uv,
-                    pbrConfig
+                    materialConfig
                 );
                 half3 detailNormalTS = TA_SampleNormalTS(
                     TEXTURE2D_ARGS(_DetailNormalMap, sampler_DetailNormalMap),
@@ -286,13 +288,13 @@ Shader "TA/BasePass Lighting Decomposition"
                     _MacroNormalWeight,
                     proceduralMask
                 );
-                pbrInput.normalTS = TA_ComposeNormalLayersTS(
-                    pbrInput.normalTS,
+                materialInput.normalTS = TA_ComposeNormalLayersTS(
+                    materialInput.normalTS,
                     detailLayer,
                     macroLayer
                 );
-                half3 normalWS = TA_TransformTangentToWorld(
-                    pbrInput.normalTS,
+                half3 normalWS = TA_ResolveMaterialNormalWS(
+                    materialInput,
                     input.normalWS,
                     input.tangentWS
                 );
@@ -308,13 +310,13 @@ Shader "TA/BasePass Lighting Decomposition"
                     viewDirectionWS,
                     edgeWearConfig
                 );
-                pbrInput.baseColor = TA_ApplyEdgeWearColor(
-                    pbrInput.baseColor,
+                materialInput.baseColor = TA_ApplyEdgeWearColor(
+                    materialInput.baseColor,
                     edgeWearConfig,
                     edgeWearMask
                 );
-                pbrInput.roughness = TA_ApplyEdgeWearRoughness(
-                    pbrInput.roughness,
+                materialInput.roughness = TA_ApplyEdgeWearRoughness(
+                    materialInput.roughness,
                     edgeWearConfig,
                     edgeWearMask
                 );
@@ -332,27 +334,21 @@ Shader "TA/BasePass Lighting Decomposition"
                     input.positionWS,
                     snowConfig
                 );
-                pbrInput.baseColor = TA_ApplySnowCoverColor(
-                    pbrInput.baseColor,
+                materialInput.baseColor = TA_ApplySnowCoverColor(
+                    materialInput.baseColor,
                     snowConfig.snowColor,
                     snowMask
                 );
-                pbrInput.roughness = TA_ApplySnowCoverRoughness(
-                    pbrInput.roughness,
+                materialInput.roughness = TA_ApplySnowCoverRoughness(
+                    materialInput.roughness,
                     snowConfig.snowRoughness,
                     snowMask
                 );
-                pbrInput.metallic = TA_ApplySnowCoverMetallic(
-                    pbrInput.metallic,
+                materialInput.metallic = TA_ApplySnowCoverMetallic(
+                    materialInput.metallic,
                     snowMask
                 );
-                TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
-                TA_ApplyAnisotropyToSurface(
-                    surface,
-                    input.tangentWS,
-                    _Anisotropy * (1.0h - snowMask),
-                    _AnisotropyRotation
-                );
+                materialConfig.anisotropy *= 1.0h - snowMask;
 
                 Light mainLight = GetMainLight(input.shadowCoord);
                 TA_LightingInput lightingInput;
@@ -360,15 +356,21 @@ Shader "TA/BasePass Lighting Decomposition"
                 lightingInput.lightDirectionWS = mainLight.direction;
                 lightingInput.lightColor = mainLight.color;
                 lightingInput.lightAttenuation = mainLight.distanceAttenuation * mainLight.shadowAttenuation;
-                lightingInput.ambientIrradiance = max(SampleSH(surface.normalWS), 0.0h);
+                lightingInput.ambientIrradiance = max(SampleSH(normalWS), 0.0h);
 
-                TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
+                TA_MaterialEvaluation material = TA_EvaluateMaterial(
+                    materialInput,
+                    normalWS,
+                    input.tangentWS,
+                    lightingInput,
+                    materialConfig
+                );
                 return TA_SelectDebugView(
                     _DebugView,
-                    surface,
-                    lighting,
+                    material.surface,
+                    material.lighting,
                     mainLight.shadowAttenuation,
-                    pbrInput.alpha
+                    material.alpha
                 );
             }
             ENDHLSL

@@ -143,6 +143,7 @@ $typesSource = Get-Content -LiteralPath (Resolve-Asset $manifest.typesSource) -R
 $inputSource = Get-Content -LiteralPath (Resolve-Asset $manifest.inputSource) -Raw
 $lightingSource = Get-Content -LiteralPath (Resolve-Asset $manifest.lightingSource) -Raw
 $consumer = Get-Content -LiteralPath (Resolve-Asset $manifest.consumer) -Raw
+$materialInterface = Get-Content -LiteralPath (Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_MaterialInterface.hlsl') -Raw
 $material = Get-Content -LiteralPath (Resolve-Asset $manifest.material) -Raw
 $profile = Get-Content -LiteralPath (Resolve-Asset $manifest.profile) -Raw
 foreach ($symbol in @($manifest.publicSymbols)) { Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) -Pass ($source -match ('\b' + [Regex]::Escape([string]$symbol) + '\b')) -Detail ([string]$symbol) }
@@ -151,7 +152,7 @@ Add-Check 'ORTHONORMAL_FRAME_POLICY' ($source -match 'tangentWS - normal \* dot\
 Add-Check 'SURFACE_ZERO_IDENTITY' ($source -match 'surface\.anisotropy = sanitizedAnisotropy;' -and $source -match 'if \(abs\(sanitizedAnisotropy\) <= TA_MIN_DENOMINATOR\)[\s\S]*?return;') 'Zero anisotropy exits before mutating the established normal and tangent frame'
 Add-Check 'ISOTROPIC_FALLBACK' ($source -match 'TA_DistributionGGX\(normalDotHalf, roughness\)' -and $source -match 'TA_VisibilitySmithGGXCorrelated' -and $source -match 'if \(abs\(surface\.anisotropy\) <= TA_MIN_DENOMINATOR\)') 'Zero anisotropy retains the established isotropic GGX branch'
 Add-Check 'ANISOTROPIC_LIGHTING' ($source -match 'TA_AnisotropicAlphaFromRoughness' -and $source -match 'TA_DistributionGGXAnisotropic' -and $source -match 'TA_VisibilitySmithGGXAnisotropic' -and $lightingSource -match 'TA_EvaluateGGXSpecularTerms') 'Direct light consumes anisotropic alpha, distribution and visibility through one shared entry point'
-Add-Check 'CONSUMER_WIRING' ($consumer -match '_Anisotropy\("Anisotropy", Range\(-1, 1\)\) = 0' -and $consumer -match '_AnisotropyRotation' -and $consumer -match 'TA_ApplyAnisotropyToSurface\(' -and $consumer -match '_Anisotropy \* \(1\.0h - snowMask\)') 'BasePass exposes anisotropy, rotation and snow attenuation'
+Add-Check 'CONSUMER_WIRING' ($consumer -match '_Anisotropy\("Anisotropy", Range\(-1, 1\)\) = 0' -and $consumer -match '_AnisotropyRotation' -and $consumer -match 'materialConfig\.anisotropy \*= 1\.0h - snowMask;' -and $consumer -match 'TA_EvaluateMaterial\(' -and $consumer -notmatch '\bTA_ApplyAnisotropyToSurface\(' -and $materialInterface -match 'TA_ApplyAnisotropyToSurface\(') 'BasePass exposes anisotropy and rotation, attenuates the unified config with snow, then delegates surface application'
 Add-Check 'MATERIAL_PARAMETERS' ($material -match '_Anisotropy: 0\.65' -and $material -match '_AnisotropyRotation: 0\.35') 'Sample material serializes enabled anisotropy parameters'
 Add-Check 'PROFILE_PARAMETERS' ($profile -match 'anisotropy: 0\.65' -and $profile -match 'anisotropyRotation: 0\.35') 'Sample profile serializes enabled anisotropy parameters'
 

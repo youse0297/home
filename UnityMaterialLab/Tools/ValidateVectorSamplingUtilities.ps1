@@ -152,6 +152,7 @@ $vectorSource = Get-Content -LiteralPath $vectorPath -Raw
 $samplingSource = Get-Content -LiteralPath $samplingPath -Raw
 $consumerSource = Get-Content -LiteralPath $consumerPath -Raw
 $integrationConsumerSource = Get-Content -LiteralPath $integrationConsumerPath -Raw
+$materialInterfaceSource = Get-Content -LiteralPath (Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_MaterialInterface.hlsl') -Raw
 
 $vectorSymbols = @($manifest.functions | Where-Object category -eq 'Vector' | ForEach-Object name)
 $samplingSymbols = @($manifest.functions | Where-Object category -eq 'Sampling' | ForEach-Object name)
@@ -177,8 +178,10 @@ Add-Check -Id 'PBR_INPUT_SAMPLING_WIRING' `
     -Detail $manifest.consumer
 Add-Check -Id 'BASEPASS_VECTOR_INTEGRATION' `
     -Pass ($integrationConsumerSource -match 'TA_TransformUV\(' -and
-        $integrationConsumerSource -match 'TA_TransformTangentToWorld\(' -and
-        $integrationConsumerSource -match 'TA_SamplePBRInput\(') `
+        $integrationConsumerSource -match 'TA_ResolveMaterialNormalWS\(' -and
+        $integrationConsumerSource -match 'TA_SampleMaterial\(' -and
+        $materialInterfaceSource -match 'TA_TransformTangentToWorld\(' -and
+        $materialInterfaceSource -match 'TA_SamplePBRInput\(') `
     -Detail $manifest.integrationConsumer
 
 $failed = @($checks | Where-Object { -not $_.pass })

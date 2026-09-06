@@ -107,9 +107,9 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## HLSL 源码库
 
-- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按依赖顺序装配 17 个模块；`TA_NormalBlend.hlsl` 负责切线空间 RNM 多层法线组合，`TA_Anisotropy.hlsl` 负责旋转 T/B 基与各向异性 GGX，`TA_TransparencyRefraction.hlsl` 负责透明与折射光学，`TA_VertexDeformation.hlsl` 位于低层位移/动画与 PBR 输入之间。
-- BasePass 通过 `TA_PBRInputConfig`、`TA_SamplePBRInput` 和 `TA_BuildSurfaceData` 组装表面数据，再调用 `TA_EvaluateLighting` 与 `TA_SelectDebugView`；采样、材质边界、GGX 和调试选择不再内联重复。
-- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 68 个公共符号；各向异性与透明折射分别由对应专项脚本验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_ANISOTROPY_BASICS.md`、`../docs/UNITY_ANISOTROPIC_PBR_INTEGRATION.md` 和 `../docs/UNITY_TRANSPARENCY_REFRACTION.md`。
+- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按依赖顺序装配 18 个模块；`TA_NormalBlend.hlsl` 负责切线空间 RNM 多层法线组合，`TA_Anisotropy.hlsl` 负责旋转 T/B 基与各向异性 GGX，`TA_TransparencyRefraction.hlsl` 负责透明与折射光学，`TA_MaterialInterface.hlsl` 统一 Renderer 材质调用边界。
+- BasePass 与透明折射 Shader 共同使用 `TA_MaterialConfig`、`TA_MaterialInputData`、`TA_MaterialEvaluation`，通过 `TA_SampleMaterial`、`TA_ResolveMaterialNormalWS` 和 `TA_EvaluateMaterial` 完成采样、扩展和评估；旧 PBR 输入与光照函数只在接口内部调用。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 74 个公共符号，运行 `Tools/ValidateUnifiedMaterialInterface.ps1` 检查统一接口数值与接线。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md` 和 `../docs/UNITY_UNIFIED_MATERIAL_INTERFACE.md`。
 
 ## 顶点位移基础
 
@@ -156,7 +156,7 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
 ## Direct-light PBR integration
 
-The renderer-facing HLSL source library is v1.15.0. BasePass consumes vertex deformation through one structured entry point; low-level height, wave and wind modules remain independently validated and default to zero amplitude.
+The renderer-facing HLSL source library is v1.16.0. BasePass consumes vertex deformation through one structured entry point; low-level height, wave and wind modules remain independently validated and default to zero amplitude.
 
 The source library also exposes `TA_NormalBlend.hlsl` for tangent-space RNM layering. BasePass samples optional detail and macro normal maps, composes them in `base → detail → macro` order, and clamps each layer weight; zero weights preserve the established normal baseline. See `../docs/UNITY_NORMAL_LAYER_BLENDING.md` and `Reports/NormalLayerBlendingValidation.json`.
 
@@ -171,6 +171,8 @@ The source library also exposes `TA_NormalBlend.hlsl` for tangent-space RNM laye
 `TA_EvaluateGGXSpecularTerms` now provides the single isotropic/anisotropic D/V boundary consumed by direct lighting. `Tools/ValidateAnisotropicPbrIntegration.ps1` locks twelve final direct-light RGB fixtures and the existing DirectSpecular debug view; see `../docs/UNITY_ANISOTROPIC_PBR_INTEGRATION.md`.
 
 `TA_TransparencyRefraction.hlsl` adds dielectric IOR, Snell refraction, Beer-Lambert absorption and bounded screen UV distortion. `TA_TransparentRefraction.shader` samples the enabled URP opaque texture in the Transparent queue and avoids double background blending; run `Tools/ValidateTransparencyRefraction.ps1` and see `../docs/UNITY_TRANSPARENCY_REFRACTION.md`.
+
+`TA_MaterialInterface.hlsl` exposes one flat sampling/normal/evaluation contract for both opaque BasePass and transparent refraction consumers. Material extensions mutate sampled input before the interface fixes surface assembly, anisotropy and lighting order; run `Tools/ValidateUnifiedMaterialInterface.ps1` and see `../docs/UNITY_UNIFIED_MATERIAL_INTERFACE.md`.
 
 ## PBR parameter regression
 

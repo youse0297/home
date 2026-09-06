@@ -142,10 +142,11 @@ $anisotropySource = Get-Content -LiteralPath (Resolve-Asset $manifest.anisotropy
 $lightingSource = Get-Content -LiteralPath (Resolve-Asset $manifest.lightingSource) -Raw
 $debugSource = Get-Content -LiteralPath (Resolve-Asset $manifest.debugSource) -Raw
 $consumer = Get-Content -LiteralPath (Resolve-Asset $manifest.consumer) -Raw
+$materialInterface = Get-Content -LiteralPath (Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_MaterialInterface.hlsl') -Raw
 Add-Check 'SPECULAR_TERMS_ENTRY' ($anisotropySource -match 'struct TA_GGXSpecularTerms' -and $anisotropySource -match 'TA_GGXSpecularTerms TA_EvaluateGGXSpecularTerms' -and $anisotropySource -match 'abs\(surface\.anisotropy\) <= TA_MIN_DENOMINATOR') 'One entry point selects isotropic or anisotropic GGX terms'
 Add-Check 'LIGHTING_LAYER_DELEGATION' ($lightingSource -match 'TA_GGXSpecularTerms specularTerms = TA_EvaluateGGXSpecularTerms' -and $lightingSource -match 'distribution \* visibility \* fresnel' -and $lightingSource -notmatch 'TA_DistributionGGXAnisotropic\(') 'Lighting composes shared GGX terms with Fresnel and radiance without duplicating directional formulas'
 Add-Check 'ENERGY_CONSERVING_METALLIC_WORKFLOW' ($lightingSource -match 'reflectanceAtNormal = lerp\(' -and $lightingSource -match 'diffuseWeight = \(1\.0h - metallic\) \* \(1\.0h - fresnel\)') 'F0 and diffuse energy use the metallic workflow'
-Add-Check 'BASEPASS_SURFACE_WIRING' ($consumer -match 'TA_ApplyAnisotropyToSurface\(' -and $consumer -match '_Anisotropy \* \(1\.0h - snowMask\)' -and $consumer -match 'TA_EvaluateLighting\(surface, lightingInput\)') 'BasePass applies anisotropy and snow attenuation before lighting'
+Add-Check 'BASEPASS_SURFACE_WIRING' ($consumer -match 'materialConfig\.anisotropy \*= 1\.0h - snowMask;' -and $consumer -match 'TA_EvaluateMaterial\(' -and $consumer -notmatch '\bTA_ApplyAnisotropyToSurface\(|\bTA_EvaluateLighting\(' -and $materialInterface -match 'TA_ApplyAnisotropyToSurface\s*\([\s\S]*?TA_EvaluateLighting\s*\(') 'BasePass attenuates anisotropy with snow and delegates the fixed surface-to-lighting order'
 Add-Check 'DIRECT_SPECULAR_DEBUG_VIEW' ($debugSource -match 'TA_DEBUG_DIRECT_SPECULAR 7\.0h' -and $debugSource -match 'half4\(lighting\.directSpecular, 1\.0h\)') 'Existing debug ID 7 displays integrated anisotropic specular'
 
 $failed = @($checks | Where-Object { -not $_.pass })

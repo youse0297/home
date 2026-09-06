@@ -9,7 +9,7 @@
     "limitationCount":  3,
     "tolerance":  1E-06,
     "maximumError":  1.0658141036401503E-14,
-    "generatedAtUtc":  "2026-09-06T11:56:29.4602035Z",
+    "generatedAtUtc":  "2026-09-06T13:04:57.3069319Z",
     "checks":  [
                    {
                        "id":  "ALPHA_ISOTROPIC",
@@ -134,7 +134,7 @@
                    {
                        "id":  "CONSUMER_WIRING",
                        "pass":  true,
-                       "detail":  "BasePass exposes anisotropy, rotation and snow attenuation",
+                       "detail":  "BasePass exposes anisotropy and rotation, attenuates the unified config with snow, then delegates surface application",
                        "maximumError":  0
                    },
                    {

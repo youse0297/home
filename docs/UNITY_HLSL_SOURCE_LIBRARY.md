@@ -20,6 +20,7 @@
 | `TA_TransparencyRefraction.hlsl` | IOR、Snell 折射、Beer-Lambert 吸收与透明合成 | Common、Vector、BRDF |
 | `TA_Anisotropy.hlsl` | 正交旋转 T/B 基、方向粗糙度、各向异性 GGX/Smith | Types、Common、Vector、BRDF |
 | `TA_Lighting.hlsl` | 直接漫反射、直接高光、间接漫反射及最终合成 | Types、Common、Vector、BRDF、Anisotropy |
+| `TA_MaterialInterface.hlsl` | Renderer 材质采样、法线解析与表面/光照统一评估 | PBRInput、Anisotropy、Lighting |
 | `TA_DebugViews.hlsl` | 固定 0–9 调试 ID 与输出选择 | Types、Vector |
 | `TA_ShaderLibrary.hlsl` | 按依赖顺序聚合全部模块 | 全部模块 |
 
@@ -27,7 +28,7 @@
 
 ## 公共接口
 
-v1.15 固定 68 个公共符号，全部使用 `TA_` 前缀：
+v1.16 固定 74 个公共符号，全部使用 `TA_` 前缀：
 
 - 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_DirectLightingBreakdown`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
@@ -40,6 +41,7 @@ v1.15 固定 68 个公共符号，全部使用 `TA_` 前缀：
 - BRDF：`TA_FresnelSchlickScalar`、`TA_FresnelSchlick`、`TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、`TA_DistributionGGX`、`TA_SmithGGXLambdaTerm`、`TA_VisibilitySmithGGXCorrelated`
 - 透明与折射：`TA_TransparencyRefractionConfig`、`TA_TransparencyRefractionData`、`TA_DielectricF0FromIOR`、`TA_EvaluateRefractionDirectionWS`、`TA_EvaluateRefractionUV`、`TA_EvaluateBeerLambertTransmittance`、`TA_EvaluateTransparencyRefraction`
 - 各向异性：`TA_OrthogonalizeTangentWS`、`TA_ApplyAnisotropyToSurface`、`TA_AnisotropicAlphaFromRoughness`、`TA_DistributionGGXAnisotropic`、`TA_VisibilitySmithGGXAnisotropic`、`TA_GGXSpecularTerms`、`TA_EvaluateGGXSpecularTerms`
+- 材质统一接口：`TA_MaterialConfig`、`TA_MaterialInputData`、`TA_MaterialEvaluation`、`TA_SampleMaterial`、`TA_ResolveMaterialNormalWS`、`TA_EvaluateMaterial`
 - 流程入口：`TA_EvaluateDirectLighting`、`TA_EvaluateLighting`、`TA_SelectDebugView`
 
 Renderer Shader 应只包含聚合头：
@@ -48,18 +50,20 @@ Renderer Shader 应只包含聚合头：
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Library/TA_ShaderLibrary.hlsl"
 
-TA_PBRInputData pbrInput = TA_SamplePBRInput(
+TA_MaterialInputData materialInput = TA_SampleMaterial(
     TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap),
     TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap),
     TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
     uv,
-    pbrConfig);
-TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
-TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
-return TA_SelectDebugView(debugView, surface, lighting, shadowAttenuation, alpha);
+    materialConfig);
+float3 normalWS = TA_ResolveMaterialNormalWS(materialInput, vertexNormalWS, vertexTangentWS);
+TA_MaterialEvaluation material = TA_EvaluateMaterial(
+    materialInput, normalWS, vertexTangentWS, lightingInput, materialConfig);
+return TA_SelectDebugView(
+    debugView, material.surface, material.lighting, shadowAttenuation, material.alpha);
 ```
 
-`TA_EvaluateLighting` 保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码、顶点位移/动画、PBR 输入组装与空间变换；具体纹理绑定、材质配置和引擎光照数据获取仍由消费 Shader 负责。顶点变形高层入口只接收已采样高度、显式时间和配置结构，不依赖 Unity 纹理或时间全局。分层与消费边界详见 [Unity 顶点位移模块化](UNITY_VERTEX_DISPLACEMENT_MODULARIZATION.md)。
+`TA_EvaluateMaterial` 在内部保持 `FinalLit = DirectDiffuse + DirectSpecular + IndirectDiffuse`。工具库负责通用采样、解码、顶点位移/动画、材质输入组装与空间变换；具体纹理绑定、材质扩展和引擎光照数据获取仍由消费 Shader 负责。统一材质边界详见 [Unity 材质库统一接口](UNITY_UNIFIED_MATERIAL_INTERFACE.md)。
 
 ## 与 Shader Graph 函数库的边界
 
@@ -81,12 +85,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDispla
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropyBasics.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropicPbrIntegration.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateTransparencyRefraction.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateUnifiedMaterialInterface.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
 专项脚本读取 `Assets/_TA/Documentation/HlslSourceLibrary.json`，检查文件存在性、include guard、包依赖隔离、模块依赖顺序、公共前缀和唯一性、聚合顺序、BasePass 接线及最终光照加法不变量，输出 `Reports/HlslSourceLibraryValidation.json`。项目级静态验收会再次检查关键源码和专项报告。
 
 当前机器若被 Unity 许可证阻塞，离线 `PASS` 不等于 Editor shader 编译成功。最终运行验收仍需在 Unity `2022.3.62f3c1` 中打开 BasePass 对照场景，确认 Shader 无编译错误且 10 档视图可切换。
-## v1.15 更新
+## v1.16 更新
 
-当前契约为 v1.15.0、17 个模块和 68 个公共符号。v1.15 新增 `TA_TransparencyRefraction.hlsl`，将 IOR、Snell 方向、屏幕 UV、Beer-Lambert 吸收与透明合成收口为无 Renderer 资源依赖的光学模块。
+当前契约为 v1.16.0、18 个模块和 74 个公共符号。v1.16 新增 `TA_MaterialInterface.hlsl`，将 Renderer 侧材质采样、最终法线解析、表面组装、各向异性与光照评估收口为统一接口；旧 PBR 类型和低层评估函数继续作为库内实现保留。

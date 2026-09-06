@@ -118,25 +118,26 @@ Shader "TA/Transparent Refraction"
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                TA_PBRInputConfig pbrConfig;
-                pbrConfig.baseColorTint = _BaseColor;
-                pbrConfig.normalScale = _BumpScale;
-                pbrConfig.ambientOcclusionStrength = _AOStrength;
-                pbrConfig.roughnessScale = _RoughnessScale;
-                pbrConfig.metallicScale = _MetallicScale;
-                TA_PBRInputData pbrInput = TA_SamplePBRInput(
+                TA_MaterialConfig materialConfig;
+                materialConfig.baseColorTint = _BaseColor;
+                materialConfig.normalScale = _BumpScale;
+                materialConfig.ambientOcclusionStrength = _AOStrength;
+                materialConfig.roughnessScale = _RoughnessScale;
+                materialConfig.metallicScale = _MetallicScale;
+                materialConfig.anisotropy = 0.0h;
+                materialConfig.anisotropyRotation = 0.0h;
+                TA_MaterialInputData materialInput = TA_SampleMaterial(
                     TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap),
                     TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap),
                     TEXTURE2D_ARGS(_ORMMap, sampler_ORMMap),
                     input.uv,
-                    pbrConfig
+                    materialConfig
                 );
-                half3 normalWS = TA_TransformTangentToWorld(
-                    pbrInput.normalTS,
+                half3 normalWS = TA_ResolveMaterialNormalWS(
+                    materialInput,
                     input.normalWS,
                     input.tangentWS
                 );
-                TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
                 half3 viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
 
                 Light mainLight = GetMainLight(input.shadowCoord);
@@ -145,11 +146,17 @@ Shader "TA/Transparent Refraction"
                 lightingInput.lightDirectionWS = mainLight.direction;
                 lightingInput.lightColor = mainLight.color;
                 lightingInput.lightAttenuation = mainLight.distanceAttenuation * mainLight.shadowAttenuation;
-                lightingInput.ambientIrradiance = max(SampleSH(surface.normalWS), 0.0h);
-                TA_LightingBreakdown lighting = TA_EvaluateLighting(surface, lightingInput);
+                lightingInput.ambientIrradiance = max(SampleSH(normalWS), 0.0h);
+                TA_MaterialEvaluation material = TA_EvaluateMaterial(
+                    materialInput,
+                    normalWS,
+                    input.tangentWS,
+                    lightingInput,
+                    materialConfig
+                );
 
                 half3 refractionDirectionWS = TA_EvaluateRefractionDirectionWS(
-                    surface.normalWS,
+                    material.surface.normalWS,
                     viewDirectionWS,
                     _IndexOfRefraction
                 );
@@ -173,13 +180,13 @@ Shader "TA/Transparent Refraction"
 
                 TA_TransparencyRefractionConfig refractionConfig;
                 refractionConfig.absorptionCoefficient = _AbsorptionCoefficient.rgb;
-                refractionConfig.opacity = _Opacity * pbrInput.alpha;
+                refractionConfig.opacity = _Opacity * material.alpha;
                 refractionConfig.indexOfRefraction = _IndexOfRefraction;
                 refractionConfig.thickness = _Thickness;
                 TA_TransparencyRefractionData refraction = TA_EvaluateTransparencyRefraction(
                     opaqueSceneColor,
-                    lighting.finalLit,
-                    saturate(dot(surface.normalWS, viewDirectionWS)),
+                    material.lighting.finalLit,
+                    saturate(dot(material.surface.normalWS, viewDirectionWS)),
                     refractionConfig
                 );
                 return half4(refraction.color, 1.0h);

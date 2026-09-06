@@ -191,6 +191,7 @@ $inputSource = Get-Content -LiteralPath $inputSourcePath -Raw
 $lightingSource = Get-Content -LiteralPath $lightingSourcePath -Raw
 $anisotropySource = Get-Content -LiteralPath $anisotropySourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
+$materialInterface = Get-Content -LiteralPath (Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_MaterialInterface.hlsl') -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     $symbolSource = if ($symbol -in @('TA_SamplePBRInput','TA_BuildSurfaceData')) { $inputSource } else { $lightingSource }
     Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) `
@@ -211,9 +212,12 @@ Add-Check -Id 'LIGHTING_POLICY_WIRING' `
         $anisotropySource -match 'TA_VisibilitySmithGGXCorrelated') `
     -Detail 'Lighting layer consumes the integrated direct-light PBR components'
 Add-Check -Id 'BASEPASS_PARAMETER_WIRING' `
-    -Pass ($consumer -match 'TA_SamplePBRInput\s*\(' -and
-        $consumer -match 'TA_BuildSurfaceData\s*\(' -and
-        $consumer -match 'TA_EvaluateLighting\s*\(') `
+    -Pass ($consumer -match 'TA_SampleMaterial\s*\(' -and
+        $consumer -match 'TA_EvaluateMaterial\s*\(' -and
+        $consumer -notmatch '\bTA_SamplePBRInput\s*\(|\bTA_BuildSurfaceData\s*\(|\bTA_EvaluateLighting\s*\(' -and
+        $materialInterface -match 'TA_SamplePBRInput\s*\(' -and
+        $materialInterface -match 'TA_BuildSurfaceData\s*\(' -and
+        $materialInterface -match 'TA_EvaluateLighting\s*\(') `
     -Detail $manifest.consumer
 
 $outputReport = [ordered]@{}

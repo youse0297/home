@@ -115,6 +115,8 @@ $hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
 $hlslLibraryTransparencyPath = Join-Path $hlslLibraryRootPath 'TA_TransparencyRefraction.hlsl'
 $hlslLibraryTransparencyMetaPath = Join-Path $hlslLibraryRootPath 'TA_TransparencyRefraction.hlsl.meta'
 $hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
+$hlslLibraryMaterialInterfacePath = Join-Path $hlslLibraryRootPath 'TA_MaterialInterface.hlsl'
+$hlslLibraryMaterialInterfaceMetaPath = Join-Path $hlslLibraryRootPath 'TA_MaterialInterface.hlsl.meta'
 $hlslLibraryDebugPath = Join-Path $hlslLibraryRootPath 'TA_DebugViews.hlsl'
 $hlslLibraryManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\HlslSourceLibrary.json'
 $hlslLibraryValidationPath = Join-Path $projectPath 'Tools\ValidateHlslSourceLibrary.ps1'
@@ -218,9 +220,10 @@ Add-Check ((@(
     $hlslLibraryBrdfPath,
     $hlslLibraryTransparencyPath,
     $hlslLibraryLightingPath,
+    $hlslLibraryMaterialInterfacePath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all seventeen modules'
+    'HLSL source library contains all eighteen modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
     'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType Leaf) `
@@ -239,6 +242,8 @@ Add-Check (Test-Path -LiteralPath $hlslLibraryAnisotropyMetaPath -PathType Leaf)
     'HLSL anisotropy module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryTransparencyMetaPath -PathType Leaf) `
     'HLSL transparency and refraction module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryMaterialInterfaceMetaPath -PathType Leaf) `
+    'HLSL unified material interface module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -354,6 +359,10 @@ $transparencyManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation
 $transparencyValidationPath = Join-Path $projectPath 'Tools\ValidateTransparencyRefraction.ps1'
 $transparencyReportPath = Join-Path $projectPath 'Reports\TransparencyRefractionValidation.json'
 $urpPipelineAssetPath = Join-Path $projectPath 'Assets\_TA\Settings\RP_MaterialLab_URP.asset'
+$unifiedMaterialManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\UnifiedMaterialInterface.json'
+$unifiedMaterialManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\UnifiedMaterialInterface.json.meta'
+$unifiedMaterialValidationPath = Join-Path $projectPath 'Tools\ValidateUnifiedMaterialInterface.ps1'
+$unifiedMaterialReportPath = Join-Path $projectPath 'Reports\UnifiedMaterialInterfaceValidation.json'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
     'Edge wear contract exists'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
@@ -404,6 +413,14 @@ Add-Check (Test-Path -LiteralPath $transparencyReportPath -PathType Leaf) `
     'Transparency and refraction report exists'
 Add-Check (Test-Path -LiteralPath $urpPipelineAssetPath -PathType Leaf) `
     'URP pipeline asset exists for opaque scene-color capture'
+Add-Check (Test-Path -LiteralPath $unifiedMaterialManifestPath -PathType Leaf) `
+    'Unified material interface contract exists'
+Add-Check (Test-Path -LiteralPath $unifiedMaterialManifestMetaPath -PathType Leaf) `
+    'Unified material interface contract meta exists'
+Add-Check (Test-Path -LiteralPath $unifiedMaterialValidationPath -PathType Leaf) `
+    'Unified material interface validator exists'
+Add-Check (Test-Path -LiteralPath $unifiedMaterialReportPath -PathType Leaf) `
+    'Unified material interface report exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -939,7 +956,7 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
     Add-Check ($basePassShader -match 'Name "BasePassLightingDecomposition"' -and
         $basePassShader -match '"LightMode" = "UniversalForward"' -and
         $basePassShader -match 'GetMainLight\(input\.shadowCoord\)' -and
-        $basePassShader -match 'SampleSH\(surface\.normalWS\)') `
+        $basePassShader -match 'SampleSH\(normalWS\)') `
         'BasePass shader uses the URP forward pass, main light shadows and SH ambient light'
     Add-Check ($basePassShader -match '#include "Library/TA_ShaderLibrary\.hlsl"' -and
         $basePassShader -match 'TA_TransformUV\(' -and
@@ -948,26 +965,26 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match 'TA_VertexDeformationConfig\s+deformationConfig' -and
         $basePassShader -match 'TA_VertexDeformationResult\s+deformation' -and
         $basePassShader -match 'TA_EvaluateVertexDeformationOS\(' -and
-        $basePassShader -match 'TA_TransformTangentToWorld\(' -and
-        $basePassShader -match 'TA_PBRInputConfig\s+pbrConfig' -and
-        $basePassShader -match 'TA_SamplePBRInput\(' -and
-        $basePassShader -match 'TA_BuildSurfaceData\(' -and
-        $basePassShader -match 'TA_ApplyAnisotropyToSurface\(' -and
-        $basePassShader -match 'TA_SurfaceData\s+surface' -and
+        $basePassShader -match 'TA_MaterialConfig\s+materialConfig' -and
+        $basePassShader -match 'TA_MaterialInputData\s+materialInput' -and
+        $basePassShader -match 'TA_SampleMaterial\(' -and
+        $basePassShader -match 'TA_ResolveMaterialNormalWS\(' -and
+        $basePassShader -match 'TA_MaterialEvaluation\s+material' -and
+        $basePassShader -match 'TA_EvaluateMaterial\(' -and
         $basePassShader -match 'TA_LightingInput\s+lightingInput' -and
-        $basePassShader -match 'TA_EvaluateLighting\(surface, lightingInput\)' -and
-        $basePassShader -match 'TA_SelectDebugView\(') `
-        'BasePass shader consumes the HLSL source library through its aggregate entry point'
+        $basePassShader -match 'TA_SelectDebugView\(' -and
+        $basePassShader -notmatch '\bTA_PBRInputConfig\b|\bTA_PBRInputData\b|\bTA_SamplePBRInput\s*\(|\bTA_BuildSurfaceData\s*\(|\bTA_ApplyAnisotropyToSurface\s*\(|\bTA_EvaluateLighting\s*\(') `
+        'BasePass shader consumes the HLSL source library through the unified material entry points'
     Add-Check ($basePassShader -match '_BaseMap' -and
         $basePassShader -match '_BumpMap' -and
         $basePassShader -match '_ORMMap' -and
-        $basePassShader -match 'pbrConfig\.baseColorTint' -and
-        $basePassShader -match 'pbrConfig\.normalScale' -and
-        $basePassShader -match 'pbrConfig\.ambientOcclusionStrength' -and
-        $basePassShader -match 'pbrConfig\.roughnessScale' -and
-        $basePassShader -match 'pbrConfig\.metallicScale' -and
-        $basePassShader -match 'pbrInput\.alpha') `
-        'BasePass binds the three PBR maps through the simplified input configuration'
+        $basePassShader -match 'materialConfig\.baseColorTint' -and
+        $basePassShader -match 'materialConfig\.normalScale' -and
+        $basePassShader -match 'materialConfig\.ambientOcclusionStrength' -and
+        $basePassShader -match 'materialConfig\.roughnessScale' -and
+        $basePassShader -match 'materialConfig\.metallicScale' -and
+        $basePassShader -match 'material\.alpha') `
+        'BasePass binds the three PBR maps through the unified material configuration'
     Add-Check ($basePassShader -match '_DisplacementMap\("Displacement Height", 2D\) = "gray"' -and
         $basePassShader -match '_DisplacementAmplitude\("Displacement Amplitude", Range\(-1, 1\)\) = 0' -and
         $basePassShader -match '_DisplacementCenter\("Displacement Center", Range\(0, 1\)\) = 0\.5' -and
@@ -1023,6 +1040,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_TransparencyRefraction\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Anisotropy\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_MaterialInterface\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
 }
@@ -1188,24 +1206,40 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
         'HLSL debug module fixes the complete debug view range'
 }
 
+if (Test-Path -LiteralPath $hlslLibraryMaterialInterfacePath) {
+    $hlslLibraryMaterialInterface = Get-Content -LiteralPath $hlslLibraryMaterialInterfacePath -Raw
+    Add-Check ($hlslLibraryMaterialInterface -match 'struct TA_MaterialConfig' -and
+        $hlslLibraryMaterialInterface -match 'struct TA_MaterialInputData' -and
+        $hlslLibraryMaterialInterface -match 'struct TA_MaterialEvaluation' -and
+        $hlslLibraryMaterialInterface -match 'TA_SampleMaterial' -and
+        $hlslLibraryMaterialInterface -match 'TA_ResolveMaterialNormalWS' -and
+        $hlslLibraryMaterialInterface -match 'TA_EvaluateMaterial') `
+        'HLSL material interface exposes flat configuration, sampled input and evaluated output contracts'
+    Add-Check ($hlslLibraryMaterialInterface -match 'TA_SamplePBRInput' -and
+        $hlslLibraryMaterialInterface -match 'TA_TransformTangentToWorld' -and
+        $hlslLibraryMaterialInterface -match 'TA_BuildSurfaceData[\s\S]*TA_ApplyAnisotropyToSurface[\s\S]*TA_EvaluateLighting' -and
+        $hlslLibraryMaterialInterface -notmatch 'Packages/') `
+        'HLSL material interface owns legacy delegation order without engine package coupling'
+}
+
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.15.0' -and
+        $hlslLibraryManifest.version -eq '1.16.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 17 -and
-        @($hlslLibraryManifest.invariants).Count -eq 21) `
+        @($hlslLibraryManifest.modules).Count -eq 18 -and
+        @($hlslLibraryManifest.invariants).Count -eq 23) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.version -eq '1.15.0' -and
-        $hlslLibraryReport.moduleCount -eq 17 -and
-        $hlslLibraryReport.publicSymbolCount -eq 68 -and
+        $hlslLibraryReport.version -eq '1.16.0' -and
+        $hlslLibraryReport.moduleCount -eq 18 -and
+        $hlslLibraryReport.publicSymbolCount -eq 74 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-    'HLSL source library report validates seventeen modules and sixty-eight public symbols'
+    'HLSL source library report validates eighteen modules and seventy-four public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
@@ -1592,6 +1626,34 @@ if (Test-Path -LiteralPath $transparencyReportPath) {
         $transparencyReport.maximumError -le 0.000001 -and
         @($transparencyReport.failures).Count -eq 0) `
         'Transparency report validates IOR, Snell direction, UV bounds, absorption, composition and render wiring'
+}
+
+if (Test-Path -LiteralPath $unifiedMaterialManifestPath) {
+    $unifiedMaterialManifest = Get-Content -LiteralPath $unifiedMaterialManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($unifiedMaterialManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $unifiedMaterialManifest.version -eq '1.0.0' -and
+        $unifiedMaterialManifest.sourceLibraryVersion -eq '1.16.0' -and
+        @($unifiedMaterialManifest.publicSymbols).Count -eq 6 -and
+        @($unifiedMaterialManifest.dependencies).Count -eq 3 -and
+        @($unifiedMaterialManifest.consumers).Count -eq 2 -and
+        @($unifiedMaterialManifest.fixtures).Count -eq 4 -and
+        @($unifiedMaterialManifest.invariants).Count -eq 9 -and
+        @($unifiedMaterialManifest.limitations).Count -eq 4) `
+        'Unified material interface contract fixes six symbols, two consumers and four regression fixtures'
+}
+if (Test-Path -LiteralPath $unifiedMaterialReportPath) {
+    $unifiedMaterialReport = Get-Content -LiteralPath $unifiedMaterialReportPath -Raw | ConvertFrom-Json
+    Add-Check ($unifiedMaterialReport.status -eq 'PASS' -and
+        $unifiedMaterialReport.sourceLibraryVersion -eq '1.16.0' -and
+        $unifiedMaterialReport.publicSymbolCount -eq 6 -and
+        $unifiedMaterialReport.dependencyCount -eq 3 -and
+        $unifiedMaterialReport.consumerCount -eq 2 -and
+        $unifiedMaterialReport.fixtureCount -eq 4 -and
+        $unifiedMaterialReport.invariantCount -eq 9 -and
+        $unifiedMaterialReport.limitationCount -eq 4 -and
+        $unifiedMaterialReport.maximumError -le 0.000001 -and
+        @($unifiedMaterialReport.failures).Count -eq 0) `
+        'Unified material interface report validates numeric parity, call ownership and consumer migration'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

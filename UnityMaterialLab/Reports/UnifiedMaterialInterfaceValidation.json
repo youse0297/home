@@ -1,0 +1,235 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.16.0",
+    "publicSymbolCount":  6,
+    "dependencyCount":  3,
+    "consumerCount":  2,
+    "fixtureCount":  4,
+    "invariantCount":  9,
+    "limitationCount":  4,
+    "tolerance":  1E-06,
+    "maximumError":  6.0042306196383954E-09,
+    "generatedAtUtc":  "2026-09-06T13:06:58.1736199Z",
+    "checks":  [
+                   {
+                       "id":  "NORMAL_RIGHT_HANDED_NORMAL",
+                       "pass":  true,
+                       "detail":  "actual=0.6, 0, 0.8 expected=0.6, 0.0, 0.8",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NORMAL_MIRRORED_HANDEDNESS_NORMAL",
+                       "pass":  true,
+                       "detail":  "actual=0, -0.6, 0.8 expected=0.0, -0.6, 0.8",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_NORMALWS",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 1 expected=0.0, 0.0, 1.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_TANGENTWS",
+                       "pass":  true,
+                       "detail":  "actual=1, 0, 0 expected=1.0, 0.0, 0.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_BITANGENTWS",
+                       "pass":  true,
+                       "detail":  "actual=0, 1, 0 expected=0.0, 1.0, 0.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_DIRECTDIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.175757637424659, 0.0447981077288744, 0.0189149233394061 expected=0.17575764, 0.04479811, 0.01891492",
+                       "maximumError":  3.3394060849900598E-09
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_DIRECTSPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.100847464513126, 0.0298818123063406, 0.0175075584923925 expected=0.10084746, 0.02988181, 0.01750756",
+                       "maximumError":  4.5131262893516322E-09
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_INDIRECTDIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.02912, 0.008112, 0.00468 expected=0.02912, 0.008112, 0.00468",
+                       "maximumError":  3.4694469519536142E-18
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_FINALLIT",
+                       "pass":  true,
+                       "detail":  "actual=0.305725101937785, 0.082791920035215, 0.0411024818317986 expected=0.30572510, 0.08279192, 0.04110248",
+                       "maximumError":  1.937785376604495E-09
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_ANISOTROPY",
+                       "pass":  true,
+                       "detail":  "actual=0 expected=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ISOTROPIC_MATERIAL_EVALUATION_ALPHA",
+                       "pass":  true,
+                       "detail":  "actual=0.75 expected=0.75",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_NORMALWS",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, 1 expected=0.0, 0.0, 1.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_TANGENTWS",
+                       "pass":  true,
+                       "detail":  "actual=1, 0, 0 expected=1.0, 0.0, 0.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_BITANGENTWS",
+                       "pass":  true,
+                       "detail":  "actual=0, 1, 0 expected=0.0, 1.0, 0.0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_DIRECTDIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.172396800243789, 0.0439414784051422, 0.0185532322142643 expected=0.17239680, 0.04394148, 0.01855323",
+                       "maximumError":  2.2142642615297081E-09
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_DIRECTSPECULAR",
+                       "pass":  true,
+                       "detail":  "actual=0.126090493962022, 0.0373614178450175, 0.0218897737899664 expected=0.12609049, 0.03736142, 0.02188977",
+                       "maximumError":  3.9620224601133458E-09
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_INDIRECTDIFFUSE",
+                       "pass":  true,
+                       "detail":  "actual=0.026208, 0.007605, 0.004212 expected=0.026208, 0.007605, 0.004212",
+                       "maximumError":  6.9388939039072284E-18
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_FINALLIT",
+                       "pass":  true,
+                       "detail":  "actual=0.324695294205811, 0.0889078962501597, 0.0446550060042306 expected=0.32469529, 0.08890790, 0.04465500",
+                       "maximumError":  6.0042306196383954E-09
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_ANISOTROPY",
+                       "pass":  true,
+                       "detail":  "actual=0.65 expected=0.65",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ANISOTROPIC_MATERIAL_EVALUATION_ALPHA",
+                       "pass":  true,
+                       "detail":  "actual=0.42 expected=0.42",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_MaterialConfig",
+                       "pass":  true,
+                       "detail":  "TA_MaterialConfig",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_MaterialInputData",
+                       "pass":  true,
+                       "detail":  "TA_MaterialInputData",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_MaterialEvaluation",
+                       "pass":  true,
+                       "detail":  "TA_MaterialEvaluation",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_SampleMaterial",
+                       "pass":  true,
+                       "detail":  "TA_SampleMaterial",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ResolveMaterialNormalWS",
+                       "pass":  true,
+                       "detail":  "TA_ResolveMaterialNormalWS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateMaterial",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateMaterial",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "DEPENDENCY_BOUNDARY",
+                       "pass":  true,
+                       "detail":  "TA_PBRInput.hlsl -\u003e TA_Anisotropy.hlsl -\u003e TA_Lighting.hlsl",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FLAT_RENDERER_CONTRACT",
+                       "pass":  true,
+                       "detail":  "Renderer consumers use only TA_MaterialConfig, TA_MaterialInputData and TA_MaterialEvaluation; legacy PBR input types remain internal to the interface",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "FIXED_EVALUATION_ORDER",
+                       "pass":  true,
+                       "detail":  "Build surface, apply anisotropy, evaluate lighting and preserve sampled alpha",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "NO_ENGINE_GLOBALS",
+                       "pass":  true,
+                       "detail":  "The interface contains no URP Light, shadow, SH, scene-color or time globals",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TA_BASEPASSLIGHTINGDECOMPOSITION_UNIFIED_ENTRIES",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TA_BASEPASSLIGHTINGDECOMPOSITION_NO_LEGACY_CALLS",
+                       "pass":  true,
+                       "detail":  "TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_ApplyAnisotropyToSurface, TA_EvaluateLighting",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TA_BASEPASSLIGHTINGDECOMPOSITION_FLAT_TYPES",
+                       "pass":  true,
+                       "detail":  "Renderer consumers use only TA_MaterialConfig, TA_MaterialInputData and TA_MaterialEvaluation; legacy PBR input types remain internal to the interface",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TA_TRANSPARENTREFRACTION_UNIFIED_ENTRIES",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/TA_TransparentRefraction.shader",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TA_TRANSPARENTREFRACTION_NO_LEGACY_CALLS",
+                       "pass":  true,
+                       "detail":  "TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_ApplyAnisotropyToSurface, TA_EvaluateLighting",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TA_TRANSPARENTREFRACTION_FLAT_TYPES",
+                       "pass":  true,
+                       "detail":  "Renderer consumers use only TA_MaterialConfig, TA_MaterialInputData and TA_MaterialEvaluation; legacy PBR input types remain internal to the interface",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

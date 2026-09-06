@@ -18,6 +18,7 @@
 #include "TA_TransparencyRefraction.hlsl"
 #include "TA_Anisotropy.hlsl"
 #include "TA_Lighting.hlsl"
+#include "TA_MaterialInterface.hlsl"
 #include "TA_DebugViews.hlsl"
 
 #endif

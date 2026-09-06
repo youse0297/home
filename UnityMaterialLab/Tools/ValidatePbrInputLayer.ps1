@@ -162,6 +162,7 @@ $sourcePath = Join-Path $projectPath ($manifest.source -replace '/', '\')
 $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
 $source = Get-Content -LiteralPath $sourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
+$materialInterface = Get-Content -LiteralPath (Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_MaterialInterface.hlsl') -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) `
         -Pass ($source -match ('\b' + [Regex]::Escape([string]$symbol) + '\b')) `
@@ -174,10 +175,13 @@ Add-Check -Id 'PBR_INPUT_POLICY' `
         $source -match 'saturate\(orm\.b \* config\.metallicScale\)') `
     -Detail 'BaseColor, Alpha, Roughness and Metallic policies'
 Add-Check -Id 'PBR_INPUT_CONSUMER_WIRING' `
-    -Pass ($consumer -match 'TA_PBRInputConfig' -and
-        $consumer -match 'TA_SamplePBRInput\(' -and
-        $consumer -match 'TA_BuildSurfaceData\(' -and
-        $consumer -match 'pbrInput\.alpha') `
+    -Pass ($consumer -match 'TA_MaterialConfig' -and
+        $consumer -match 'TA_SampleMaterial\(' -and
+        $consumer -match 'TA_EvaluateMaterial\(' -and
+        $consumer -match 'material\.alpha' -and
+        $consumer -notmatch '\bTA_PBRInputConfig\b|\bTA_PBRInputData\b' -and
+        $materialInterface -match 'TA_SamplePBRInput\(' -and
+        $materialInterface -match 'TA_BuildSurfaceData\(') `
     -Detail $manifest.consumer
 Add-Check -Id 'PBR_INPUT_NO_INLINE_ASSEMBLY' `
     -Pass ($consumer -notmatch 'surface\.baseColor\s*=' -and

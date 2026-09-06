@@ -155,6 +155,7 @@ $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
 $source = Get-Content -LiteralPath $sourcePath -Raw
 $anisotropySource = Get-Content -LiteralPath $anisotropySourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
+$materialInterface = Get-Content -LiteralPath (Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_MaterialInterface.hlsl') -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) `
         -Pass ($source -match ('\b' + [Regex]::Escape([string]$symbol) + '\b')) `
@@ -180,8 +181,10 @@ Add-Check -Id 'BACKFACE_GUARD' `
         $source -match 'normalDotView\s*<=\s*0\.0h') `
     -Detail 'Back-facing view or light returns zero direct components'
 Add-Check -Id 'BASEPASS_CONSUMER_WIRING' `
-    -Pass ($consumer -match 'TA_EvaluateLighting\s*\(' -and
-        $consumer -match 'TA_LightingBreakdown') `
+    -Pass ($consumer -match 'TA_EvaluateMaterial\s*\(' -and
+        $consumer -match 'TA_MaterialEvaluation' -and
+        $consumer -notmatch '\bTA_EvaluateLighting\s*\(' -and
+        $materialInterface -match 'TA_EvaluateLighting\s*\(') `
     -Detail $manifest.consumer
 
 $failed = @($checks | Where-Object { -not $_.pass })

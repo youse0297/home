@@ -1,0 +1,133 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.16.0",
+  "source": "Assets/_TA/Shaders/Library/TA_MaterialInterface.hlsl",
+  "consumers": [
+    "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+    "Assets/_TA/Shaders/TA_TransparentRefraction.shader"
+  ],
+  "dependencies": [
+    "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
+    "Assets/_TA/Shaders/Library/TA_Anisotropy.hlsl",
+    "Assets/_TA/Shaders/Library/TA_Lighting.hlsl"
+  ],
+  "publicSymbols": [
+    "TA_MaterialConfig",
+    "TA_MaterialInputData",
+    "TA_MaterialEvaluation",
+    "TA_SampleMaterial",
+    "TA_ResolveMaterialNormalWS",
+    "TA_EvaluateMaterial"
+  ],
+  "policies": {
+    "stages": "Sample material textures, allow consumer-owned material extensions, resolve the final world normal, then evaluate surface and lighting",
+    "flatContract": "Renderer consumers use only TA_MaterialConfig, TA_MaterialInputData and TA_MaterialEvaluation; legacy PBR input types remain internal to the interface",
+    "evaluationOrder": "Build surface, apply anisotropy, evaluate lighting and preserve sampled alpha",
+    "extensionBoundary": "Procedural masks, layered normals, edge wear and snow may mutate TA_MaterialInputData before TA_EvaluateMaterial",
+    "engineBoundary": "The interface contains no URP Light, shadow, SH, scene-color or time globals"
+  },
+  "fixtures": [
+    {
+      "id": "NORMAL_RIGHT_HANDED",
+      "kind": "normal",
+      "input": {
+        "normalTS": [0.6, 0.0, 0.8],
+        "vertexNormalWS": [0.0, 0.0, 1.0],
+        "vertexTangentWS": [1.0, 0.0, 0.0, 1.0]
+      },
+      "expected": { "normalWS": [0.6, 0.0, 0.8] }
+    },
+    {
+      "id": "NORMAL_MIRRORED_HANDEDNESS",
+      "kind": "normal",
+      "input": {
+        "normalTS": [0.0, 0.6, 0.8],
+        "vertexNormalWS": [0.0, 0.0, 1.0],
+        "vertexTangentWS": [1.0, 0.0, 0.0, -1.0]
+      },
+      "expected": { "normalWS": [0.0, -0.6, 0.8] }
+    },
+    {
+      "id": "ISOTROPIC_MATERIAL_EVALUATION",
+      "kind": "evaluation",
+      "input": {
+        "baseColor": [0.56, 0.13, 0.06],
+        "alpha": 0.75,
+        "normalTS": [0.0, 0.0, 1.0],
+        "ambientOcclusion": 0.8,
+        "roughness": 0.45,
+        "metallic": 0.35,
+        "vertexNormalWS": [0.0, 0.0, 1.0],
+        "vertexTangentWS": [1.0, 0.0, 0.0, 1.0],
+        "anisotropy": 0.0,
+        "anisotropyRotation": 0.0,
+        "viewDirectionWS": [0.0, 0.0, 1.0],
+        "lightDirectionWS": [0.3, 0.5, 0.81240384],
+        "lightColor": [3.0, 2.76, 2.46],
+        "lightAttenuation": 0.8,
+        "ambientIrradiance": [0.1, 0.12, 0.15]
+      },
+      "expected": {
+        "normalWS": [0.0, 0.0, 1.0],
+        "tangentWS": [1.0, 0.0, 0.0],
+        "bitangentWS": [0.0, 1.0, 0.0],
+        "anisotropy": 0.0,
+        "alpha": 0.75,
+        "directDiffuse": [0.17575764, 0.04479811, 0.01891492],
+        "directSpecular": [0.10084746, 0.02988181, 0.01750756],
+        "indirectDiffuse": [0.02912, 0.008112, 0.00468],
+        "finalLit": [0.30572510, 0.08279192, 0.04110248]
+      }
+    },
+    {
+      "id": "ANISOTROPIC_MATERIAL_EVALUATION",
+      "kind": "evaluation",
+      "input": {
+        "baseColor": [0.56, 0.13, 0.06],
+        "alpha": 0.42,
+        "normalTS": [0.0, 0.0, 1.0],
+        "ambientOcclusion": 0.9,
+        "roughness": 0.45,
+        "metallic": 0.35,
+        "vertexNormalWS": [0.0, 0.0, 1.0],
+        "vertexTangentWS": [1.0, 0.0, 0.0, 1.0],
+        "anisotropy": 0.65,
+        "anisotropyRotation": 0.0,
+        "viewDirectionWS": [0.25, -0.1, 0.9630680142129111],
+        "lightDirectionWS": [0.55, 0.25, 0.7968688725254613],
+        "lightColor": [3.0, 2.76, 2.46],
+        "lightAttenuation": 0.8,
+        "ambientIrradiance": [0.08, 0.1, 0.12]
+      },
+      "expected": {
+        "normalWS": [0.0, 0.0, 1.0],
+        "tangentWS": [1.0, 0.0, 0.0],
+        "bitangentWS": [0.0, 1.0, 0.0],
+        "anisotropy": 0.65,
+        "alpha": 0.42,
+        "directDiffuse": [0.17239680, 0.04394148, 0.01855323],
+        "directSpecular": [0.12609049, 0.03736142, 0.02188977],
+        "indirectDiffuse": [0.026208, 0.007605, 0.004212],
+        "finalLit": [0.32469529, 0.08890790, 0.04465500]
+      }
+    }
+  ],
+  "invariants": [
+    "All renderer-facing material state crosses three flat structures",
+    "Texture sampling is exposed through one TA_SampleMaterial call",
+    "Tangent-space normals resolve through one TA_ResolveMaterialNormalWS call",
+    "Surface assembly, anisotropy and lighting execute through one TA_EvaluateMaterial call",
+    "Legacy PBR input types do not appear in renderer consumers",
+    "Both opaque and transparent consumers use the same three-stage interface",
+    "Extensions mutate sampled material input before the fixed evaluation order",
+    "Sampled alpha is preserved in TA_MaterialEvaluation",
+    "Isotropic and anisotropic results remain numerically equal to the established lighting baselines"
+  ],
+  "limitations": [
+    "Renderer-specific light, shadow, SH and scene-color acquisition remain consumer responsibilities",
+    "The interface currently standardizes BaseColor, Normal, ORM and anisotropy; clear coat and subsurface models are not represented",
+    "Texture resources remain explicit function arguments because HLSL structures cannot portably own Unity texture objects",
+    "Runtime shader compilation and visual inspection require a licensed Unity Editor"
+  ]
+}

@@ -1,13 +1,13 @@
 {
   "status": "STATIC_LIBRARY_VALIDATED",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "root": "Assets/_TA/Shaders/Library",
   "namespacePrefix": "TA_",
   "precisionPolicy": "Renderer-facing calculations use half precision unless Unity requires float inputs",
   "aggregate": {
     "file": "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "includeGuard": "TA_SHADER_LIBRARY_INCLUDED",
-    "modules": ["types", "common", "vector", "edgeWear", "proceduralMask", "snowCover", "sampling", "normalBlend", "vertexDisplacement", "vertexAnimation", "vertexDeformation", "pbrInput", "brdf", "transparencyRefraction", "anisotropy", "lighting", "debugViews"]
+    "modules": ["types", "common", "vector", "edgeWear", "proceduralMask", "snowCover", "sampling", "normalBlend", "vertexDisplacement", "vertexAnimation", "vertexDeformation", "pbrInput", "brdf", "transparencyRefraction", "anisotropy", "lighting", "materialInterface", "debugViews"]
   },
   "consumer": {
     "file": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
@@ -27,11 +27,9 @@
       "TA_EvaluateVertexDeformationOS",
       "TA_SampleNormalTS",
       "TA_ComposeNormalLayersTS",
-      "TA_SamplePBRInput",
-      "TA_TransformTangentToWorld",
-      "TA_BuildSurfaceData",
-      "TA_ApplyAnisotropyToSurface",
-      "TA_EvaluateLighting",
+      "TA_SampleMaterial",
+      "TA_ResolveMaterialNormalWS",
+      "TA_EvaluateMaterial",
       "TA_SelectDebugView"
     ]
   },
@@ -223,6 +221,21 @@
       "publicSymbols": ["TA_EvaluateDirectLighting", "TA_EvaluateLighting"]
     },
     {
+      "id": "materialInterface",
+      "file": "Assets/_TA/Shaders/Library/TA_MaterialInterface.hlsl",
+      "role": "Unified renderer material configuration, sampled input, world-normal resolution and surface-lighting evaluation boundary",
+      "includeGuard": "TA_MATERIAL_INTERFACE_INCLUDED",
+      "dependencies": ["pbrInput", "anisotropy", "lighting"],
+      "publicSymbols": [
+        "TA_MaterialConfig",
+        "TA_MaterialInputData",
+        "TA_MaterialEvaluation",
+        "TA_SampleMaterial",
+        "TA_ResolveMaterialNormalWS",
+        "TA_EvaluateMaterial"
+      ]
+    },
+    {
       "id": "debugViews",
       "file": "Assets/_TA/Shaders/Library/TA_DebugViews.hlsl",
       "role": "Stable debug view identifiers and output selection",
@@ -252,6 +265,8 @@
     "Snow cover derives a bounded world-up slope and height mask and applies dielectric snow responses",
     "Anisotropy zero preserves the isotropic GGX path while nonzero values use a rotated orthonormal tangent frame and directional roughness",
     "Direct lighting consumes isotropic and anisotropic GGX distribution and visibility through one shared specular-terms entry point",
-    "Transparency derives dielectric Fresnel from IOR, attenuates transmission with Beer-Lambert absorption and samples only the captured opaque scene color"
+    "Transparency derives dielectric Fresnel from IOR, attenuates transmission with Beer-Lambert absorption and samples only the captured opaque scene color",
+    "Renderer shaders consume sampling, normal resolution, surface assembly, anisotropy and lighting through the unified material interface",
+    "Material extensions may mutate sampled material input before the unified evaluation step without bypassing its surface and lighting order"
   ]
 }
