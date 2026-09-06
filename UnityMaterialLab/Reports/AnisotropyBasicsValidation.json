@@ -1,0 +1,156 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.13.0",
+    "publicSymbolCount":  5,
+    "dependencyCount":  4,
+    "fixtureCount":  10,
+    "invariantCount":  6,
+    "limitationCount":  3,
+    "tolerance":  1E-06,
+    "maximumError":  1.0658141036401503E-14,
+    "generatedAtUtc":  "2026-09-06T10:48:09.5219706Z",
+    "checks":  [
+                   {
+                       "id":  "ALPHA_ISOTROPIC",
+                       "pass":  true,
+                       "detail":  "actual=0.25, 0.25",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ALPHA_POSITIVE",
+                       "pass":  true,
+                       "detail":  "actual=0.368604890387243, 0.169558249578132",
+                       "maximumError":  3.0531133177191805E-16
+                   },
+                   {
+                       "id":  "ALPHA_NEGATIVE_SWAPS_AXES",
+                       "pass":  true,
+                       "detail":  "actual=0.169558249578132, 0.368604890387243",
+                       "maximumError":  3.0531133177191805E-16
+                   },
+                   {
+                       "id":  "ANISOTROPY_CLAMP",
+                       "pass":  true,
+                       "detail":  "actual=0.573539334676404, 0.108972473588517",
+                       "maximumError":  5.5511151231257827E-16
+                   },
+                   {
+                       "id":  "DISTRIBUTION_NORMAL_ALIGNED",
+                       "pass":  true,
+                       "detail":  "actual=5.09295817894064",
+                       "maximumError":  1.0658141036401503E-14
+                   },
+                   {
+                       "id":  "DISTRIBUTION_TANGENT_DIRECTION",
+                       "pass":  true,
+                       "detail":  "actual=0.470634677627758",
+                       "maximumError":  1.1102230246251565E-16
+                   },
+                   {
+                       "id":  "DISTRIBUTION_BITANGENT_DIRECTION",
+                       "pass":  true,
+                       "detail":  "actual=0.0293997442551916",
+                       "maximumError":  1.3877787807814457E-16
+                   },
+                   {
+                       "id":  "ANISOTROPIC_VISIBILITY",
+                       "pass":  true,
+                       "detail":  "actual=0.381924132388355",
+                       "maximumError":  2.2204460492503131E-16
+                   },
+                   {
+                       "id":  "DEGENERATE_TANGENT_FALLBACK",
+                       "pass":  true,
+                       "detail":  "actual=1, 0, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ROTATION_AND_HANDEDNESS",
+                       "pass":  true,
+                       "detail":  "actual=6.12303176911189E-17, -1, 0, -1, -6.12303176911189E-17, 0, 0.6",
+                       "maximumError":  6.1230317691118863E-17
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_OrthogonalizeTangentWS",
+                       "pass":  true,
+                       "detail":  "TA_OrthogonalizeTangentWS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_ApplyAnisotropyToSurface",
+                       "pass":  true,
+                       "detail":  "TA_ApplyAnisotropyToSurface",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_AnisotropicAlphaFromRoughness",
+                       "pass":  true,
+                       "detail":  "TA_AnisotropicAlphaFromRoughness",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_DistributionGGXAnisotropic",
+                       "pass":  true,
+                       "detail":  "TA_DistributionGGXAnisotropic",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_VisibilitySmithGGXAnisotropic",
+                       "pass":  true,
+                       "detail":  "TA_VisibilitySmithGGXAnisotropic",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SURFACE_FRAME_DATA",
+                       "pass":  true,
+                       "detail":  "Surface data owns a stable zero-anisotropy frame baseline",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ORTHONORMAL_FRAME_POLICY",
+                       "pass":  true,
+                       "detail":  "Final normal, tangent handedness and rotation define the anisotropy frame",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SURFACE_ZERO_IDENTITY",
+                       "pass":  true,
+                       "detail":  "Zero anisotropy exits before mutating the established normal and tangent frame",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ISOTROPIC_FALLBACK",
+                       "pass":  true,
+                       "detail":  "Zero anisotropy retains the established isotropic GGX branch",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ANISOTROPIC_LIGHTING",
+                       "pass":  true,
+                       "detail":  "Direct light consumes anisotropic alpha, distribution and visibility",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "CONSUMER_WIRING",
+                       "pass":  true,
+                       "detail":  "BasePass exposes anisotropy, rotation and snow attenuation",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "MATERIAL_PARAMETERS",
+                       "pass":  true,
+                       "detail":  "Sample material serializes enabled anisotropy parameters",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PROFILE_PARAMETERS",
+                       "pass":  true,
+                       "detail":  "Sample profile serializes enabled anisotropy parameters",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

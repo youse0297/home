@@ -461,6 +461,8 @@ namespace TA.MaterialLab.Editor
             profile.snowHeightBlend = 0.0f;
             profile.snowHeightStart = 0.0f;
             profile.snowHeightFade = 1.0f;
+            profile.anisotropy = 0.65f;
+            profile.anisotropyRotation = 0.35f;
             profile.metallic = 0.15f;
             profile.roughness = 0.42f;
             profile.occlusionStrength = 1.0f;
@@ -983,6 +985,7 @@ namespace TA.MaterialLab.Editor
                 Check(layeredNormalProfile.HasValidParameters(), "Layered normal procedural mask parameters are valid", report);
                 Check(layeredNormalMaterial.HasProperty("_EdgeWearStrength") && layeredNormalProfile.edgeWearStrength > 0.0f, "Layered normal profile enables edge wear", report);
                 Check(layeredNormalMaterial.HasProperty("_SnowCoverage") && layeredNormalProfile.snowCoverage > 0.0f, "Layered normal profile enables snow cover", report);
+                Check(layeredNormalMaterial.HasProperty("_Anisotropy") && Mathf.Abs(layeredNormalProfile.anisotropy) > 0.0f, "Layered normal profile enables anisotropy", report);
             }
             if (masterMaterial != null)
             {

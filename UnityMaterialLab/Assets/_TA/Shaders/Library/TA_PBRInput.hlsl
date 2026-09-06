@@ -67,9 +67,12 @@ TA_SurfaceData TA_BuildSurfaceData(
     TA_SurfaceData surface;
     surface.baseColor = inputData.baseColor;
     surface.normalWS = TA_SafeNormalize(normalWS);
+    surface.tangentWS = half3(1.0h, 0.0h, 0.0h);
+    surface.bitangentWS = half3(0.0h, 1.0h, 0.0h);
     surface.ambientOcclusion = inputData.ambientOcclusion;
     surface.roughness = inputData.roughness;
     surface.metallic = inputData.metallic;
+    surface.anisotropy = 0.0h;
     return surface;
 }
 

@@ -36,6 +36,8 @@ Shader "TA/BasePass Lighting Decomposition"
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _RoughnessScale("Roughness Scale", Range(0, 1)) = 1
         _MetallicScale("Metallic Scale", Range(0, 1)) = 1
+        _Anisotropy("Anisotropy", Range(-1, 1)) = 0
+        _AnisotropyRotation("Anisotropy Rotation", Range(-3.1415927, 3.1415927)) = 0
         _DisplacementMap("Displacement Height", 2D) = "gray" {}
         _DisplacementAmplitude("Displacement Amplitude", Range(-1, 1)) = 0
         _DisplacementCenter("Displacement Center", Range(0, 1)) = 0.5
@@ -135,6 +137,8 @@ Shader "TA/BasePass Lighting Decomposition"
                 half _AOStrength;
                 half _RoughnessScale;
                 half _MetallicScale;
+                half _Anisotropy;
+                half _AnisotropyRotation;
                 half _DisplacementAmplitude;
                 half _DisplacementCenter;
                 half _WaveAmplitude;
@@ -343,6 +347,12 @@ Shader "TA/BasePass Lighting Decomposition"
                     snowMask
                 );
                 TA_SurfaceData surface = TA_BuildSurfaceData(pbrInput, normalWS);
+                TA_ApplyAnisotropyToSurface(
+                    surface,
+                    input.tangentWS,
+                    _Anisotropy * (1.0h - snowMask),
+                    _AnisotropyRotation
+                );
 
                 Light mainLight = GetMainLight(input.shadowCoord);
                 TA_LightingInput lightingInput;

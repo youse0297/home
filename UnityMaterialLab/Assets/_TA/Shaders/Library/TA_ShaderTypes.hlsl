@@ -6,9 +6,12 @@ struct TA_SurfaceData
 {
     half3 baseColor;
     half3 normalWS;
+    half3 tangentWS;
+    half3 bitangentWS;
     half ambientOcclusion;
     half roughness;
     half metallic;
+    half anisotropy;
 };
 
 struct TA_LightingInput

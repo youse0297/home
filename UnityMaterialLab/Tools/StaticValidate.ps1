@@ -99,6 +99,8 @@ $hlslLibraryEdgeWearPath = Join-Path $hlslLibraryRootPath 'TA_EdgeWear.hlsl'
 $hlslLibraryEdgeWearMetaPath = Join-Path $hlslLibraryRootPath 'TA_EdgeWear.hlsl.meta'
 $hlslLibrarySnowCoverPath = Join-Path $hlslLibraryRootPath 'TA_SnowCover.hlsl'
 $hlslLibrarySnowCoverMetaPath = Join-Path $hlslLibraryRootPath 'TA_SnowCover.hlsl.meta'
+$hlslLibraryAnisotropyPath = Join-Path $hlslLibraryRootPath 'TA_Anisotropy.hlsl'
+$hlslLibraryAnisotropyMetaPath = Join-Path $hlslLibraryRootPath 'TA_Anisotropy.hlsl.meta'
 $hlslLibrarySamplingPath = Join-Path $hlslLibraryRootPath 'TA_Sampling.hlsl'
 $hlslLibraryVertexDisplacementPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl'
 $hlslLibraryVertexDisplacementMetaPath = Join-Path $hlslLibraryRootPath 'TA_VertexDisplacement.hlsl.meta'
@@ -204,6 +206,7 @@ Add-Check ((@(
     $hlslLibraryEdgeWearPath,
     $hlslLibraryProceduralMaskPath,
     $hlslLibrarySnowCoverPath,
+    $hlslLibraryAnisotropyPath,
     $hlslLibrarySamplingPath,
     $hlslLibraryVertexDisplacementPath,
     $hlslLibraryVertexAnimationPath,
@@ -214,7 +217,7 @@ Add-Check ((@(
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all fifteen modules'
+    'HLSL source library contains all sixteen modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
     'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType Leaf) `
@@ -229,6 +232,8 @@ Add-Check (Test-Path -LiteralPath $hlslLibraryEdgeWearMetaPath -PathType Leaf) `
     'HLSL edge wear module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibrarySnowCoverMetaPath -PathType Leaf) `
     'HLSL snow cover module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryAnisotropyMetaPath -PathType Leaf) `
+    'HLSL anisotropy module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -327,6 +332,10 @@ $snowCoverManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\SnowCo
 $snowCoverManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\SnowCover.json.meta'
 $snowCoverValidationPath = Join-Path $projectPath 'Tools\ValidateSnowCover.ps1'
 $snowCoverReportPath = Join-Path $projectPath 'Reports\SnowCoverValidation.json'
+$anisotropyManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\AnisotropyBasics.json'
+$anisotropyManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\AnisotropyBasics.json.meta'
+$anisotropyValidationPath = Join-Path $projectPath 'Tools\ValidateAnisotropyBasics.ps1'
+$anisotropyReportPath = Join-Path $projectPath 'Reports\AnisotropyBasicsValidation.json'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
     'Edge wear contract exists'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
@@ -343,6 +352,14 @@ Add-Check (Test-Path -LiteralPath $snowCoverValidationPath -PathType Leaf) `
     'Snow cover validator exists'
 Add-Check (Test-Path -LiteralPath $snowCoverReportPath -PathType Leaf) `
     'Snow cover validation report exists'
+Add-Check (Test-Path -LiteralPath $anisotropyManifestPath -PathType Leaf) `
+    'Anisotropy basics contract exists'
+Add-Check (Test-Path -LiteralPath $anisotropyManifestMetaPath -PathType Leaf) `
+    'Anisotropy basics contract meta exists'
+Add-Check (Test-Path -LiteralPath $anisotropyValidationPath -PathType Leaf) `
+    'Anisotropy basics validator exists'
+Add-Check (Test-Path -LiteralPath $anisotropyReportPath -PathType Leaf) `
+    'Anisotropy basics validation report exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -365,6 +382,11 @@ if ((Test-Path -LiteralPath $layeredNormalMaterialPath) -and (Test-Path -Literal
         $layeredNormalProfile -match 'proceduralMaskScale:' -and
         $layeredNormalProfile -match 'proceduralMaskStrength: 0\.75') `
         'Layered normal material binds the procedural mask contract'
+    Add-Check ($layeredNormalMaterial -match '_Anisotropy: 0\.65' -and
+        $layeredNormalMaterial -match '_AnisotropyRotation: 0\.35' -and
+        $layeredNormalProfile -match 'anisotropy: 0\.65' -and
+        $layeredNormalProfile -match 'anisotropyRotation: 0\.35') `
+        'Layered normal material and profile bind enabled anisotropy parameters'
     Add-Check ($layeredNormalProfile -match 'm_Name: MI_LayeredNormal' -and
         $layeredNormalProfile -match 'detailNormal:' -and
         $layeredNormalProfile -match 'macroNormal:' -and
@@ -886,6 +908,7 @@ if (Test-Path -LiteralPath $basePassShaderPath) {
         $basePassShader -match 'TA_PBRInputConfig\s+pbrConfig' -and
         $basePassShader -match 'TA_SamplePBRInput\(' -and
         $basePassShader -match 'TA_BuildSurfaceData\(' -and
+        $basePassShader -match 'TA_ApplyAnisotropyToSurface\(' -and
         $basePassShader -match 'TA_SurfaceData\s+surface' -and
         $basePassShader -match 'TA_LightingInput\s+lightingInput' -and
         $basePassShader -match 'TA_EvaluateLighting\(surface, lightingInput\)' -and
@@ -953,6 +976,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_VertexDeformation\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_PBRInput\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_BRDF\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_Anisotropy\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
         'HLSL source library aggregate exposes all modules'
@@ -989,6 +1013,17 @@ if (Test-Path -LiteralPath $hlslLibrarySnowCoverPath) {
         $hlslLibrarySnowCover -match 'positionWS\.y - config\.heightStart' -and
         $hlslLibrarySnowCover -match 'half3\(0\.0h, 1\.0h, 0\.0h\)') `
         'HLSL snow cover module fixes world-up slope, height blend and bounded material responses'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryAnisotropyPath) {
+    $hlslLibraryAnisotropy = Get-Content -LiteralPath $hlslLibraryAnisotropyPath -Raw
+    Add-Check ($hlslLibraryAnisotropy -match 'TA_OrthogonalizeTangentWS' -and
+        $hlslLibraryAnisotropy -match 'TA_ApplyAnisotropyToSurface' -and
+        $hlslLibraryAnisotropy -match 'TA_AnisotropicAlphaFromRoughness' -and
+        $hlslLibraryAnisotropy -match 'TA_DistributionGGXAnisotropic' -and
+        $hlslLibraryAnisotropy -match 'TA_VisibilitySmithGGXAnisotropic' -and
+        $hlslLibraryAnisotropy -match 'clamp\(anisotropy, -0\.9h, 0\.9h\)') `
+        'HLSL anisotropy module fixes tangent frame, directional alpha, distribution and visibility'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryNormalBlendPath) {
@@ -1094,20 +1129,20 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.12.0' -and
+        $hlslLibraryManifest.version -eq '1.13.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 15 -and
-        @($hlslLibraryManifest.invariants).Count -eq 18) `
+        @($hlslLibraryManifest.modules).Count -eq 16 -and
+        @($hlslLibraryManifest.invariants).Count -eq 19) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 15 -and
-        $hlslLibraryReport.publicSymbolCount -eq 54 -and
+        $hlslLibraryReport.moduleCount -eq 16 -and
+        $hlslLibraryReport.publicSymbolCount -eq 59 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-    'HLSL source library report validates fifteen modules and fifty-four public symbols'
+    'HLSL source library report validates sixteen modules and fifty-nine public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
@@ -1419,6 +1454,31 @@ if (Test-Path -LiteralPath $snowCoverReportPath) {
         $snowCoverReport.maximumError -le 0.000001 -and
         @($snowCoverReport.failures).Count -eq 0) `
         'Snow cover report validates slope, height, color, roughness, metallic and clamping fixtures'
+}
+if (Test-Path -LiteralPath $anisotropyManifestPath) {
+    $anisotropyManifest = Get-Content -LiteralPath $anisotropyManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($anisotropyManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $anisotropyManifest.version -eq '1.0.0' -and
+        $anisotropyManifest.sourceLibraryVersion -eq '1.13.0' -and
+        @($anisotropyManifest.publicSymbols).Count -eq 5 -and
+        @($anisotropyManifest.dependencies).Count -eq 4 -and
+        @($anisotropyManifest.fixtures).Count -eq 10 -and
+        @($anisotropyManifest.invariants).Count -eq 6 -and
+        @($anisotropyManifest.limitations).Count -eq 3) `
+        'Anisotropy basics contract fixes five entry points, ten fixtures and six invariants'
+}
+if (Test-Path -LiteralPath $anisotropyReportPath) {
+    $anisotropyReport = Get-Content -LiteralPath $anisotropyReportPath -Raw | ConvertFrom-Json
+    Add-Check ($anisotropyReport.status -eq 'PASS' -and
+        $anisotropyReport.sourceLibraryVersion -eq '1.13.0' -and
+        $anisotropyReport.publicSymbolCount -eq 5 -and
+        $anisotropyReport.dependencyCount -eq 4 -and
+        $anisotropyReport.fixtureCount -eq 10 -and
+        $anisotropyReport.invariantCount -eq 6 -and
+        $anisotropyReport.limitationCount -eq 3 -and
+        $anisotropyReport.maximumError -le 0.000001 -and
+        @($anisotropyReport.failures).Count -eq 0) `
+        'Anisotropy basics report validates frame, rotation, directional GGX and isotropic fallback wiring'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

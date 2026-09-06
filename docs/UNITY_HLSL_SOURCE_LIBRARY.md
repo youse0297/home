@@ -17,7 +17,8 @@
 | `TA_VertexDeformation.hlsl` | 结构化顶点输入/配置/结果与固定效果编排 | VertexDisplacement、VertexAnimation |
 | `TA_PBRInput.hlsl` | BaseColor、Normal、ORM 与材质缩放的简化输入组装 | Types、Common、Vector、Sampling |
 | `TA_BRDF.hlsl` | Schlick Fresnel、GGX NDF、Smith 可见性 | Common |
-| `TA_Lighting.hlsl` | 直接漫反射、直接高光、间接漫反射及最终合成 | Types、Common、Vector、BRDF |
+| `TA_Anisotropy.hlsl` | 正交旋转 T/B 基、方向粗糙度、各向异性 GGX/Smith | Types、Common、Vector、BRDF |
+| `TA_Lighting.hlsl` | 直接漫反射、直接高光、间接漫反射及最终合成 | Types、Common、Vector、BRDF、Anisotropy |
 | `TA_DebugViews.hlsl` | 固定 0–9 调试 ID 与输出选择 | Types、Vector |
 | `TA_ShaderLibrary.hlsl` | 按依赖顺序聚合全部模块 | 全部模块 |
 
@@ -25,7 +26,7 @@
 
 ## 公共接口
 
-v1.8 固定 38 个公共符号，全部使用 `TA_` 前缀：
+v1.13 固定 59 个公共符号，全部使用 `TA_` 前缀：
 
 - 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_DirectLightingBreakdown`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
@@ -36,6 +37,7 @@ v1.8 固定 38 个公共符号，全部使用 `TA_` 前缀：
 - 顶点变形：`TA_VertexDeformationInput`、`TA_VertexDeformationConfig`、`TA_VertexDeformationResult`、`TA_EvaluateVertexDeformationOS`
 - PBR 输入：`TA_PBRInputConfig`、`TA_PBRInputData`、`TA_SamplePBRInput`、`TA_BuildSurfaceData`
 - BRDF：`TA_FresnelSchlickScalar`、`TA_FresnelSchlick`、`TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、`TA_DistributionGGX`、`TA_SmithGGXLambdaTerm`、`TA_VisibilitySmithGGXCorrelated`
+- 各向异性：`TA_OrthogonalizeTangentWS`、`TA_ApplyAnisotropyToSurface`、`TA_AnisotropicAlphaFromRoughness`、`TA_DistributionGGXAnisotropic`、`TA_VisibilitySmithGGXAnisotropic`
 - 流程入口：`TA_EvaluateDirectLighting`、`TA_EvaluateLighting`、`TA_SelectDebugView`
 
 Renderer Shader 应只包含聚合头：
@@ -74,12 +76,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateGgxGeometryF
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementBasics.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateWaveWindAnimation.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementModularization.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropyBasics.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
 专项脚本读取 `Assets/_TA/Documentation/HlslSourceLibrary.json`，检查文件存在性、include guard、包依赖隔离、模块依赖顺序、公共前缀和唯一性、聚合顺序、BasePass 接线及最终光照加法不变量，输出 `Reports/HlslSourceLibraryValidation.json`。项目级静态验收会再次检查关键源码和专项报告。
 
 当前机器若被 Unity 许可证阻塞，离线 `PASS` 不等于 Editor shader 编译成功。最终运行验收仍需在 Unity `2022.3.62f3c1` 中打开 BasePass 对照场景，确认 Shader 无编译错误且 10 档视图可切换。
-## v1.8 更新
+## v1.13 更新
 
-当前契约为 v1.8.0、11 个模块和 38 个公共符号。v1.8 新增 `TA_VertexDeformation.hlsl`，用输入、配置、结果三个结构体和单一求值入口统一高度、波浪、风摆编排。BasePass 不再直接调用低层位移函数；Shadow/Depth pass 同步、动画法线重建和世界空间跨对象连续波场仍属于后续能力边界。
+当前契约为 v1.13.0、16 个模块和 59 个公共符号。v1.13 新增 `TA_Anisotropy.hlsl`，以最终法线、网格切线、手性和旋转构建方向基，并为直接光提供各向异性 GGX 分布与 Smith 可见性；参数为零时保留既有各向同性分支。

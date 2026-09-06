@@ -294,6 +294,11 @@ Add-ScriptGate -Name 'Snow Cover' `
     -ExpectedPattern 'UNITY_SNOW_COVER: PASS' `
     -Evidence 'UnityMaterialLab/Reports/SnowCoverValidation.json' `
     -ReportName 'SnowCoverValidation.json'
+Add-ScriptGate -Name 'Anisotropy Basics' `
+    -ScriptName 'ValidateAnisotropyBasics.ps1' `
+    -ExpectedPattern 'UNITY_ANISOTROPY_BASICS: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/AnisotropyBasicsValidation.json' `
+    -ReportName 'AnisotropyBasicsValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `

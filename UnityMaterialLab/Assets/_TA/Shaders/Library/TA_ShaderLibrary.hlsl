@@ -15,6 +15,7 @@
 #include "TA_VertexDeformation.hlsl"
 #include "TA_PBRInput.hlsl"
 #include "TA_BRDF.hlsl"
+#include "TA_Anisotropy.hlsl"
 #include "TA_Lighting.hlsl"
 #include "TA_DebugViews.hlsl"
 

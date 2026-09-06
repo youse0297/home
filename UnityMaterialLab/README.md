@@ -107,9 +107,9 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 
 ## HLSL 源码库
 
-- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按依赖顺序装配 13 个模块；`TA_NormalBlend.hlsl` 负责切线空间 RNM 多层法线组合，`TA_ProceduralMask.hlsl` 提供显式时间驱动的 UV 程序化遮罩，`TA_VertexDeformation.hlsl` 位于低层位移/动画与 PBR 输入之间。
+- `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按依赖顺序装配 16 个模块；`TA_NormalBlend.hlsl` 负责切线空间 RNM 多层法线组合，`TA_Anisotropy.hlsl` 负责旋转 T/B 基与各向异性 GGX，`TA_VertexDeformation.hlsl` 位于低层位移/动画与 PBR 输入之间。
 - BasePass 通过 `TA_PBRInputConfig`、`TA_SamplePBRInput` 和 `TA_BuildSurfaceData` 组装表面数据，再调用 `TA_EvaluateLighting` 与 `TA_SelectDebugView`；采样、材质边界、GGX 和调试选择不再内联重复。
-- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 45 个公共符号；多层法线由 `Tools/ValidateNormalLayerBlending.ps1` 验证，程序化遮罩由 `Tools/ValidateProceduralMask.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_NORMAL_LAYER_BLENDING.md` 和 `../docs/UNITY_PROCEDURAL_MASK.md`。
+- `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 59 个公共符号；各向异性由 `Tools/ValidateAnisotropyBasics.ps1` 验证。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md`、`../docs/UNITY_NORMAL_LAYER_BLENDING.md`、`../docs/UNITY_PROCEDURAL_MASK.md` 和 `../docs/UNITY_ANISOTROPY_BASICS.md`。
 
 ## 顶点位移基础
 
@@ -156,7 +156,7 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 当前机器的 Editor 自动化若被许可证阻塞，诊断与解锁步骤见 `Reports/EDITOR_VALIDATION_BLOCKED.md`；静态 PASS 不能替代最终 Editor 场景验收。
 ## Direct-light PBR integration
 
-The renderer-facing HLSL source library is v1.10.0. BasePass consumes vertex deformation through one structured entry point; low-level height, wave and wind modules remain independently validated and default to zero amplitude.
+The renderer-facing HLSL source library is v1.13.0. BasePass consumes vertex deformation through one structured entry point; low-level height, wave and wind modules remain independently validated and default to zero amplitude.
 
 The source library also exposes `TA_NormalBlend.hlsl` for tangent-space RNM layering. BasePass samples optional detail and macro normal maps, composes them in `base → detail → macro` order, and clamps each layer weight; zero weights preserve the established normal baseline. See `../docs/UNITY_NORMAL_LAYER_BLENDING.md` and `Reports/NormalLayerBlendingValidation.json`.
 
@@ -165,6 +165,8 @@ The source library also exposes `TA_NormalBlend.hlsl` for tangent-space RNM laye
 `TA_EdgeWear.hlsl` derives a view-angle grazing mask from world normal and view direction, then blends a bounded wear color and raises roughness toward one. The sample profile enables the response with threshold `0.58`, softness `0.24`, strength `0.7`, and roughness boost `0.35`; run `Tools/ValidateEdgeWear.ps1` and see `../docs/UNITY_EDGE_WEAR.md`.
 
 `TA_SnowCover.hlsl` derives a world-up slope mask with optional world-height accumulation, then blends snow color, snow roughness and dielectric metallic response. The sample profile enables coverage `0.7` with snow roughness `0.82`; run `Tools/ValidateSnowCover.ps1` and see `../docs/UNITY_SNOW_COVER.md`.
+
+`TA_Anisotropy.hlsl` rebuilds a rotated orthonormal tangent frame from the final normal and evaluates anisotropic GGX distribution and Smith visibility. The sample profile enables anisotropy `0.65` with rotation `0.35`; zero preserves the isotropic path. Run `Tools/ValidateAnisotropyBasics.ps1` and see `../docs/UNITY_ANISOTROPY_BASICS.md`.
 
 ## PBR parameter regression
 

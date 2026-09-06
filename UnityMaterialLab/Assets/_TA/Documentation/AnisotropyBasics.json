@@ -1,0 +1,103 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.13.0",
+  "source": "Assets/_TA/Shaders/Library/TA_Anisotropy.hlsl",
+  "typesSource": "Assets/_TA/Shaders/Library/TA_ShaderTypes.hlsl",
+  "inputSource": "Assets/_TA/Shaders/Library/TA_PBRInput.hlsl",
+  "lightingSource": "Assets/_TA/Shaders/Library/TA_Lighting.hlsl",
+  "consumer": "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
+  "material": "Assets/_TA/Materials/MAT_LayeredNormal.mat",
+  "profile": "Assets/_TA/Materials/Instances/MI_LayeredNormal.asset",
+  "publicSymbols": [
+    "TA_OrthogonalizeTangentWS",
+    "TA_ApplyAnisotropyToSurface",
+    "TA_AnisotropicAlphaFromRoughness",
+    "TA_DistributionGGXAnisotropic",
+    "TA_VisibilitySmithGGXAnisotropic"
+  ],
+  "dependencies": ["types", "common", "vector", "brdf"],
+  "model": {
+    "frame": "World-space tangent and bitangent are re-orthogonalized against the final normal and rotated around that normal",
+    "range": "Material anisotropy is exposed in [-1,1] and internally clamped to [-0.9,0.9] for stable directional roughness",
+    "roughness": "Positive anisotropy broadens alpha along tangent and narrows it along bitangent; negative anisotropy swaps the axes",
+    "distribution": "Anisotropic Trowbridge-Reitz GGX uses TdotH, BdotH, NdotH and alphaT/alphaB",
+    "visibility": "Correlated anisotropic Smith visibility uses projected view and light directions in the same tangent frame",
+    "fallback": "Anisotropy zero delegates to the established isotropic GGX distribution and visibility path"
+  },
+  "fixtures": [
+    {
+      "id": "ALPHA_ISOTROPIC",
+      "function": "TA_AnisotropicAlphaFromRoughness",
+      "input": { "roughness": 0.5, "anisotropy": 0.0 },
+      "expected": [0.25, 0.25]
+    },
+    {
+      "id": "ALPHA_POSITIVE",
+      "function": "TA_AnisotropicAlphaFromRoughness",
+      "input": { "roughness": 0.5, "anisotropy": 0.6 },
+      "expected": [0.368604890387243, 0.169558249578132]
+    },
+    {
+      "id": "ALPHA_NEGATIVE_SWAPS_AXES",
+      "function": "TA_AnisotropicAlphaFromRoughness",
+      "input": { "roughness": 0.5, "anisotropy": -0.6 },
+      "expected": [0.169558249578132, 0.368604890387243]
+    },
+    {
+      "id": "ANISOTROPY_CLAMP",
+      "function": "TA_AnisotropicAlphaFromRoughness",
+      "input": { "roughness": 0.5, "anisotropy": 2.0 },
+      "expected": [0.573539334676404, 0.108972473588517]
+    },
+    {
+      "id": "DISTRIBUTION_NORMAL_ALIGNED",
+      "function": "TA_DistributionGGXAnisotropic",
+      "input": { "normalDotHalf": 1.0, "tangentDotHalf": 0.0, "bitangentDotHalf": 0.0, "alphaTB": [0.368604890387243, 0.169558249578132] },
+      "expected": 5.09295817894065
+    },
+    {
+      "id": "DISTRIBUTION_TANGENT_DIRECTION",
+      "function": "TA_DistributionGGXAnisotropic",
+      "input": { "normalDotHalf": 0.8, "tangentDotHalf": 0.6, "bitangentDotHalf": 0.0, "alphaTB": [0.368604890387243, 0.169558249578132] },
+      "expected": 0.470634677627758
+    },
+    {
+      "id": "DISTRIBUTION_BITANGENT_DIRECTION",
+      "function": "TA_DistributionGGXAnisotropic",
+      "input": { "normalDotHalf": 0.8, "tangentDotHalf": 0.0, "bitangentDotHalf": 0.6, "alphaTB": [0.368604890387243, 0.169558249578132] },
+      "expected": 0.0293997442551915
+    },
+    {
+      "id": "ANISOTROPIC_VISIBILITY",
+      "function": "TA_VisibilitySmithGGXAnisotropic",
+      "input": { "normalDotView": 0.8, "normalDotLight": 0.8, "tangentDotView": 0.6, "bitangentDotView": 0.0, "tangentDotLight": 0.0, "bitangentDotLight": 0.6, "alphaTB": [0.368604890387243, 0.169558249578132] },
+      "expected": 0.381924132388355
+    },
+    {
+      "id": "DEGENERATE_TANGENT_FALLBACK",
+      "function": "TA_OrthogonalizeTangentWS",
+      "input": { "normal": [0.0, 0.0, 1.0], "tangent": [0.0, 0.0, 1.0] },
+      "expected": [1.0, 0.0, 0.0]
+    },
+    {
+      "id": "ROTATION_AND_HANDEDNESS",
+      "function": "TA_ApplyAnisotropyToSurface",
+      "input": { "normal": [0.0, 0.0, 1.0], "tangent": [1.0, 0.0, 0.0, -1.0], "anisotropy": 0.6, "rotation": 1.5707963267948966 },
+      "expected": [0.0, -1.0, 0.0, -1.0, 0.0, 0.0, 0.6]
+    }
+  ],
+  "invariants": [
+    "The tangent frame is orthonormal to the final world-space normal and preserves mesh tangent handedness",
+    "Rotation changes highlight orientation without changing the normal or anisotropy magnitude",
+    "Positive and negative anisotropy swap the directional roughness axes",
+    "Anisotropy zero preserves the established isotropic GGX direct-light path",
+    "Snow coverage attenuates substrate anisotropy with the shared snow mask",
+    "All GGX denominators and directional alpha values have explicit lower bounds"
+  ],
+  "limitations": [
+    "The model uses mesh tangents and a scalar rotation instead of a flow map or strand direction texture",
+    "The internal anisotropy clamp limits magnitude to 0.9 to avoid singular highlights at the exposed endpoints",
+    "Visual confirmation and platform shader compilation still require a licensed Unity Editor"
+  ]
+}

@@ -1,11 +1,11 @@
 ﻿{
     "status":  "PASS",
-    "version":  "1.12.0",
-    "moduleCount":  15,
-    "publicSymbolCount":  54,
+    "version":  "1.13.0",
+    "moduleCount":  16,
+    "publicSymbolCount":  59,
     "aggregate":  "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "consumer":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
-    "generatedAtUtc":  "2026-08-31T13:44:41.6648144Z",
+    "generatedAtUtc":  "2026-09-06T10:45:59.3788353Z",
     "checks":  [
                    {
                        "id":  "MODULE_EXISTS_types",
@@ -398,6 +398,36 @@
                        "detail":  "TA_FresnelSchlickScalar, TA_FresnelSchlick, TA_GGXAlphaFromRoughness, TA_DistributionGGXFromAlpha, TA_DistributionGGX, TA_SmithGGXLambdaTerm, TA_VisibilitySmithGGXCorrelated"
                    },
                    {
+                       "id":  "MODULE_EXISTS_anisotropy",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Anisotropy.hlsl"
+                   },
+                   {
+                       "id":  "INCLUDE_GUARD_anisotropy",
+                       "pass":  true,
+                       "detail":  "TA_ANISOTROPY_INCLUDED"
+                   },
+                   {
+                       "id":  "NO_PACKAGE_INCLUDE_anisotropy",
+                       "pass":  true,
+                       "detail":  "Assets/_TA/Shaders/Library/TA_Anisotropy.hlsl"
+                   },
+                   {
+                       "id":  "DEPENDENCY_ORDER_anisotropy",
+                       "pass":  true,
+                       "detail":  "types, common, vector, brdf"
+                   },
+                   {
+                       "id":  "DECLARED_INCLUDES_anisotropy",
+                       "pass":  true,
+                       "detail":  "TA_ShaderTypes.hlsl, TA_Common.hlsl, TA_Vector.hlsl, TA_BRDF.hlsl"
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOLS_anisotropy",
+                       "pass":  true,
+                       "detail":  "TA_OrthogonalizeTangentWS, TA_ApplyAnisotropyToSurface, TA_AnisotropicAlphaFromRoughness, TA_DistributionGGXAnisotropic, TA_VisibilitySmithGGXAnisotropic"
+                   },
+                   {
                        "id":  "MODULE_EXISTS_lighting",
                        "pass":  true,
                        "detail":  "Assets/_TA/Shaders/Library/TA_Lighting.hlsl"
@@ -415,12 +445,12 @@
                    {
                        "id":  "DEPENDENCY_ORDER_lighting",
                        "pass":  true,
-                       "detail":  "types, common, vector, brdf"
+                       "detail":  "types, common, vector, brdf, anisotropy"
                    },
                    {
                        "id":  "DECLARED_INCLUDES_lighting",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl, TA_Common.hlsl, TA_Vector.hlsl, TA_BRDF.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl, TA_Common.hlsl, TA_Vector.hlsl, TA_BRDF.hlsl, TA_Anisotropy.hlsl"
                    },
                    {
                        "id":  "PUBLIC_SYMBOLS_lighting",
@@ -470,12 +500,12 @@
                    {
                        "id":  "AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_EdgeWear.hlsl -\u003e TA_ProceduralMask.hlsl -\u003e TA_SnowCover.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_NormalBlend.hlsl -\u003e TA_VertexDisplacement.hlsl -\u003e TA_VertexAnimation.hlsl -\u003e TA_VertexDeformation.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
+                       "detail":  "TA_ShaderTypes.hlsl -\u003e TA_Common.hlsl -\u003e TA_Vector.hlsl -\u003e TA_EdgeWear.hlsl -\u003e TA_ProceduralMask.hlsl -\u003e TA_SnowCover.hlsl -\u003e TA_Sampling.hlsl -\u003e TA_NormalBlend.hlsl -\u003e TA_VertexDisplacement.hlsl -\u003e TA_VertexAnimation.hlsl -\u003e TA_VertexDeformation.hlsl -\u003e TA_PBRInput.hlsl -\u003e TA_BRDF.hlsl -\u003e TA_Anisotropy.hlsl -\u003e TA_Lighting.hlsl -\u003e TA_DebugViews.hlsl"
                    },
                    {
                        "id":  "MANIFEST_AGGREGATE_ORDER",
                        "pass":  true,
-                       "detail":  "types -\u003e common -\u003e vector -\u003e edgeWear -\u003e proceduralMask -\u003e snowCover -\u003e sampling -\u003e normalBlend -\u003e vertexDisplacement -\u003e vertexAnimation -\u003e vertexDeformation -\u003e pbrInput -\u003e brdf -\u003e lighting -\u003e debugViews"
+                       "detail":  "types -\u003e common -\u003e vector -\u003e edgeWear -\u003e proceduralMask -\u003e snowCover -\u003e sampling -\u003e normalBlend -\u003e vertexDisplacement -\u003e vertexAnimation -\u003e vertexDeformation -\u003e pbrInput -\u003e brdf -\u003e anisotropy -\u003e lighting -\u003e debugViews"
                    },
                    {
                        "id":  "CONSUMER_EXISTS",
@@ -485,7 +515,7 @@
                    {
                        "id":  "CONSUMER_WIRING",
                        "pass":  true,
-                       "detail":  "TA_TransformUV, TA_EvaluateProceduralMask, TA_ApplyProceduralMask, TA_EvaluateEdgeWear, TA_ApplyEdgeWearColor, TA_ApplyEdgeWearRoughness, TA_EvaluateSnowCover, TA_ApplySnowCoverColor, TA_ApplySnowCoverRoughness, TA_ApplySnowCoverMetallic, TA_SampleTexture2DLod, TA_EvaluateVertexDeformationOS, TA_SampleNormalTS, TA_ComposeNormalLayersTS, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_EvaluateLighting, TA_SelectDebugView"
+                       "detail":  "TA_TransformUV, TA_EvaluateProceduralMask, TA_ApplyProceduralMask, TA_EvaluateEdgeWear, TA_ApplyEdgeWearColor, TA_ApplyEdgeWearRoughness, TA_EvaluateSnowCover, TA_ApplySnowCoverColor, TA_ApplySnowCoverRoughness, TA_ApplySnowCoverMetallic, TA_SampleTexture2DLod, TA_EvaluateVertexDeformationOS, TA_SampleNormalTS, TA_ComposeNormalLayersTS, TA_SamplePBRInput, TA_TransformTangentToWorld, TA_BuildSurfaceData, TA_ApplyAnisotropyToSurface, TA_EvaluateLighting, TA_SelectDebugView"
                    },
                    {
                        "id":  "ADDITIVE_LIGHTING_INVARIANT",

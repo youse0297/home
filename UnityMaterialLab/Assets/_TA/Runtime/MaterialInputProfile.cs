@@ -99,6 +99,13 @@ namespace TA.MaterialLab
         [Range(0.001f, 10.0f)]
         public float snowHeightFade = 1.0f;
 
+        [Header("Anisotropy")]
+        [Range(-1.0f, 1.0f)]
+        public float anisotropy;
+
+        [Range(-3.1415927f, 3.1415927f)]
+        public float anisotropyRotation;
+
         [Range(0.0f, 1.0f)]
         public float metallic;
 
@@ -160,6 +167,8 @@ namespace TA.MaterialLab
             SetFloatIfSupported(material, "_SnowHeightBlend", snowHeightBlend);
             SetFloatIfSupported(material, "_SnowHeightStart", snowHeightStart);
             SetFloatIfSupported(material, "_SnowHeightFade", snowHeightFade);
+            SetFloatIfSupported(material, "_Anisotropy", anisotropy);
+            SetFloatIfSupported(material, "_AnisotropyRotation", anisotropyRotation);
             SetFloatIfSupported(material, "_Metallic", metallic);
             SetFloatIfSupported(material, "_Smoothness", 1.0f - roughness);
             SetFloatIfSupported(material, "_OcclusionStrength", occlusionStrength);
@@ -222,6 +231,9 @@ namespace TA.MaterialLab
                    snowRoughness >= 0.045f && snowRoughness <= 1.0f &&
                    snowHeightBlend >= 0.0f && snowHeightBlend <= 1.0f &&
                    snowHeightFade >= 0.001f && snowHeightFade <= 10.0f &&
+                   IsFinite(anisotropy) && IsFinite(anisotropyRotation) &&
+                   anisotropy >= -1.0f && anisotropy <= 1.0f &&
+                   anisotropyRotation >= -3.1415927f && anisotropyRotation <= 3.1415927f &&
                    metallic >= 0.0f && metallic <= 1.0f &&
                    roughness >= 0.0f && roughness <= 1.0f &&
                    occlusionStrength >= 0.0f && occlusionStrength <= 1.0f &&
@@ -263,6 +275,8 @@ namespace TA.MaterialLab
             snowHeightBlend = ClampFinite(snowHeightBlend, 0.0f, 1.0f, 0.0f);
             snowHeightStart = ClampFinite(snowHeightStart, -4096.0f, 4096.0f, 0.0f);
             snowHeightFade = ClampFinite(snowHeightFade, 0.001f, 10.0f, 1.0f);
+            anisotropy = ClampFinite(anisotropy, -1.0f, 1.0f, 0.0f);
+            anisotropyRotation = ClampFinite(anisotropyRotation, -3.1415927f, 3.1415927f, 0.0f);
             metallic = ClampFinite(metallic, 0.0f, 1.0f, 0.0f);
             roughness = ClampFinite(roughness, 0.0f, 1.0f, 0.5f);
             occlusionStrength = ClampFinite(occlusionStrength, 0.0f, 1.0f, 1.0f);

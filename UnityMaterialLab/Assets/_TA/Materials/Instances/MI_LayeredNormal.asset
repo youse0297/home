@@ -43,6 +43,8 @@ MonoBehaviour:
   snowHeightBlend: 0
   snowHeightStart: 0
   snowHeightFade: 1
+  anisotropy: 0.65
+  anisotropyRotation: 0.35
   metallic: 0.15
   roughness: 0.42
   occlusionStrength: 1

@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  20,
-    "passedRequiredGateCount":  20,
+    "requiredGateCount":  21,
+    "passedRequiredGateCount":  21,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-08-31T13:45:23.4860375Z",
+    "generatedAtUtc":  "2026-09-06T10:48:15.5446289Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -52,13 +52,13 @@
                                          "      Start 10: ggx_brdf_acceptance",
                                          "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.03 sec",
                                          "      Start 11: material_workflow_acceptance",
-                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.02 sec",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
                                          "      Start 12: release_acceptance",
                                          "12/12 Test #12: release_acceptance ......................   Passed    0.04 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.35 sec"
+                                         "Total Test time (real) =   0.34 sec"
                                      ]
                   },
                   {
@@ -268,6 +268,19 @@
                       "outputTail":  [
                                          "UNITY_SNOW_COVER: PASS",
                                          "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\SnowCoverValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Anisotropy Basics",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/AnisotropyBasicsValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_ANISOTROPY_BASICS: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\AnisotropyBasicsValidation.json"
                                      ]
                   },
                   {

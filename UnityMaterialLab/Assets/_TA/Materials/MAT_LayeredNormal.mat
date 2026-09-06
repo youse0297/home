@@ -67,6 +67,8 @@ Material:
     - _SnowHeightBlend: 0
     - _SnowHeightStart: 0
     - _SnowHeightFade: 1
+    - _Anisotropy: 0.65
+    - _AnisotropyRotation: 0.35
     - _AOStrength: 1
     - _RoughnessScale: 1
     - _MetallicScale: 1
