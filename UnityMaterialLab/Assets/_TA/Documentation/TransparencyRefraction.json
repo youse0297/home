@@ -1,0 +1,66 @@
+{
+  "status": "STATIC_NUMERIC_VALIDATED",
+  "version": "1.0.0",
+  "sourceLibraryVersion": "1.15.0",
+  "source": "Assets/_TA/Shaders/Library/TA_TransparencyRefraction.hlsl",
+  "shader": "Assets/_TA/Shaders/TA_TransparentRefraction.shader",
+  "material": "Assets/_TA/Materials/MAT_TransparentRefraction.mat",
+  "pipelineAsset": "Assets/_TA/Settings/RP_MaterialLab_URP.asset",
+  "dependencies": ["common", "vector", "brdf"],
+  "publicSymbols": [
+    "TA_TransparencyRefractionConfig",
+    "TA_TransparencyRefractionData",
+    "TA_DielectricF0FromIOR",
+    "TA_EvaluateRefractionDirectionWS",
+    "TA_EvaluateRefractionUV",
+    "TA_EvaluateBeerLambertTransmittance",
+    "TA_EvaluateTransparencyRefraction"
+  ],
+  "renderState": {
+    "queue": "Transparent",
+    "renderType": "Transparent",
+    "blend": "One Zero",
+    "zWrite": "Off",
+    "sceneColorSource": "URP _CameraOpaqueTexture",
+    "opaqueTextureRequired": true
+  },
+  "policies": {
+    "ior": "Clamp material IOR to [1,2.5], derive F0=((IOR-1)/(IOR+1))^2 and use eta=1/IOR for air-to-material Snell refraction",
+    "absorption": "Transmittance=exp(-max(absorptionCoefficient,0)*clamp(thickness,0,10))",
+    "surfaceWeight": "saturate(opacity)+(1-saturate(opacity))*SchlickFresnel",
+    "screenOffset": "Subtract the projected incident ray from the projected refracted ray, scale by bounded strength and thickness, then clamp UV to [0,1]",
+    "composition": "Overwrite with the already-composited transmitted scene and lit surface result; do not alpha-blend the sampled background a second time"
+  },
+  "fixtures": [
+    { "id": "F0_AIR", "function": "TA_DielectricF0FromIOR", "input": { "indexOfRefraction": 1.0 }, "expected": [0.0] },
+    { "id": "F0_GLASS", "function": "TA_DielectricF0FromIOR", "input": { "indexOfRefraction": 1.5 }, "expected": [0.04] },
+    { "id": "F0_HIGH_CLAMP", "function": "TA_DielectricF0FromIOR", "input": { "indexOfRefraction": 3.0 }, "expected": [0.1836734693877551] },
+    { "id": "REFRACTION_NORMAL_INCIDENCE", "function": "TA_EvaluateRefractionDirectionWS", "input": { "normal": [0.0, 0.0, 1.0], "viewDirection": [0.0, 0.0, 1.0], "indexOfRefraction": 1.5 }, "expected": [0.0, 0.0, -1.0] },
+    { "id": "REFRACTION_OBLIQUE_GLASS", "function": "TA_EvaluateRefractionDirectionWS", "input": { "normal": [0.0, 0.0, 1.0], "viewDirection": [0.6, 0.0, 0.8], "indexOfRefraction": 1.5 }, "expected": [-0.4, 0.0, -0.916515138991168] },
+    { "id": "REFRACTION_IOR_LOW_CLAMP", "function": "TA_EvaluateRefractionDirectionWS", "input": { "normal": [0.0, 0.0, 1.0], "viewDirection": [0.6, 0.0, 0.8], "indexOfRefraction": 0.5 }, "expected": [-0.6, 0.0, -0.8] },
+    { "id": "SCREEN_UV_IOR_IDENTITY", "function": "TA_EvaluateRefractionUV", "input": { "screenUV": [0.35, 0.65], "incidentDirectionVS": [-0.6, 0.0, -0.8], "refractionDirectionVS": [-0.6, 0.0, -0.8], "strength": 0.1, "thickness": 10.0 }, "expected": [0.35, 0.65] },
+    { "id": "SCREEN_UV_OBLIQUE", "function": "TA_EvaluateRefractionUV", "input": { "screenUV": [0.5, 0.5], "incidentDirectionVS": [0.0, 0.0, -1.0], "refractionDirectionVS": [0.2, -0.1, -0.9746794344808963], "strength": 0.05, "thickness": 2.0 }, "expected": [0.5205195670417031, 0.4897402164791485] },
+    { "id": "SCREEN_UV_CLAMP", "function": "TA_EvaluateRefractionUV", "input": { "screenUV": [0.99, 0.01], "incidentDirectionVS": [0.0, 0.0, -1.0], "refractionDirectionVS": [0.6, -0.4, -0.6928203230275509], "strength": 0.2, "thickness": 20.0 }, "expected": [1.0, 0.0] },
+    { "id": "ABSORPTION_ZERO_THICKNESS", "function": "TA_EvaluateBeerLambertTransmittance", "input": { "absorptionCoefficient": [5.0, 2.0, 1.0], "thickness": 0.0 }, "expected": [1.0, 1.0, 1.0] },
+    { "id": "ABSORPTION_TINTED_GLASS", "function": "TA_EvaluateBeerLambertTransmittance", "input": { "absorptionCoefficient": [0.08, 0.025, 0.01], "thickness": 0.6 }, "expected": [0.9531337870775047, 0.9851119396030626, 0.9940179640539353] },
+    { "id": "COMPOSITE_GLASS", "function": "TA_EvaluateTransparencyRefraction", "input": { "opaqueSceneColor": [0.8, 0.6, 0.4], "surfaceLighting": [0.2, 0.7, 1.0], "normalDotView": 1.0, "absorptionCoefficient": [0.08, 0.025, 0.01], "opacity": 0.12, "indexOfRefraction": 1.5, "thickness": 0.6 }, "expected": [0.7625070296620038, 0.5910671637618376, 0.3976071856215741, 0.9531337870775047, 0.9851119396030626, 0.9940179640539353, 0.04, 0.1552, 0.6752059386584608, 0.6079735399459992, 0.4910985504131058] },
+    { "id": "COMPOSITE_GRAZING_FRESNEL", "function": "TA_EvaluateTransparencyRefraction", "input": { "opaqueSceneColor": [0.1, 0.2, 0.3], "surfaceLighting": [0.9, 0.8, 0.7], "normalDotView": 0.0, "absorptionCoefficient": [0.0, 0.0, 0.0], "opacity": 0.0, "indexOfRefraction": 1.5, "thickness": 1.0 }, "expected": [0.1, 0.2, 0.3, 1.0, 1.0, 1.0, 1.0, 1.0, 0.9, 0.8, 0.7] }
+  ],
+  "invariants": [
+    "IOR 1 has zero normal-incidence reflectance and IOR 1.5 has F0 0.04",
+    "Normal-incidence air-to-material refraction preserves the forward ray direction",
+    "Refraction direction is normalized and bends toward the surface normal for IOR above one",
+    "IOR one produces zero screen distortion because incident and refracted ray projections are identical",
+    "Screen UV distortion is bounded and clamped to the captured opaque texture domain",
+    "Zero thickness is an absorption identity",
+    "Positive absorption never amplifies transmitted radiance",
+    "Grazing-angle Fresnel converges to a fully reflective surface weight",
+    "The refraction pass uses Transparent queue, disables depth writes and avoids double background blending"
+  ],
+  "limitations": [
+    "The screen-space path can refract only content present in URP _CameraOpaqueTexture",
+    "Objects outside the screen and transparent objects rendered in the same queue are unavailable to this single-pass sample",
+    "Thickness is artist-authored rather than traced through back faces",
+    "Runtime shader import and visual artifact inspection require a licensed Unity Editor"
+  ]
+}

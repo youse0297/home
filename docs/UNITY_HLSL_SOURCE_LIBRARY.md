@@ -17,6 +17,7 @@
 | `TA_VertexDeformation.hlsl` | 结构化顶点输入/配置/结果与固定效果编排 | VertexDisplacement、VertexAnimation |
 | `TA_PBRInput.hlsl` | BaseColor、Normal、ORM 与材质缩放的简化输入组装 | Types、Common、Vector、Sampling |
 | `TA_BRDF.hlsl` | Schlick Fresnel、GGX NDF、Smith 可见性 | Common |
+| `TA_TransparencyRefraction.hlsl` | IOR、Snell 折射、Beer-Lambert 吸收与透明合成 | Common、Vector、BRDF |
 | `TA_Anisotropy.hlsl` | 正交旋转 T/B 基、方向粗糙度、各向异性 GGX/Smith | Types、Common、Vector、BRDF |
 | `TA_Lighting.hlsl` | 直接漫反射、直接高光、间接漫反射及最终合成 | Types、Common、Vector、BRDF、Anisotropy |
 | `TA_DebugViews.hlsl` | 固定 0–9 调试 ID 与输出选择 | Types、Vector |
@@ -26,7 +27,7 @@
 
 ## 公共接口
 
-v1.14 固定 61 个公共符号，全部使用 `TA_` 前缀：
+v1.15 固定 68 个公共符号，全部使用 `TA_` 前缀：
 
 - 数据：`TA_SurfaceData`、`TA_LightingInput`、`TA_DirectLightingBreakdown`、`TA_LightingBreakdown`
 - 公共工具：`TA_SanitizePerceptualRoughness`
@@ -37,6 +38,7 @@ v1.14 固定 61 个公共符号，全部使用 `TA_` 前缀：
 - 顶点变形：`TA_VertexDeformationInput`、`TA_VertexDeformationConfig`、`TA_VertexDeformationResult`、`TA_EvaluateVertexDeformationOS`
 - PBR 输入：`TA_PBRInputConfig`、`TA_PBRInputData`、`TA_SamplePBRInput`、`TA_BuildSurfaceData`
 - BRDF：`TA_FresnelSchlickScalar`、`TA_FresnelSchlick`、`TA_GGXAlphaFromRoughness`、`TA_DistributionGGXFromAlpha`、`TA_DistributionGGX`、`TA_SmithGGXLambdaTerm`、`TA_VisibilitySmithGGXCorrelated`
+- 透明与折射：`TA_TransparencyRefractionConfig`、`TA_TransparencyRefractionData`、`TA_DielectricF0FromIOR`、`TA_EvaluateRefractionDirectionWS`、`TA_EvaluateRefractionUV`、`TA_EvaluateBeerLambertTransmittance`、`TA_EvaluateTransparencyRefraction`
 - 各向异性：`TA_OrthogonalizeTangentWS`、`TA_ApplyAnisotropyToSurface`、`TA_AnisotropicAlphaFromRoughness`、`TA_DistributionGGXAnisotropic`、`TA_VisibilitySmithGGXAnisotropic`、`TA_GGXSpecularTerms`、`TA_EvaluateGGXSpecularTerms`
 - 流程入口：`TA_EvaluateDirectLighting`、`TA_EvaluateLighting`、`TA_SelectDebugView`
 
@@ -78,12 +80,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateWaveWindAnim
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateVertexDisplacementModularization.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropyBasics.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropicPbrIntegration.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateTransparencyRefraction.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
 专项脚本读取 `Assets/_TA/Documentation/HlslSourceLibrary.json`，检查文件存在性、include guard、包依赖隔离、模块依赖顺序、公共前缀和唯一性、聚合顺序、BasePass 接线及最终光照加法不变量，输出 `Reports/HlslSourceLibraryValidation.json`。项目级静态验收会再次检查关键源码和专项报告。
 
 当前机器若被 Unity 许可证阻塞，离线 `PASS` 不等于 Editor shader 编译成功。最终运行验收仍需在 Unity `2022.3.62f3c1` 中打开 BasePass 对照场景，确认 Shader 无编译错误且 10 档视图可切换。
-## v1.14 更新
+## v1.15 更新
 
-当前契约为 v1.14.0、16 个模块和 61 个公共符号。v1.14 新增 `TA_GGXSpecularTerms` 与 `TA_EvaluateGGXSpecularTerms`，把各向同性/各向异性 GGX D/V 选择收口为光照层的单一镜面项边界，并以 12 组最终直接光 RGB 固定金属工作流、方向性、旋转、积雪衰减和背面保护。
+当前契约为 v1.15.0、17 个模块和 68 个公共符号。v1.15 新增 `TA_TransparencyRefraction.hlsl`，将 IOR、Snell 方向、屏幕 UV、Beer-Lambert 吸收与透明合成收口为无 Renderer 资源依赖的光学模块。

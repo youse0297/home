@@ -112,6 +112,8 @@ $hlslLibraryNormalBlendPath = Join-Path $hlslLibraryRootPath 'TA_NormalBlend.hls
 $hlslLibraryNormalBlendMetaPath = Join-Path $hlslLibraryRootPath 'TA_NormalBlend.hlsl.meta'
 $hlslLibraryPbrInputPath = Join-Path $hlslLibraryRootPath 'TA_PBRInput.hlsl'
 $hlslLibraryBrdfPath = Join-Path $hlslLibraryRootPath 'TA_BRDF.hlsl'
+$hlslLibraryTransparencyPath = Join-Path $hlslLibraryRootPath 'TA_TransparencyRefraction.hlsl'
+$hlslLibraryTransparencyMetaPath = Join-Path $hlslLibraryRootPath 'TA_TransparencyRefraction.hlsl.meta'
 $hlslLibraryLightingPath = Join-Path $hlslLibraryRootPath 'TA_Lighting.hlsl'
 $hlslLibraryDebugPath = Join-Path $hlslLibraryRootPath 'TA_DebugViews.hlsl'
 $hlslLibraryManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\HlslSourceLibrary.json'
@@ -214,10 +216,11 @@ Add-Check ((@(
     $hlslLibraryNormalBlendPath,
     $hlslLibraryPbrInputPath,
     $hlslLibraryBrdfPath,
+    $hlslLibraryTransparencyPath,
     $hlslLibraryLightingPath,
     $hlslLibraryDebugPath
 ) | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }).Count -eq 0) `
-    'HLSL source library contains all sixteen modules'
+    'HLSL source library contains all seventeen modules'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexDisplacementMetaPath -PathType Leaf) `
     'HLSL vertex displacement module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryVertexAnimationMetaPath -PathType Leaf) `
@@ -234,6 +237,8 @@ Add-Check (Test-Path -LiteralPath $hlslLibrarySnowCoverMetaPath -PathType Leaf) 
     'HLSL snow cover module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryAnisotropyMetaPath -PathType Leaf) `
     'HLSL anisotropy module meta exists'
+Add-Check (Test-Path -LiteralPath $hlslLibraryTransparencyMetaPath -PathType Leaf) `
+    'HLSL transparency and refraction module meta exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryManifestPath -PathType Leaf) `
     'HLSL source library contract exists'
 Add-Check (Test-Path -LiteralPath $hlslLibraryValidationPath -PathType Leaf) `
@@ -340,6 +345,15 @@ $anisotropicPbrManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\A
 $anisotropicPbrManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\AnisotropicPbrIntegration.json.meta'
 $anisotropicPbrValidationPath = Join-Path $projectPath 'Tools\ValidateAnisotropicPbrIntegration.ps1'
 $anisotropicPbrReportPath = Join-Path $projectPath 'Reports\AnisotropicPbrIntegrationValidation.json'
+$transparencyShaderPath = Join-Path $projectPath 'Assets\_TA\Shaders\TA_TransparentRefraction.shader'
+$transparencyShaderMetaPath = Join-Path $projectPath 'Assets\_TA\Shaders\TA_TransparentRefraction.shader.meta'
+$transparencyMaterialPath = Join-Path $projectPath 'Assets\_TA\Materials\MAT_TransparentRefraction.mat'
+$transparencyMaterialMetaPath = Join-Path $projectPath 'Assets\_TA\Materials\MAT_TransparentRefraction.mat.meta'
+$transparencyManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\TransparencyRefraction.json'
+$transparencyManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\TransparencyRefraction.json.meta'
+$transparencyValidationPath = Join-Path $projectPath 'Tools\ValidateTransparencyRefraction.ps1'
+$transparencyReportPath = Join-Path $projectPath 'Reports\TransparencyRefractionValidation.json'
+$urpPipelineAssetPath = Join-Path $projectPath 'Assets\_TA\Settings\RP_MaterialLab_URP.asset'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
     'Edge wear contract exists'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
@@ -372,6 +386,24 @@ Add-Check (Test-Path -LiteralPath $anisotropicPbrValidationPath -PathType Leaf) 
     'Anisotropic PBR integration validator exists'
 Add-Check (Test-Path -LiteralPath $anisotropicPbrReportPath -PathType Leaf) `
     'Anisotropic PBR integration validation report exists'
+Add-Check (Test-Path -LiteralPath $transparencyShaderPath -PathType Leaf) `
+    'Transparent refraction shader exists'
+Add-Check (Test-Path -LiteralPath $transparencyShaderMetaPath -PathType Leaf) `
+    'Transparent refraction shader meta exists'
+Add-Check (Test-Path -LiteralPath $transparencyMaterialPath -PathType Leaf) `
+    'Transparent refraction material exists'
+Add-Check (Test-Path -LiteralPath $transparencyMaterialMetaPath -PathType Leaf) `
+    'Transparent refraction material meta exists'
+Add-Check (Test-Path -LiteralPath $transparencyManifestPath -PathType Leaf) `
+    'Transparency and refraction contract exists'
+Add-Check (Test-Path -LiteralPath $transparencyManifestMetaPath -PathType Leaf) `
+    'Transparency and refraction contract meta exists'
+Add-Check (Test-Path -LiteralPath $transparencyValidationPath -PathType Leaf) `
+    'Transparency and refraction validator exists'
+Add-Check (Test-Path -LiteralPath $transparencyReportPath -PathType Leaf) `
+    'Transparency and refraction report exists'
+Add-Check (Test-Path -LiteralPath $urpPipelineAssetPath -PathType Leaf) `
+    'URP pipeline asset exists for opaque scene-color capture'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -988,6 +1020,7 @@ if (Test-Path -LiteralPath $hlslLibraryAggregatePath) {
         $hlslLibraryAggregate -match '#include "TA_VertexDeformation\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_PBRInput\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_BRDF\.hlsl"' -and
+        $hlslLibraryAggregate -match '#include "TA_TransparencyRefraction\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Anisotropy\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_Lighting\.hlsl"' -and
         $hlslLibraryAggregate -match '#include "TA_DebugViews\.hlsl"') `
@@ -1038,6 +1071,20 @@ if (Test-Path -LiteralPath $hlslLibraryAnisotropyPath) {
         $hlslLibraryAnisotropy -match 'TA_EvaluateGGXSpecularTerms' -and
         $hlslLibraryAnisotropy -match 'clamp\(anisotropy, -0\.9h, 0\.9h\)') `
         'HLSL anisotropy module fixes tangent frame, directional GGX and unified specular terms'
+}
+
+if (Test-Path -LiteralPath $hlslLibraryTransparencyPath) {
+    $hlslLibraryTransparency = Get-Content -LiteralPath $hlslLibraryTransparencyPath -Raw
+    Add-Check ($hlslLibraryTransparency -match 'struct TA_TransparencyRefractionConfig' -and
+        $hlslLibraryTransparency -match 'struct TA_TransparencyRefractionData' -and
+        $hlslLibraryTransparency -match 'TA_DielectricF0FromIOR' -and
+        $hlslLibraryTransparency -match 'TA_EvaluateRefractionDirectionWS' -and
+        $hlslLibraryTransparency -match 'TA_EvaluateRefractionUV' -and
+        $hlslLibraryTransparency -match 'TA_EvaluateBeerLambertTransmittance' -and
+        $hlslLibraryTransparency -match 'TA_EvaluateTransparencyRefraction' -and
+        $hlslLibraryTransparency -match 'exp\(-coefficient \* opticalDepth\)' -and
+        $hlslLibraryTransparency -notmatch 'TEXTURE2D|SAMPLER|Packages/') `
+        'HLSL transparency module fixes IOR, Snell direction, absorption and composition without renderer resources'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryNormalBlendPath) {
@@ -1144,20 +1191,21 @@ if ((Test-Path -LiteralPath $hlslLibraryBrdfPath) -and
 if (Test-Path -LiteralPath $hlslLibraryManifestPath) {
     $hlslLibraryManifest = Get-Content -LiteralPath $hlslLibraryManifestPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryManifest.status -eq 'STATIC_LIBRARY_VALIDATED' -and
-        $hlslLibraryManifest.version -eq '1.14.0' -and
+        $hlslLibraryManifest.version -eq '1.15.0' -and
         $hlslLibraryManifest.namespacePrefix -eq 'TA_' -and
-        @($hlslLibraryManifest.modules).Count -eq 16 -and
-        @($hlslLibraryManifest.invariants).Count -eq 20) `
+        @($hlslLibraryManifest.modules).Count -eq 17 -and
+        @($hlslLibraryManifest.invariants).Count -eq 21) `
         'HLSL source library contract fixes version, namespace, modules and invariants'
 }
 
 if (Test-Path -LiteralPath $hlslLibraryReportPath) {
     $hlslLibraryReport = Get-Content -LiteralPath $hlslLibraryReportPath -Raw | ConvertFrom-Json
     Add-Check ($hlslLibraryReport.status -eq 'PASS' -and
-        $hlslLibraryReport.moduleCount -eq 16 -and
-        $hlslLibraryReport.publicSymbolCount -eq 61 -and
+        $hlslLibraryReport.version -eq '1.15.0' -and
+        $hlslLibraryReport.moduleCount -eq 17 -and
+        $hlslLibraryReport.publicSymbolCount -eq 68 -and
         @($hlslLibraryReport.failures).Count -eq 0) `
-    'HLSL source library report validates sixteen modules and sixty-one public symbols'
+    'HLSL source library report validates seventeen modules and sixty-eight public symbols'
 }
 
 if (Test-Path -LiteralPath $vectorSamplingManifestPath) {
@@ -1517,6 +1565,33 @@ if (Test-Path -LiteralPath $anisotropicPbrReportPath) {
         $anisotropicPbrReport.maximumError -le 0.000001 -and
         @($anisotropicPbrReport.failures).Count -eq 0) `
         'Anisotropic PBR integration report validates final direct-light RGB and structural delegation'
+}
+
+if (Test-Path -LiteralPath $transparencyManifestPath) {
+    $transparencyManifest = Get-Content -LiteralPath $transparencyManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($transparencyManifest.status -eq 'STATIC_NUMERIC_VALIDATED' -and
+        $transparencyManifest.version -eq '1.0.0' -and
+        $transparencyManifest.sourceLibraryVersion -eq '1.15.0' -and
+        @($transparencyManifest.publicSymbols).Count -eq 7 -and
+        @($transparencyManifest.dependencies).Count -eq 3 -and
+        @($transparencyManifest.fixtures).Count -eq 13 -and
+        @($transparencyManifest.invariants).Count -eq 9 -and
+        @($transparencyManifest.limitations).Count -eq 4 -and
+        $transparencyManifest.renderState.opaqueTextureRequired -eq $true) `
+        'Transparency contract fixes seven entry points, thirteen optical fixtures and the opaque scene-color dependency'
+}
+if (Test-Path -LiteralPath $transparencyReportPath) {
+    $transparencyReport = Get-Content -LiteralPath $transparencyReportPath -Raw | ConvertFrom-Json
+    Add-Check ($transparencyReport.status -eq 'PASS' -and
+        $transparencyReport.sourceLibraryVersion -eq '1.15.0' -and
+        $transparencyReport.publicSymbolCount -eq 7 -and
+        $transparencyReport.dependencyCount -eq 3 -and
+        $transparencyReport.fixtureCount -eq 13 -and
+        $transparencyReport.invariantCount -eq 9 -and
+        $transparencyReport.limitationCount -eq 4 -and
+        $transparencyReport.maximumError -le 0.000001 -and
+        @($transparencyReport.failures).Count -eq 0) `
+        'Transparency report validates IOR, Snell direction, UV bounds, absorption, composition and render wiring'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

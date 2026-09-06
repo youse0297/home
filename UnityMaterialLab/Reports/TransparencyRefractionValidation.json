@@ -1,0 +1,174 @@
+﻿{
+    "status":  "PASS",
+    "version":  "1.0.0",
+    "sourceLibraryVersion":  "1.15.0",
+    "publicSymbolCount":  7,
+    "dependencyCount":  3,
+    "fixtureCount":  13,
+    "invariantCount":  9,
+    "limitationCount":  4,
+    "tolerance":  1E-06,
+    "maximumError":  1.1102230246251565E-15,
+    "generatedAtUtc":  "2026-09-06T11:56:31.3929731Z",
+    "checks":  [
+                   {
+                       "id":  "F0_AIR",
+                       "pass":  true,
+                       "detail":  "actual=0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "F0_GLASS",
+                       "pass":  true,
+                       "detail":  "actual=0.04",
+                       "maximumError":  6.9388939039072284E-18
+                   },
+                   {
+                       "id":  "F0_HIGH_CLAMP",
+                       "pass":  true,
+                       "detail":  "actual=0.183673469387755",
+                       "maximumError":  2.7755575615628914E-17
+                   },
+                   {
+                       "id":  "REFRACTION_NORMAL_INCIDENCE",
+                       "pass":  true,
+                       "detail":  "actual=0, 0, -1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "REFRACTION_OBLIQUE_GLASS",
+                       "pass":  true,
+                       "detail":  "actual=-0.4, 0, -0.916515138991168",
+                       "maximumError":  1.1102230246251565E-16
+                   },
+                   {
+                       "id":  "REFRACTION_IOR_LOW_CLAMP",
+                       "pass":  true,
+                       "detail":  "actual=-0.6, 0, -0.8",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SCREEN_UV_IOR_IDENTITY",
+                       "pass":  true,
+                       "detail":  "actual=0.35, 0.65",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "SCREEN_UV_OBLIQUE",
+                       "pass":  true,
+                       "detail":  "actual=0.520519567041703, 0.489740216479148",
+                       "maximumError":  5.5511151231257827E-17
+                   },
+                   {
+                       "id":  "SCREEN_UV_CLAMP",
+                       "pass":  true,
+                       "detail":  "actual=1, 0",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ABSORPTION_ZERO_THICKNESS",
+                       "pass":  true,
+                       "detail":  "actual=1, 1, 1",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "ABSORPTION_TINTED_GLASS",
+                       "pass":  true,
+                       "detail":  "actual=0.953133787077505, 0.985111939603063, 0.994017964053935",
+                       "maximumError":  1.1102230246251565E-16
+                   },
+                   {
+                       "id":  "COMPOSITE_GLASS",
+                       "pass":  true,
+                       "detail":  "actual=0.762507029662004, 0.591067163761838, 0.397607185621574, 0.953133787077505, 0.985111939603063, 0.994017964053935, 0.04, 0.1552, 0.675205938658461, 0.607973539946, 0.491098550413106",
+                       "maximumError":  1.1102230246251565E-15
+                   },
+                   {
+                       "id":  "COMPOSITE_GRAZING_FRESNEL",
+                       "pass":  true,
+                       "detail":  "actual=0.1, 0.2, 0.3, 1, 1, 1, 1, 1, 0.9, 0.8, 0.7",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_TransparencyRefractionConfig",
+                       "pass":  true,
+                       "detail":  "TA_TransparencyRefractionConfig",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_TransparencyRefractionData",
+                       "pass":  true,
+                       "detail":  "TA_TransparencyRefractionData",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_DielectricF0FromIOR",
+                       "pass":  true,
+                       "detail":  "TA_DielectricF0FromIOR",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateRefractionDirectionWS",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateRefractionDirectionWS",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateRefractionUV",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateRefractionUV",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateBeerLambertTransmittance",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateBeerLambertTransmittance",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_TA_EvaluateTransparencyRefraction",
+                       "pass":  true,
+                       "detail":  "TA_EvaluateTransparencyRefraction",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "PURE_SOURCE_MODULE",
+                       "pass":  true,
+                       "detail":  "Module owns numeric optics without renderer resources",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "TRANSPARENT_RENDER_STATE",
+                       "pass":  true,
+                       "detail":  "Transparent queue overwrites its already-composited color and does not write depth",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "OPAQUE_SCENE_SAMPLE",
+                       "pass":  true,
+                       "detail":  "Shader samples the URP opaque texture at bounded refracted UV",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "OPTICAL_INTEGRATION",
+                       "pass":  true,
+                       "detail":  "Shader wires Snell direction, dielectric Fresnel and absorption",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "OPAQUE_TEXTURE_ENABLED",
+                       "pass":  true,
+                       "detail":  "URP asset enables the opaque scene-color copy required by refraction",
+                       "maximumError":  0
+                   },
+                   {
+                       "id":  "MATERIAL_CONTRACT",
+                       "pass":  true,
+                       "detail":  "Sample material serializes the transparent shader and bounded optical defaults",
+                       "maximumError":  0
+                   }
+               ],
+    "failures":  [
+
+                 ]
+}

@@ -304,6 +304,11 @@ Add-ScriptGate -Name 'Anisotropic PBR Integration' `
     -ExpectedPattern 'UNITY_ANISOTROPIC_PBR_INTEGRATION: PASS' `
     -Evidence 'UnityMaterialLab/Reports/AnisotropicPbrIntegrationValidation.json' `
     -ReportName 'AnisotropicPbrIntegrationValidation.json'
+Add-ScriptGate -Name 'Transparency and Refraction' `
+    -ScriptName 'ValidateTransparencyRefraction.ps1' `
+    -ExpectedPattern 'UNITY_TRANSPARENCY_REFRACTION: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/TransparencyRefractionValidation.json' `
+    -ReportName 'TransparencyRefractionValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -384,6 +389,7 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/ProceduralMaskValidation.json',
         'UnityMaterialLab/Reports/EdgeWearValidation.json',
         'UnityMaterialLab/Reports/SnowCoverValidation.json',
+        'UnityMaterialLab/Reports/TransparencyRefractionValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }
