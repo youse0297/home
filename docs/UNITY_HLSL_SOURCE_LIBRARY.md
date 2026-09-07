@@ -11,7 +11,11 @@
 | `TA_ShaderTypes.hlsl` | 表面输入、光照输入与拆解结果结构体 | 无 |
 | `TA_Common.hlsl` | 数值常量、粗糙度与标量清理策略 | 无 |
 | `TA_Vector.hlsl` | 安全归一化、法线编码、TBN 与空间变换 | Common |
+| `TA_EdgeWear.hlsl` | 视角掠射遮罩、磨损颜色和粗糙度响应 | Common、Vector |
+| `TA_ProceduralMask.hlsl` | 显式时间的 UV 正弦遮罩和权重调制 | Common |
+| `TA_SnowCover.hlsl` | 世界向上坡度、高度覆盖与雪材质响应 | Common、Vector |
 | `TA_Sampling.hlsl` | UV、普通/LOD 采样、法线解包与 ORM 解码 | Unity Core 前置宏 |
+| `TA_NormalBlend.hlsl` | RNM 切线空间法线混合与多层组合 | Vector |
 | `TA_VertexDisplacement.hlsl` | 高度中心解码与对象空间法线位移 | Vector |
 | `TA_VertexAnimation.hlsl` | 行进正弦、高度锚定与波浪/风摆组合 | Vector |
 | `TA_VertexDeformation.hlsl` | 结构化顶点输入/配置/结果与固定效果编排 | VertexDisplacement、VertexAnimation |
@@ -69,6 +73,12 @@ return TA_SelectDebugView(
 
 `Assets/_TA/ShaderGraph/Library` 是 Shader Graph Custom Function 的节点级材质预处理库，需要 `_float`/`_half` 精度后缀和节点端口契约。`Assets/_TA/Shaders/Library` 是 Renderer Shader 的源码库，使用结构体和直接返回值，不暴露 Shader Graph 节点入口。两者不能互相包含；确需复用的公式应先明确调用约定，再提升到无引擎依赖的公共模块。
 
+## v1.0 可复用发布
+
+产品发布版本 `1.0.0` 冻结当前源码契约 `1.16.0`，交付 `Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip` 及同名 `.sha256`。发布包只包含 18 个功能模块、一个聚合头、README 和逐文件哈希 manifest，可独立迁移到 `Assets/TA_HLSL/Library`。
+
+`Tools/ValidateHlslSpecialAcceptance.ps1` 聚合 18 个分项验证器，从空 Unity 工程骨架解包，检查 19 个 HLSL 文件、74 个公共符号、116 项结构检查、依赖闭包和 SHA-256，并以 `fxc /WX /Ges` 执行零警告 smoke 编译。完整复现步骤、统计口径和已知限制见 [Unity HLSL 专项验收](UNITY_HLSL_SPECIAL_ACCEPTANCE.md)。
+
 ## 验收
 
 在 `UnityMaterialLab` 目录运行：
@@ -86,6 +96,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropyBa
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateAnisotropicPbrIntegration.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateTransparencyRefraction.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateUnifiedMaterialInterface.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateHlslSpecialAcceptance.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 

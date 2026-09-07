@@ -319,6 +319,11 @@ Add-ScriptGate -Name 'Material Showcase and Documentation' `
     -ExpectedPattern 'UNITY_MATERIAL_SHOWCASE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/MaterialShowcaseValidation.json' `
     -ReportName 'MaterialShowcaseValidation.json'
+Add-ScriptGate -Name 'HLSL Special Acceptance' `
+    -ScriptName 'ValidateHlslSpecialAcceptance.ps1' `
+    -ExpectedPattern 'UNITY_HLSL_SPECIAL_ACCEPTANCE: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/HlslSpecialAcceptance.json' `
+    -ReportName 'HlslSpecialAcceptance.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -403,6 +408,9 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json',
         'UnityMaterialLab/Reports/MaterialShowcaseReference.png',
         'UnityMaterialLab/Reports/MaterialShowcaseValidation.json',
+        'UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip',
+        'UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.sha256',
+        'UnityMaterialLab/Reports/HlslSpecialAcceptance.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

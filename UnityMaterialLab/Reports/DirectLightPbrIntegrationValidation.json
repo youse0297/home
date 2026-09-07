@@ -6,7 +6,7 @@
     "fixtureCount":  2,
     "tolerance":  1E-06,
     "maximumError":  4.5131263171072078E-09,
-    "generatedAtUtc":  "2026-09-07T10:06:52.4420205Z",
+    "generatedAtUtc":  "2026-09-07T11:02:28.6199526Z",
     "checks":  [
                    {
                        "id":  "DIRECT_LIGHT_BASEPASS_FIXTURE_DIFFUSE",

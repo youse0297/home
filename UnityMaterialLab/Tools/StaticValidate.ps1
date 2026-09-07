@@ -373,6 +373,14 @@ $materialShowcaseDocumentationPath = Join-Path $projectPath '..\docs\UNITY_MATER
 $materialShowcaseValidationPath = Join-Path $projectPath 'Tools\ValidateMaterialShowcase.ps1'
 $materialShowcaseBoardPath = Join-Path $projectPath 'Reports\MaterialShowcaseReference.png'
 $materialShowcaseReportPath = Join-Path $projectPath 'Reports\MaterialShowcaseValidation.json'
+$hlslSpecialManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\HlslSpecialAcceptance.json'
+$hlslSpecialManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\HlslSpecialAcceptance.json.meta'
+$hlslSpecialValidationPath = Join-Path $projectPath 'Tools\ValidateHlslSpecialAcceptance.ps1'
+$hlslSpecialSmokePath = Join-Path $projectPath 'Tools\HlslReleaseSmoke.hlsl'
+$hlslSpecialReportPath = Join-Path $projectPath 'Reports\HlslSpecialAcceptance.json'
+$hlslSpecialArchivePath = Join-Path $projectPath 'Releases\TA_HLSL_MaterialLibrary_v1.0.0.zip'
+$hlslSpecialChecksumPath = Join-Path $projectPath 'Releases\TA_HLSL_MaterialLibrary_v1.0.0.sha256'
+$hlslSpecialDocumentationPath = Join-Path $projectPath '..\docs\UNITY_HLSL_SPECIAL_ACCEPTANCE.md'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
     'Edge wear contract exists'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
@@ -451,6 +459,22 @@ Add-Check (Test-Path -LiteralPath $materialShowcaseBoardPath -PathType Leaf) `
     'Material showcase offline reference board exists'
 Add-Check (Test-Path -LiteralPath $materialShowcaseReportPath -PathType Leaf) `
     'Material showcase validation report exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialManifestPath -PathType Leaf) `
+    'HLSL special acceptance contract exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialManifestMetaPath -PathType Leaf) `
+    'HLSL special acceptance contract meta exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialValidationPath -PathType Leaf) `
+    'HLSL special acceptance validator exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialSmokePath -PathType Leaf) `
+    'HLSL release smoke shader exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialReportPath -PathType Leaf) `
+    'HLSL special acceptance report exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialArchivePath -PathType Leaf) `
+    'HLSL v1.0 release archive exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialChecksumPath -PathType Leaf) `
+    'HLSL v1.0 release checksum exists'
+Add-Check (Test-Path -LiteralPath $hlslSpecialDocumentationPath -PathType Leaf) `
+    'HLSL special acceptance documentation exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -1713,6 +1737,53 @@ if (Test-Path -LiteralPath $materialShowcaseBootstrapPath) {
         $materialShowcaseBootstrap -match 'CAM_MaterialShowcase' -and
         $materialShowcaseBootstrap -match 'EditorBuildSettingsScene') `
         'Material showcase bootstrap creates six labeled stands with fixed camera and build settings'
+}
+
+if (Test-Path -LiteralPath $hlslSpecialManifestPath) {
+    $hlslSpecialManifest = Get-Content -LiteralPath $hlslSpecialManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($hlslSpecialManifest.status -eq 'RELEASE_CANDIDATE_VALIDATED' -and
+        $hlslSpecialManifest.releaseVersion -eq '1.0.0' -and
+        $hlslSpecialManifest.sourceLibraryVersion -eq '1.16.0' -and
+        $hlslSpecialManifest.expectedModuleCount -eq 18 -and
+        $hlslSpecialManifest.expectedHlslFileCount -eq 19 -and
+        $hlslSpecialManifest.expectedArchiveEntryCount -eq 21 -and
+        $hlslSpecialManifest.expectedPublicSymbolCount -eq 74 -and
+        $hlslSpecialManifest.expectedSourceLibraryCheckCount -eq 116 -and
+        @($hlslSpecialManifest.validators).Count -eq 18 -and
+        @($hlslSpecialManifest.migrationChecks).Count -eq 6 -and
+        @($hlslSpecialManifest.limitations).Count -eq 4) `
+        'HLSL special acceptance contract freezes v1.0 scope, migration and limitations'
+}
+if (Test-Path -LiteralPath $hlslSpecialReportPath) {
+    $hlslSpecialReport = Get-Content -LiteralPath $hlslSpecialReportPath -Raw | ConvertFrom-Json
+    Add-Check ($hlslSpecialReport.status -eq 'PASS' -and
+        $hlslSpecialReport.releaseVersion -eq '1.0.0' -and
+        $hlslSpecialReport.sourceLibraryVersion -eq '1.16.0' -and
+        $hlslSpecialReport.moduleCount -eq 18 -and
+        $hlslSpecialReport.hlslFileCount -eq 19 -and
+        $hlslSpecialReport.publicSymbolCount -eq 74 -and
+        $hlslSpecialReport.validatorCount -eq 18 -and
+        $hlslSpecialReport.passedValidatorCount -eq 18 -and
+        $hlslSpecialReport.sourceLibraryCheckCount -eq 116 -and
+        $hlslSpecialReport.compiler.exitCode -eq 0 -and
+        $hlslSpecialReport.compiler.warningCount -eq 0 -and
+        $hlslSpecialReport.migration.projectSkeletonFileCount -eq 2 -and
+        $hlslSpecialReport.migration.migratedModuleCount -eq 18 -and
+        $hlslSpecialReport.migration.migratedHlslFileCount -eq 19 -and
+        $hlslSpecialReport.migration.hashesMatch -eq $true -and
+        $hlslSpecialReport.release.entryCount -eq 21 -and
+        @($hlslSpecialReport.failures).Count -eq 0 -and
+        @($hlslSpecialReport.limitations).Count -eq 4) `
+        'HLSL special acceptance report validates all modules, migration and warning-free compilation'
+}
+if ((Test-Path -LiteralPath $hlslSpecialArchivePath -PathType Leaf) -and
+    (Test-Path -LiteralPath $hlslSpecialChecksumPath -PathType Leaf) -and
+    (Test-Path -LiteralPath $hlslSpecialReportPath -PathType Leaf)) {
+    $hlslSpecialArchiveHash = (Get-FileHash -LiteralPath $hlslSpecialArchivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+    $hlslSpecialChecksum = (Get-Content -LiteralPath $hlslSpecialChecksumPath -Raw).Trim()
+    Add-Check ($hlslSpecialChecksum.StartsWith($hlslSpecialArchiveHash) -and
+        $hlslSpecialReport.release.sha256 -eq $hlslSpecialArchiveHash) `
+        'HLSL v1.0 archive matches its checksum and acceptance report'
 }
 
 if (Test-Path -LiteralPath $basePassControllerPath) {

@@ -1,0 +1,64 @@
+{
+  "status": "RELEASE_CANDIDATE_VALIDATED",
+  "releaseVersion": "1.0.0",
+  "sourceLibraryVersion": "1.16.0",
+  "unityVersion": "2022.3.62f3c1",
+  "renderPipeline": "Universal Render Pipeline 14.0.12",
+  "sourceRoot": "Assets/_TA/Shaders/Library",
+  "aggregate": "TA_ShaderLibrary.hlsl",
+  "releaseArchive": "Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip",
+  "releaseChecksum": "Releases/TA_HLSL_MaterialLibrary_v1.0.0.sha256",
+  "migrationTarget": "Assets/TA_HLSL/Library",
+  "expectedModuleCount": 18,
+  "expectedHlslFileCount": 19,
+  "expectedArchiveEntryCount": 21,
+  "expectedPublicSymbolCount": 74,
+  "expectedSourceLibraryCheckCount": 116,
+  "compiler": {
+    "tool": "Windows SDK fxc.exe",
+    "profile": "ps_5_0",
+    "entryPoint": "PSMain",
+    "options": ["/WX", "/Ges", "/nologo"],
+    "warningPolicy": "Warnings are errors"
+  },
+  "validators": [
+    { "name": "HLSL Source Library", "script": "ValidateHlslSourceLibrary.ps1", "marker": "UNITY_HLSL_SOURCE_LIBRARY: PASS", "report": "HlslSourceLibraryValidation.json" },
+    { "name": "Vector and Sampling", "script": "ValidateVectorSamplingUtilities.ps1", "marker": "UNITY_VECTOR_SAMPLING_UTILITIES: PASS", "report": "VectorSamplingUtilitiesValidation.json" },
+    { "name": "PBR Input Layer", "script": "ValidatePbrInputLayer.ps1", "marker": "UNITY_PBR_INPUT_LAYER: PASS", "report": "PbrInputLayerValidation.json" },
+    { "name": "GGX Distribution", "script": "ValidateGgxNormalDistribution.ps1", "marker": "UNITY_GGX_NORMAL_DISTRIBUTION: PASS", "report": "GgxNormalDistributionValidation.json" },
+    { "name": "GGX Geometry and Fresnel", "script": "ValidateGgxGeometryFresnel.ps1", "marker": "UNITY_GGX_GEOMETRY_FRESNEL: PASS", "report": "GgxGeometryFresnelValidation.json" },
+    { "name": "Direct-light PBR", "script": "ValidateDirectLightPbrIntegration.ps1", "marker": "UNITY_DIRECT_LIGHT_PBR_INTEGRATION: PASS", "report": "DirectLightPbrIntegrationValidation.json" },
+    { "name": "PBR Parameter Regression", "script": "ValidatePbrParameterRegression.ps1", "marker": "UNITY_PBR_PARAMETER_REGRESSION: PASS", "report": "PbrParameterRegressionValidation.json" },
+    { "name": "Vertex Displacement", "script": "ValidateVertexDisplacementBasics.ps1", "marker": "UNITY_VERTEX_DISPLACEMENT_BASICS: PASS", "report": "VertexDisplacementBasicsValidation.json" },
+    { "name": "Wave and Wind", "script": "ValidateWaveWindAnimation.ps1", "marker": "UNITY_WAVE_WIND_ANIMATION: PASS", "report": "WaveWindAnimationValidation.json" },
+    { "name": "Vertex Deformation", "script": "ValidateVertexDisplacementModularization.ps1", "marker": "UNITY_VERTEX_DISPLACEMENT_MODULARIZATION: PASS", "report": "VertexDisplacementModularizationValidation.json" },
+    { "name": "Normal Layer Blending", "script": "ValidateNormalLayerBlending.ps1", "marker": "UNITY_NORMAL_LAYER_BLENDING: PASS", "report": "NormalLayerBlendingValidation.json" },
+    { "name": "Procedural Mask", "script": "ValidateProceduralMask.ps1", "marker": "UNITY_PROCEDURAL_MASK: PASS", "report": "ProceduralMaskValidation.json" },
+    { "name": "Edge Wear", "script": "ValidateEdgeWear.ps1", "marker": "UNITY_EDGE_WEAR: PASS", "report": "EdgeWearValidation.json" },
+    { "name": "Snow Cover", "script": "ValidateSnowCover.ps1", "marker": "UNITY_SNOW_COVER: PASS", "report": "SnowCoverValidation.json" },
+    { "name": "Anisotropy", "script": "ValidateAnisotropyBasics.ps1", "marker": "UNITY_ANISOTROPY_BASICS: PASS", "report": "AnisotropyBasicsValidation.json" },
+    { "name": "Anisotropic PBR", "script": "ValidateAnisotropicPbrIntegration.ps1", "marker": "UNITY_ANISOTROPIC_PBR_INTEGRATION: PASS", "report": "AnisotropicPbrIntegrationValidation.json" },
+    { "name": "Transparency and Refraction", "script": "ValidateTransparencyRefraction.ps1", "marker": "UNITY_TRANSPARENCY_REFRACTION: PASS", "report": "TransparencyRefractionValidation.json" },
+    { "name": "Unified Material Interface", "script": "ValidateUnifiedMaterialInterface.ps1", "marker": "UNITY_UNIFIED_MATERIAL_INTERFACE: PASS", "report": "UnifiedMaterialInterfaceValidation.json" }
+  ],
+  "releaseContents": {
+    "hlslGlob": "Assets/TA_HLSL/Library/*.hlsl",
+    "readme": "README.md",
+    "manifest": "release-manifest.json",
+    "exclude": ["*.meta", "*.shader", "Reports", "Library", "Temp"]
+  },
+  "migrationChecks": [
+    "Create a new Unity project skeleton with only ProjectVersion.txt and the URP package manifest",
+    "Copy the eighteen HLSL modules and aggregate header into Assets/TA_HLSL/Library",
+    "Resolve every quoted include inside the migrated library without the source project",
+    "Verify every migrated HLSL SHA-256 matches its source",
+    "Compile the aggregate header through HlslReleaseSmoke.hlsl with warnings treated as errors",
+    "Verify the package contains no Unity meta files or project-generated state"
+  ],
+  "limitations": [
+    "The Windows SDK compiler validates portable HLSL syntax and reachable library paths, not Unity URP shader variants",
+    "Unity shader import and platform variant compilation still require a licensed Unity 2022.3.62f3c1 Editor",
+    "Consumers must include URP Core.hlsl before TA_ShaderLibrary.hlsl so Unity texture macros are available",
+    "Vertex animation normal reconstruction and Shadow or Depth pass synchronization remain outside v1.0"
+  ]
+}

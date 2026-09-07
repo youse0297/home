@@ -91,8 +91,10 @@ foreach ($fixture in @($manifest.fixtures)) {
 
 $sourcePath = Join-Path $projectPath ($manifest.source -replace '/', '\')
 $consumerPath = Join-Path $projectPath ($manifest.consumer -replace '/', '\')
+$anisotropyPath = Join-Path $projectPath 'Assets\_TA\Shaders\Library\TA_Anisotropy.hlsl'
 $source = Get-Content -LiteralPath $sourcePath -Raw
 $consumer = Get-Content -LiteralPath $consumerPath -Raw
+$anisotropy = Get-Content -LiteralPath $anisotropyPath -Raw
 foreach ($symbol in @($manifest.publicSymbols)) {
     Add-Check -Id ('PUBLIC_SYMBOL_' + $symbol) `
         -Pass ($source -match ('\b' + [Regex]::Escape([string]$symbol) + '\b')) `
@@ -108,7 +110,10 @@ Add-Check -Id 'NDF_FORMULA' `
         $source -match 'TA_MIN_DENOMINATOR') `
     -Detail 'Trowbridge-Reitz distribution clamps cosine and denominator'
 Add-Check -Id 'LIGHTING_CONSUMER_WIRING' `
-    -Pass ($consumer -match 'TA_DistributionGGX\(') `
+    -Pass ($consumer -match 'TA_DistributionGGX\(' -or
+        ($consumer -match 'TA_EvaluateGGXSpecularTerms\(' -and
+            $consumer -match '#include\s+"TA_Anisotropy\.hlsl"' -and
+            $anisotropy -match 'TA_DistributionGGX\(')) `
     -Detail $manifest.consumer
 
 $failed = @($checks | Where-Object { -not $_.pass })

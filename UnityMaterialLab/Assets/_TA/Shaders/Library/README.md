@@ -32,6 +32,18 @@
 
 场景规范和固定参数见 `Assets/_TA/Documentation/MaterialShowcase.json`，离线参考图为 `Reports/MaterialShowcaseReference.png`。该参考图用于核对布局、输入和输出，不代表 Unity 运行帧；真实截图应另存为 `Assets/_TA/Documentation/MaterialShowcaseRuntime.png`。
 
+## v1.0 发布包
+
+`Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip` 是可直接迁移的首个发布包，包含 18 个功能模块、`TA_ShaderLibrary.hlsl` 聚合头、本 README 和逐文件 SHA-256 manifest。解压到目标 Unity 工程根目录后，源码位于 `Assets/TA_HLSL/Library`；发布包不包含 `.meta`、场景、材质或项目缓存。
+
+从仓库根目录运行专项验收可重新生成 ZIP、校验和与结构化报告：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\UnityMaterialLab\Tools\ValidateHlslSpecialAcceptance.ps1
+```
+
+验收会从两文件空工程骨架迁移发布包，核对 19 个 HLSL 文件的哈希和 include 闭包，并使用 `fxc /WX /Ges` 编译覆盖全部模块的 smoke shader。完整口径与限制见 `docs/UNITY_HLSL_SPECIAL_ACCEPTANCE.md`。
+
 ## 常见失败点
 
 - BaseColor 必须按 sRGB 导入，Normal 与 ORM 必须按 Linear 导入，ORM 通道固定为 R=AO、G=roughness、B=metallic。
@@ -46,7 +58,8 @@
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateMaterialShowcase.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\ValidateHlslSpecialAcceptance.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 ```
 
-专项脚本检查六个展台、独立材质路径、输入/输出、生成器结构、文档和 1600×900 离线参考图，成功标记为 `UNITY_MATERIAL_SHOWCASE: PASS`。
+场景脚本检查六个展台、独立材质路径、输入/输出、生成器结构、文档和 1600×900 离线参考图；HLSL 专项脚本检查分项回归、空工程迁移、文件哈希、依赖闭包、发布卫生和零警告编译。成功标记分别为 `UNITY_MATERIAL_SHOWCASE: PASS` 与 `UNITY_HLSL_SPECIAL_ACCEPTANCE: PASS`。

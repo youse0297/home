@@ -9,7 +9,7 @@
     "limitationCount":  3,
     "tolerance":  1E-06,
     "maximumError":  5.5511151231257827E-17,
-    "generatedAtUtc":  "2026-09-07T10:06:56.2244860Z",
+    "generatedAtUtc":  "2026-09-07T11:02:32.3029829Z",
     "checks":  [
                    {
                        "id":  "DEFAULT_ZERO_AMPLITUDES_POSITION",

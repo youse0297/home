@@ -5,7 +5,7 @@
     "publicSymbolCount":  74,
     "aggregate":  "Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl",
     "consumer":  "Assets/_TA/Shaders/TA_BasePassLightingDecomposition.shader",
-    "generatedAtUtc":  "2026-09-06T13:04:07.4920878Z",
+    "generatedAtUtc":  "2026-09-07T11:02:24.2761380Z",
     "checks":  [
                    {
                        "id":  "MODULE_EXISTS_types",

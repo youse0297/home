@@ -1,9 +1,9 @@
 ﻿# Stage 1 Acceptance
 
 - Overall status: `CONDITIONAL_PASS`
-- Required offline gates: `25/25`
+- Required offline gates: `26/26`
 - External runtime acceptance: `BLOCKED`
-- Generated at (UTC): `2026-09-07T10:07:11.9235019Z`
+- Generated at (UTC): `2026-09-07T11:02:46.3324171Z`
 
 ## Gate Results
 
@@ -33,6 +33,7 @@
 | Transparency and Refraction | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/TransparencyRefractionValidation.json` |
 | Unified Material Interface | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json` |
 | Material Showcase and Documentation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/MaterialShowcaseValidation.json` |
+| HLSL Special Acceptance | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/HlslSpecialAcceptance.json` |
 | Unity Static Validation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/StaticValidation.json` |
 | RenderDoc Capture Readiness | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/RenderDocCaptureReadiness.json` |
 | Unity Editor Runtime Validation | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md` |

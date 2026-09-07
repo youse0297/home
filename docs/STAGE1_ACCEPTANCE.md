@@ -38,6 +38,7 @@
 | Unity | Transparency and Refraction | IOR、Snell 折射、吸收、场景色采样与透明合成通过 |
 | Unity | Unified Material Interface | 统一采样、法线解析、表面组装和光照边界通过 |
 | Unity | Material Showcase and Documentation | 六个展台、独立材质路径、输入输出、文档与 1600×900 离线参考板通过 |
+| Unity | HLSL Special Acceptance | 18 个分项验证器、空工程迁移、哈希/include 闭包与 `fxc /WX /Ges` 零警告编译通过 |
 | Unity | Static Validation | 工程、资产、HLSL、C# 离线编译和报告全部通过 |
 
 ## 外部运行门禁
@@ -64,6 +65,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 - `build/release_acceptance.ppm`：CPU 三材质发布基准图。
 - `UnityMaterialLab/Reports/`：Unity 参数、函数、压缩、LOD、BasePass、结构化顶点变形和静态报告。
 - `UnityMaterialLab/Reports/MaterialShowcaseReference.png`：明确标注为离线参考的六模块展板。
+- `UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip` 与 `.sha256`：可迁移 HLSL v1.0 发布包及完整性记录。
+- `UnityMaterialLab/Reports/HlslSpecialAcceptance.json`：分项回归、迁移、编译和发布包机器可读证据。
 
 ## 补验步骤
 
@@ -74,4 +77,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\RunStage1Acceptance.
 5. 捕获稳定帧并保存为 `UnityMaterialLab/Reports/RenderDoc/MaterialLab_Frame_0001.rdc`。
 6. 重新运行阶段 1 总验收，并人工确认外部运行证据。
 
-阶段 1 离线门禁包含直接光 PBR、PBR 参数、顶点位移/动画、模块化、各向异性、透明折射、统一材质接口和综合示例场景专项回归，再执行聚合静态门禁；所有 25 条必过门禁均通过后，才会根据 Unity/RenderDoc 外部状态给出 `PASS` 或 `CONDITIONAL_PASS`。
+阶段 1 离线门禁包含直接光 PBR、PBR 参数、顶点位移/动画、模块化、各向异性、透明折射、统一材质接口、综合示例场景和 HLSL v1.0 发布专项回归，再执行聚合静态门禁；所有 26 条必过门禁均通过后，才会根据 Unity/RenderDoc 外部状态给出 `PASS` 或 `CONDITIONAL_PASS`。

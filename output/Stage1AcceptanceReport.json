@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  25,
-    "passedRequiredGateCount":  25,
+    "requiredGateCount":  26,
+    "passedRequiredGateCount":  26,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-09-07T10:07:11.9235019Z",
+    "generatedAtUtc":  "2026-09-07T11:02:46.3324171Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -54,11 +54,11 @@
                                          "      Start 11: material_workflow_acceptance",
                                          "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
                                          "      Start 12: release_acceptance",
-                                         "12/12 Test #12: release_acceptance ......................   Passed    0.05 sec",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.03 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   0.34 sec"
+                                         "Total Test time (real) =   0.31 sec"
                                      ]
                   },
                   {
@@ -337,6 +337,21 @@
                                      ]
                   },
                   {
+                      "name":  "HLSL Special Acceptance",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/HlslSpecialAcceptance.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_HLSL_SPECIAL_ACCEPTANCE: PASS",
+                                         "Archive: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Releases\\TA_HLSL_MaterialLibrary_v1.0.0.zip",
+                                         "SHA256: 70a8abf77aef7de6bb1750deae824de961493f3aed2f099daaa65653f5236990",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\HlslSpecialAcceptance.json"
+                                     ]
+                  },
+                  {
                       "name":  "Unity Static Validation",
                       "category":  "Unity Offline",
                       "required":  true,
@@ -407,6 +422,9 @@
                       "UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json",
                       "UnityMaterialLab/Reports/MaterialShowcaseReference.png",
                       "UnityMaterialLab/Reports/MaterialShowcaseValidation.json",
+                      "UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip",
+                      "UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.sha256",
+                      "UnityMaterialLab/Reports/HlslSpecialAcceptance.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

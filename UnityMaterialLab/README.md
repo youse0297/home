@@ -112,6 +112,7 @@ powershell -ExecutionPolicy Bypass -File .\Tools\StaticValidate.ps1
 - `Assets/_TA/Shaders/Library/TA_ShaderLibrary.hlsl` 是 Renderer 侧唯一聚合入口，按依赖顺序装配 18 个模块；`TA_NormalBlend.hlsl` 负责切线空间 RNM 多层法线组合，`TA_Anisotropy.hlsl` 负责旋转 T/B 基与各向异性 GGX，`TA_TransparencyRefraction.hlsl` 负责透明与折射光学，`TA_MaterialInterface.hlsl` 统一 Renderer 材质调用边界。
 - BasePass 与透明折射 Shader 共同使用 `TA_MaterialConfig`、`TA_MaterialInputData`、`TA_MaterialEvaluation`，通过 `TA_SampleMaterial`、`TA_ResolveMaterialNormalWS` 和 `TA_EvaluateMaterial` 完成采样、扩展和评估；旧 PBR 输入与光照函数只在接口内部调用。
 - `Assets/_TA/ShaderGraph/Library` 继续服务 Shader Graph 节点，不与 Renderer 源码库互相包含。运行 `Tools/ValidateHlslSourceLibrary.ps1` 检查 74 个公共符号，运行 `Tools/ValidateUnifiedMaterialInterface.ps1` 检查统一接口数值与接线。完整约定见 `../docs/UNITY_HLSL_SOURCE_LIBRARY.md` 和 `../docs/UNITY_UNIFIED_MATERIAL_INTERFACE.md`。
+- `Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip` 是可独立迁移的 v1.0 发布物；`Tools/ValidateHlslSpecialAcceptance.ps1` 聚合 18 个专项验证器，从空工程骨架校验 19 个 HLSL 文件、逐文件哈希、include 闭包和 `fxc /WX /Ges` 零警告编译。完整复现与限制见 `../docs/UNITY_HLSL_SPECIAL_ACCEPTANCE.md`。
 
 ## 顶点位移基础
 

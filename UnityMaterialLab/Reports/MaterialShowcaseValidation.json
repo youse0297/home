@@ -7,7 +7,7 @@
     "limitationCount":  3,
     "referenceBoard":  "E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialShowcaseReference.png",
     "runtimeScreenshot":  "Assets/_TA/Documentation/MaterialShowcaseRuntime.png",
-    "generatedAtUtc":  "2026-09-07T10:07:05.9633797Z",
+    "generatedAtUtc":  "2026-09-07T11:02:20.2808480Z",
     "checks":  [
                    "REQUIRED_FILE: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Assets\\_TA\\Documentation\\MaterialShowcase.json",
                    "REQUIRED_FILE: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Assets\\_TA\\Editor\\MaterialShowcaseBootstrap.cs",

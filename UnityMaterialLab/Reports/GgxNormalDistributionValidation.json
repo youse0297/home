@@ -6,7 +6,7 @@
     "fixtureCount":  8,
     "tolerance":  1E-06,
     "maximumError":  8.8817841970012523E-16,
-    "generatedAtUtc":  "2026-08-31T12:21:38.5346073Z",
+    "generatedAtUtc":  "2026-09-07T11:02:26.8805375Z",
     "checks":  [
                    {
                        "id":  "GGX_ALPHA_ZERO_ROUGHNESS",
