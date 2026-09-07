@@ -1,9 +1,9 @@
 ﻿# Stage 1 Acceptance
 
 - Overall status: `CONDITIONAL_PASS`
-- Required offline gates: `24/24`
+- Required offline gates: `25/25`
 - External runtime acceptance: `BLOCKED`
-- Generated at (UTC): `2026-09-06T13:05:06.7246166Z`
+- Generated at (UTC): `2026-09-07T10:07:11.9235019Z`
 
 ## Gate Results
 
@@ -32,6 +32,7 @@
 | Anisotropic PBR Integration | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/AnisotropicPbrIntegrationValidation.json` |
 | Transparency and Refraction | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/TransparencyRefractionValidation.json` |
 | Unified Material Interface | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json` |
+| Material Showcase and Documentation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/MaterialShowcaseValidation.json` |
 | Unity Static Validation | Unity Offline | Yes | `PASS` | `UnityMaterialLab/Reports/StaticValidation.json` |
 | RenderDoc Capture Readiness | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/RenderDocCaptureReadiness.json` |
 | Unity Editor Runtime Validation | External Runtime | No | `BLOCKED` | `UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md` |

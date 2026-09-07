@@ -1,0 +1,89 @@
+{
+  "status": "STATIC_SCENE_SPEC_VALIDATED",
+  "version": "1.0.0",
+  "scene": "Assets/_TA/Scenes/SCN_MaterialShowcase.unity",
+  "bootstrap": "Assets/_TA/Editor/MaterialShowcaseBootstrap.cs",
+  "menu": "TA/Material Lab/Build Material Showcase",
+  "referenceBoard": "Reports/MaterialShowcaseReference.png",
+  "runtimeScreenshot": "Assets/_TA/Documentation/MaterialShowcaseRuntime.png",
+  "camera": {
+    "name": "CAM_MaterialShowcase",
+    "fieldOfView": 43.0,
+    "framing": "All six stands in one 16:9 frame"
+  },
+  "lighting": {
+    "colorSpace": "Linear",
+    "ambient": [0.085, 0.10, 0.14],
+    "key": "Directional warm light with soft shadows",
+    "rim": "Blue point light"
+  },
+  "showcases": [
+    {
+      "id": "BASE_PBR",
+      "label": "Base PBR",
+      "module": "TA_MaterialInterface",
+      "material": "Assets/_TA/Materials/Showcase/MAT_Showcase_BASE_PBR.mat",
+      "primitive": "Sphere",
+      "inputs": ["BaseColor", "NormalTS", "ORM", "roughnessScale=0.55", "metallicScale=0.0"],
+      "output": "Energy-conserving direct and indirect PBR lighting"
+    },
+    {
+      "id": "LAYERED_NORMAL",
+      "label": "Layered Normal",
+      "module": "TA_NormalBlend",
+      "material": "Assets/_TA/Materials/Showcase/MAT_Showcase_LAYERED_NORMAL.mat",
+      "primitive": "Sphere",
+      "inputs": ["base normal", "detail normal weight=0.65", "macro normal weight=0.35", "procedural mask strength=0.75"],
+      "output": "RNM-composed tangent-space normal resolved to world space"
+    },
+    {
+      "id": "EDGE_WEAR",
+      "label": "Edge Wear",
+      "module": "TA_EdgeWear",
+      "material": "Assets/_TA/Materials/Showcase/MAT_Showcase_EDGE_WEAR.mat",
+      "primitive": "Cube",
+      "inputs": ["threshold=0.58", "softness=0.24", "strength=0.85", "roughnessBoost=0.35"],
+      "output": "Grazing-angle wear color and bounded roughness response"
+    },
+    {
+      "id": "SNOW_COVER",
+      "label": "Snow Cover",
+      "module": "TA_SnowCover",
+      "material": "Assets/_TA/Materials/Showcase/MAT_Showcase_SNOW_COVER.mat",
+      "primitive": "Capsule",
+      "inputs": ["coverage=0.72", "normalThreshold=0.48", "heightBlend=0.35", "snowRoughness=0.84"],
+      "output": "World-up and height-masked dielectric snow layer"
+    },
+    {
+      "id": "ANISOTROPIC_METAL",
+      "label": "Anisotropic Metal",
+      "module": "TA_Anisotropy",
+      "material": "Assets/_TA/Materials/Showcase/MAT_Showcase_ANISOTROPIC_METAL.mat",
+      "primitive": "Sphere",
+      "inputs": ["metallicScale=1.0", "roughnessScale=0.42", "anisotropy=0.72", "rotation=0.35"],
+      "output": "Directional GGX highlight in the rotated tangent frame"
+    },
+    {
+      "id": "TRANSPARENT_REFRACTION",
+      "label": "Transparent Refraction",
+      "module": "TA_TransparencyRefraction",
+      "material": "Assets/_TA/Materials/Showcase/MAT_Showcase_TRANSPARENT_REFRACTION.mat",
+      "primitive": "Sphere",
+      "inputs": ["IOR=1.5", "opacity=0.12", "thickness=0.6", "refractionStrength=0.025", "Beer-Lambert absorption"],
+      "output": "Opaque scene-color refraction with Fresnel reflection and absorption"
+    }
+  ],
+  "validationChecklist": [
+    "Six unique showcase IDs and six unique material paths are present",
+    "Every record declares inputs and one observable output",
+    "Opaque examples share the unified material interface",
+    "The transparent example uses URP Opaque Texture",
+    "The reference board is explicitly marked as offline and is not a runtime capture",
+    "The runtime screenshot remains a licensed Unity Editor verification step"
+  ],
+  "limitations": [
+    "Primitive meshes prioritize comparison and do not demonstrate production asset topology",
+    "Vertex displacement, wave and wind are documented but disabled because primitive topology and auxiliary passes are not a valid visual baseline",
+    "Runtime shader compilation and screenshot capture require a licensed Unity 2022.3.62f3c1 Editor"
+  ]
+}

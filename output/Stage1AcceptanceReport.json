@@ -3,12 +3,12 @@
     "phase":  "Stage 1",
     "offlineAcceptance":  "PASS",
     "externalRuntimeAcceptance":  "BLOCKED",
-    "requiredGateCount":  24,
-    "passedRequiredGateCount":  24,
+    "requiredGateCount":  25,
+    "passedRequiredGateCount":  25,
     "blockerCount":  2,
     "configuration":  "Debug",
     "buildDirectory":  "E:\\ueProject\\home\\build",
-    "generatedAtUtc":  "2026-09-06T13:05:06.7246166Z",
+    "generatedAtUtc":  "2026-09-07T10:07:11.9235019Z",
     "gates":  [
                   {
                       "name":  "CMake Configure",
@@ -44,21 +44,21 @@
                       "exitCode":  0,
                       "outputTail":  [
                                          "      Start  7: texture_sampling_acceptance",
-                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.08 sec",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
                                          "      Start  8: surface_attributes_acceptance",
-                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.08 sec",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
                                          "      Start  9: diffuse_exposure_acceptance",
-                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.09 sec",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.03 sec",
                                          "      Start 10: ggx_brdf_acceptance",
-                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.09 sec",
+                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
                                          "      Start 11: material_workflow_acceptance",
-                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.09 sec",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
                                          "      Start 12: release_acceptance",
-                                         "12/12 Test #12: release_acceptance ......................   Passed    0.11 sec",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.05 sec",
                                          "",
                                          "100% tests passed, 0 tests failed out of 12",
                                          "",
-                                         "Total Test time (real) =   1.05 sec"
+                                         "Total Test time (real) =   0.34 sec"
                                      ]
                   },
                   {
@@ -323,6 +323,20 @@
                                      ]
                   },
                   {
+                      "name":  "Material Showcase and Documentation",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/MaterialShowcaseValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_MATERIAL_SHOWCASE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialShowcaseReference.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialShowcaseValidation.json"
+                                     ]
+                  },
+                  {
                       "name":  "Unity Static Validation",
                       "category":  "Unity Offline",
                       "required":  true,
@@ -391,6 +405,8 @@
                       "UnityMaterialLab/Reports/SnowCoverValidation.json",
                       "UnityMaterialLab/Reports/TransparencyRefractionValidation.json",
                       "UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json",
+                      "UnityMaterialLab/Reports/MaterialShowcaseReference.png",
+                      "UnityMaterialLab/Reports/MaterialShowcaseValidation.json",
                       "UnityMaterialLab/Reports/StaticValidation.json"
                   ]
 }

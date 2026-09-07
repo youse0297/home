@@ -314,6 +314,11 @@ Add-ScriptGate -Name 'Unified Material Interface' `
     -ExpectedPattern 'UNITY_UNIFIED_MATERIAL_INTERFACE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json' `
     -ReportName 'UnifiedMaterialInterfaceValidation.json'
+Add-ScriptGate -Name 'Material Showcase and Documentation' `
+    -ScriptName 'ValidateMaterialShowcase.ps1' `
+    -ExpectedPattern 'UNITY_MATERIAL_SHOWCASE: PASS' `
+    -Evidence 'UnityMaterialLab/Reports/MaterialShowcaseValidation.json' `
+    -ReportName 'MaterialShowcaseValidation.json'
 Add-ScriptGate -Name 'Unity Static Validation' -ScriptName 'StaticValidate.ps1' `
     -ExpectedPattern 'UNITY_PROJECT_STATIC_ACCEPTANCE: PASS' `
     -Evidence 'UnityMaterialLab/Reports/StaticValidation.json' `
@@ -396,6 +401,8 @@ $report = [ordered]@{
         'UnityMaterialLab/Reports/SnowCoverValidation.json',
         'UnityMaterialLab/Reports/TransparencyRefractionValidation.json',
         'UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json',
+        'UnityMaterialLab/Reports/MaterialShowcaseReference.png',
+        'UnityMaterialLab/Reports/MaterialShowcaseValidation.json',
         'UnityMaterialLab/Reports/StaticValidation.json'
     )
 }

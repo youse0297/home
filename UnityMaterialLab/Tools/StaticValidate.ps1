@@ -363,6 +363,16 @@ $unifiedMaterialManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\
 $unifiedMaterialManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\UnifiedMaterialInterface.json.meta'
 $unifiedMaterialValidationPath = Join-Path $projectPath 'Tools\ValidateUnifiedMaterialInterface.ps1'
 $unifiedMaterialReportPath = Join-Path $projectPath 'Reports\UnifiedMaterialInterfaceValidation.json'
+$materialShowcaseBootstrapPath = Join-Path $projectPath 'Assets\_TA\Editor\MaterialShowcaseBootstrap.cs'
+$materialShowcaseBootstrapMetaPath = Join-Path $projectPath 'Assets\_TA\Editor\MaterialShowcaseBootstrap.cs.meta'
+$materialShowcaseManifestPath = Join-Path $projectPath 'Assets\_TA\Documentation\MaterialShowcase.json'
+$materialShowcaseManifestMetaPath = Join-Path $projectPath 'Assets\_TA\Documentation\MaterialShowcase.json.meta'
+$materialShowcaseReadmePath = Join-Path $projectPath 'Assets\_TA\Shaders\Library\README.md'
+$materialShowcaseReadmeMetaPath = Join-Path $projectPath 'Assets\_TA\Shaders\Library\README.md.meta'
+$materialShowcaseDocumentationPath = Join-Path $projectPath '..\docs\UNITY_MATERIAL_SHOWCASE.md'
+$materialShowcaseValidationPath = Join-Path $projectPath 'Tools\ValidateMaterialShowcase.ps1'
+$materialShowcaseBoardPath = Join-Path $projectPath 'Reports\MaterialShowcaseReference.png'
+$materialShowcaseReportPath = Join-Path $projectPath 'Reports\MaterialShowcaseValidation.json'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestPath -PathType Leaf) `
     'Edge wear contract exists'
 Add-Check (Test-Path -LiteralPath $edgeWearManifestMetaPath -PathType Leaf) `
@@ -421,6 +431,26 @@ Add-Check (Test-Path -LiteralPath $unifiedMaterialValidationPath -PathType Leaf)
     'Unified material interface validator exists'
 Add-Check (Test-Path -LiteralPath $unifiedMaterialReportPath -PathType Leaf) `
     'Unified material interface report exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseBootstrapPath -PathType Leaf) `
+    'Material showcase scene bootstrap exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseBootstrapMetaPath -PathType Leaf) `
+    'Material showcase scene bootstrap meta exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseManifestPath -PathType Leaf) `
+    'Material showcase scene contract exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseManifestMetaPath -PathType Leaf) `
+    'Material showcase scene contract meta exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseReadmePath -PathType Leaf) `
+    'Renderer HLSL source library README exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseReadmeMetaPath -PathType Leaf) `
+    'Renderer HLSL source library README meta exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseDocumentationPath -PathType Leaf) `
+    'Material showcase task documentation exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseValidationPath -PathType Leaf) `
+    'Material showcase validator exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseBoardPath -PathType Leaf) `
+    'Material showcase offline reference board exists'
+Add-Check (Test-Path -LiteralPath $materialShowcaseReportPath -PathType Leaf) `
+    'Material showcase validation report exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialPath -PathType Leaf) `
     'Layered normal material asset exists'
 Add-Check (Test-Path -LiteralPath $layeredNormalMaterialMetaPath -PathType Leaf) `
@@ -1656,6 +1686,35 @@ if (Test-Path -LiteralPath $unifiedMaterialReportPath) {
         'Unified material interface report validates numeric parity, call ownership and consumer migration'
 }
 
+if (Test-Path -LiteralPath $materialShowcaseManifestPath) {
+    $materialShowcaseManifest = Get-Content -LiteralPath $materialShowcaseManifestPath -Raw | ConvertFrom-Json
+    Add-Check ($materialShowcaseManifest.status -in @('STATIC_SCENE_SPEC_VALIDATED', 'EDITOR_SCENE_GENERATED') -and
+        $materialShowcaseManifest.version -eq '1.0.0' -and
+        @($materialShowcaseManifest.showcases).Count -eq 6 -and
+        @($materialShowcaseManifest.validationChecklist).Count -eq 6 -and
+        @($materialShowcaseManifest.limitations).Count -eq 3) `
+        'Material showcase contract fixes six stands, runtime checks and explicit limitations'
+}
+if (Test-Path -LiteralPath $materialShowcaseReportPath) {
+    $materialShowcaseReport = Get-Content -LiteralPath $materialShowcaseReportPath -Raw | ConvertFrom-Json
+    Add-Check ($materialShowcaseReport.status -eq 'PASS' -and
+        $materialShowcaseReport.showcaseCount -eq 6 -and
+        $materialShowcaseReport.uniqueMaterialCount -eq 6 -and
+        $materialShowcaseReport.checklistCount -eq 6 -and
+        $materialShowcaseReport.limitationCount -eq 3 -and
+        @($materialShowcaseReport.failures).Count -eq 0) `
+        'Material showcase report validates scene specification, documentation and offline board'
+}
+if (Test-Path -LiteralPath $materialShowcaseBootstrapPath) {
+    $materialShowcaseBootstrap = Get-Content -LiteralPath $materialShowcaseBootstrapPath -Raw
+    Add-Check ($materialShowcaseBootstrap -match 'Build Material Showcase' -and
+        $materialShowcaseBootstrap -match 'SCN_MaterialShowcase' -and
+        ([Regex]::Matches($materialShowcaseBootstrap, 'new ShowcaseDefinition')).Count -eq 6 -and
+        $materialShowcaseBootstrap -match 'CAM_MaterialShowcase' -and
+        $materialShowcaseBootstrap -match 'EditorBuildSettingsScene') `
+        'Material showcase bootstrap creates six labeled stands with fixed camera and build settings'
+}
+
 if (Test-Path -LiteralPath $basePassControllerPath) {
     $basePassController = Get-Content -LiteralPath $basePassControllerPath -Raw
     Add-Check ($basePassController -match 'enum BasePassDebugView' -and
@@ -1788,7 +1847,8 @@ if ($compilerAvailable -and (Test-Path -LiteralPath $bootstrapPath)) {
         $lodPolicyPath `
         $lodBootstrapPath `
         $basePassControllerPath `
-        $basePassBootstrapPath
+        $basePassBootstrapPath `
+        $materialShowcaseBootstrapPath
     Add-Check ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $compileOutput)) `
         'ProjectBootstrap compiles against installed Unity assemblies'
 }
