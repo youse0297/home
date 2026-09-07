@@ -1,0 +1,425 @@
+﻿{
+    "status":  "PASS",
+    "releaseVersion":  "1.0.0",
+    "sourceLibraryVersion":  "1.16.0",
+    "moduleCount":  18,
+    "hlslFileCount":  19,
+    "publicSymbolCount":  74,
+    "validatorCount":  18,
+    "passedValidatorCount":  18,
+    "sourceLibraryCheckCount":  116,
+    "compiler":  {
+                     "tool":  "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22621.0\\x64\\fxc.exe",
+                     "profile":  "ps_5_0",
+                     "entryPoint":  "PSMain",
+                     "warningsAsErrors":  true,
+                     "exitCode":  0,
+                     "warningCount":  0,
+                     "output":  [
+                                    "compilation object save succeeded; see E:\\ueProject\\home\\UnityMaterialLab\\Reports\\HlslSpecialAcceptanceScratch\\HlslReleaseSmoke.dxbc"
+                                ]
+                 },
+    "migration":  {
+                      "projectSkeletonFileCount":  2,
+                      "target":  "Assets/TA_HLSL/Library",
+                      "migratedModuleCount":  18,
+                      "migratedHlslFileCount":  19,
+                      "resolvedIncludeCount":  51,
+                      "hashesMatch":  true
+                  },
+    "release":  {
+                    "archive":  "UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip",
+                    "sha256File":  "UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.sha256",
+                    "sha256":  "70a8abf77aef7de6bb1750deae824de961493f3aed2f099daaa65653f5236990",
+                    "bytes":  18475,
+                    "entryCount":  21
+                },
+    "editorShaderValidation":  "BLOCKED_LICENSE",
+    "generatedAtUtc":  "2026-09-07T11:02:40.5077583Z",
+    "validators":  [
+                       {
+                           "name":  "HLSL Source Library",
+                           "script":  "ValidateHlslSourceLibrary.ps1",
+                           "report":  "HlslSourceLibraryValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_HLSL_SOURCE_LIBRARY: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\HlslSourceLibraryValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Vector and Sampling",
+                           "script":  "ValidateVectorSamplingUtilities.ps1",
+                           "report":  "VectorSamplingUtilitiesValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_VECTOR_SAMPLING_UTILITIES: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\VectorSamplingUtilitiesValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "PBR Input Layer",
+                           "script":  "ValidatePbrInputLayer.ps1",
+                           "report":  "PbrInputLayerValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_PBR_INPUT_LAYER: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\PbrInputLayerValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "GGX Distribution",
+                           "script":  "ValidateGgxNormalDistribution.ps1",
+                           "report":  "GgxNormalDistributionValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_GGX_NORMAL_DISTRIBUTION: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\GgxNormalDistributionValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "GGX Geometry and Fresnel",
+                           "script":  "ValidateGgxGeometryFresnel.ps1",
+                           "report":  "GgxGeometryFresnelValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_GGX_GEOMETRY_FRESNEL: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\GgxGeometryFresnelValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Direct-light PBR",
+                           "script":  "ValidateDirectLightPbrIntegration.ps1",
+                           "report":  "DirectLightPbrIntegrationValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_DIRECT_LIGHT_PBR_INTEGRATION: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\DirectLightPbrIntegrationValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "PBR Parameter Regression",
+                           "script":  "ValidatePbrParameterRegression.ps1",
+                           "report":  "PbrParameterRegressionValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_PBR_PARAMETER_REGRESSION: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\PbrParameterRegressionValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Vertex Displacement",
+                           "script":  "ValidateVertexDisplacementBasics.ps1",
+                           "report":  "VertexDisplacementBasicsValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_VERTEX_DISPLACEMENT_BASICS: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\VertexDisplacementBasicsValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Wave and Wind",
+                           "script":  "ValidateWaveWindAnimation.ps1",
+                           "report":  "WaveWindAnimationValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_WAVE_WIND_ANIMATION: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\WaveWindAnimationValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Vertex Deformation",
+                           "script":  "ValidateVertexDisplacementModularization.ps1",
+                           "report":  "VertexDisplacementModularizationValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_VERTEX_DISPLACEMENT_MODULARIZATION: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\VertexDisplacementModularizationValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Normal Layer Blending",
+                           "script":  "ValidateNormalLayerBlending.ps1",
+                           "report":  "NormalLayerBlendingValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_NORMAL_LAYER_BLENDING: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\NormalLayerBlendingValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Procedural Mask",
+                           "script":  "ValidateProceduralMask.ps1",
+                           "report":  "ProceduralMaskValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_PROCEDURAL_MASK: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\ProceduralMaskValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Edge Wear",
+                           "script":  "ValidateEdgeWear.ps1",
+                           "report":  "EdgeWearValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_EDGE_WEAR: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\EdgeWearValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Snow Cover",
+                           "script":  "ValidateSnowCover.ps1",
+                           "report":  "SnowCoverValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_SNOW_COVER: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\SnowCoverValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Anisotropy",
+                           "script":  "ValidateAnisotropyBasics.ps1",
+                           "report":  "AnisotropyBasicsValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_ANISOTROPY_BASICS: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\AnisotropyBasicsValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Anisotropic PBR",
+                           "script":  "ValidateAnisotropicPbrIntegration.ps1",
+                           "report":  "AnisotropicPbrIntegrationValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_ANISOTROPIC_PBR_INTEGRATION: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\AnisotropicPbrIntegrationValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Transparency and Refraction",
+                           "script":  "ValidateTransparencyRefraction.ps1",
+                           "report":  "TransparencyRefractionValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_TRANSPARENCY_REFRACTION: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TransparencyRefractionValidation.json"
+                                          ]
+                       },
+                       {
+                           "name":  "Unified Material Interface",
+                           "script":  "ValidateUnifiedMaterialInterface.ps1",
+                           "report":  "UnifiedMaterialInterfaceValidation.json",
+                           "status":  "PASS",
+                           "exitCode":  0,
+                           "outputTail":  [
+                                              "UNITY_UNIFIED_MATERIAL_INTERFACE: PASS",
+                                              "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\UnifiedMaterialInterfaceValidation.json"
+                                          ]
+                       }
+                   ],
+    "checks":  [
+                   {
+                       "id":  "RELEASE_VERSION",
+                       "pass":  true,
+                       "detail":  "Release contract is v1.0.0"
+                   },
+                   {
+                       "id":  "SOURCE_VERSION",
+                       "pass":  true,
+                       "detail":  "Release and source-library versions agree"
+                   },
+                   {
+                       "id":  "MODULE_COUNT",
+                       "pass":  true,
+                       "detail":  "Source manifest contains eighteen modules"
+                   },
+                   {
+                       "id":  "PUBLIC_SYMBOL_COUNT",
+                       "pass":  true,
+                       "detail":  "Source manifest contains seventy-four public symbols"
+                   },
+                   {
+                       "id":  "FXC_AVAILABLE",
+                       "pass":  true,
+                       "detail":  "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.22621.0\\x64\\fxc.exe"
+                   },
+                   {
+                       "id":  "SMOKE_SHADER",
+                       "pass":  true,
+                       "detail":  "E:\\ueProject\\home\\UnityMaterialLab\\Tools\\HlslReleaseSmoke.hlsl"
+                   },
+                   {
+                       "id":  "VALIDATOR_HLSL_SOURCE_LIBRARY",
+                       "pass":  true,
+                       "detail":  "UNITY_HLSL_SOURCE_LIBRARY: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_VECTOR_AND_SAMPLING",
+                       "pass":  true,
+                       "detail":  "UNITY_VECTOR_SAMPLING_UTILITIES: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_PBR_INPUT_LAYER",
+                       "pass":  true,
+                       "detail":  "UNITY_PBR_INPUT_LAYER: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_GGX_DISTRIBUTION",
+                       "pass":  true,
+                       "detail":  "UNITY_GGX_NORMAL_DISTRIBUTION: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_GGX_GEOMETRY_AND_FRESNEL",
+                       "pass":  true,
+                       "detail":  "UNITY_GGX_GEOMETRY_FRESNEL: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_DIRECT_LIGHT_PBR",
+                       "pass":  true,
+                       "detail":  "UNITY_DIRECT_LIGHT_PBR_INTEGRATION: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_PBR_PARAMETER_REGRESSION",
+                       "pass":  true,
+                       "detail":  "UNITY_PBR_PARAMETER_REGRESSION: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_VERTEX_DISPLACEMENT",
+                       "pass":  true,
+                       "detail":  "UNITY_VERTEX_DISPLACEMENT_BASICS: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_WAVE_AND_WIND",
+                       "pass":  true,
+                       "detail":  "UNITY_WAVE_WIND_ANIMATION: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_VERTEX_DEFORMATION",
+                       "pass":  true,
+                       "detail":  "UNITY_VERTEX_DISPLACEMENT_MODULARIZATION: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_NORMAL_LAYER_BLENDING",
+                       "pass":  true,
+                       "detail":  "UNITY_NORMAL_LAYER_BLENDING: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_PROCEDURAL_MASK",
+                       "pass":  true,
+                       "detail":  "UNITY_PROCEDURAL_MASK: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_EDGE_WEAR",
+                       "pass":  true,
+                       "detail":  "UNITY_EDGE_WEAR: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_SNOW_COVER",
+                       "pass":  true,
+                       "detail":  "UNITY_SNOW_COVER: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_ANISOTROPY",
+                       "pass":  true,
+                       "detail":  "UNITY_ANISOTROPY_BASICS: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_ANISOTROPIC_PBR",
+                       "pass":  true,
+                       "detail":  "UNITY_ANISOTROPIC_PBR_INTEGRATION: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_TRANSPARENCY_AND_REFRACTION",
+                       "pass":  true,
+                       "detail":  "UNITY_TRANSPARENCY_REFRACTION: PASS"
+                   },
+                   {
+                       "id":  "VALIDATOR_UNIFIED_MATERIAL_INTERFACE",
+                       "pass":  true,
+                       "detail":  "UNITY_UNIFIED_MATERIAL_INTERFACE: PASS"
+                   },
+                   {
+                       "id":  "SOURCE_LIBRARY_CHECK_COUNT",
+                       "pass":  true,
+                       "detail":  "Source library completed all 116 structural checks"
+                   },
+                   {
+                       "id":  "EMPTY_PROJECT_BASELINE",
+                       "pass":  true,
+                       "detail":  "Migration begins from a two-file Unity project skeleton"
+                   },
+                   {
+                       "id":  "PACKAGE_SOURCE_COUNT",
+                       "pass":  true,
+                       "detail":  "Package stages eighteen modules and one aggregate HLSL header"
+                   },
+                   {
+                       "id":  "ARCHIVE_CREATED",
+                       "pass":  true,
+                       "detail":  "E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Releases\\TA_HLSL_MaterialLibrary_v1.0.0.zip"
+                   },
+                   {
+                       "id":  "CHECKSUM_CREATED",
+                       "pass":  true,
+                       "detail":  "E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Releases\\TA_HLSL_MaterialLibrary_v1.0.0.sha256"
+                   },
+                   {
+                       "id":  "MIGRATED_HLSL_FILE_COUNT",
+                       "pass":  true,
+                       "detail":  "The archive migrates eighteen modules and the aggregate header into the empty project"
+                   },
+                   {
+                       "id":  "MIGRATED_HASHES",
+                       "pass":  true,
+                       "detail":  "Every extracted release file matches its recorded SHA-256"
+                   },
+                   {
+                       "id":  "INCLUDE_CLOSURE",
+                       "pass":  true,
+                       "detail":  "All quoted includes resolve inside the migrated library"
+                   },
+                   {
+                       "id":  "PACKAGE_CLEAN",
+                       "pass":  true,
+                       "detail":  "Release archive excludes Unity metadata, caches and reports"
+                   },
+                   {
+                       "id":  "PACKAGE_ENTRY_COUNT",
+                       "pass":  true,
+                       "detail":  "Archive contains nineteen HLSL files, README and release manifest"
+                   },
+                   {
+                       "id":  "WARNING_FREE_COMPILE",
+                       "pass":  true,
+                       "detail":  "Migrated aggregate compiles as ps_5_0 with /WX and /Ges"
+                   }
+               ],
+    "failures":  [
+
+                 ],
+    "limitations":  [
+                        "The Windows SDK compiler validates portable HLSL syntax and reachable library paths, not Unity URP shader variants",
+                        "Unity shader import and platform variant compilation still require a licensed Unity 2022.3.62f3c1 Editor",
+                        "Consumers must include URP Core.hlsl before TA_ShaderLibrary.hlsl so Unity texture macros are available",
+                        "Vertex animation normal reconstruction and Shadow or Depth pass synchronization remain outside v1.0"
+                    ]
+}

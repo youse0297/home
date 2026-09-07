@@ -1,0 +1,430 @@
+﻿{
+    "status":  "CONDITIONAL_PASS",
+    "phase":  "Stage 1",
+    "offlineAcceptance":  "PASS",
+    "externalRuntimeAcceptance":  "BLOCKED",
+    "requiredGateCount":  26,
+    "passedRequiredGateCount":  26,
+    "blockerCount":  2,
+    "configuration":  "Debug",
+    "buildDirectory":  "E:\\ueProject\\home\\build",
+    "generatedAtUtc":  "2026-09-07T11:02:46.3324171Z",
+    "gates":  [
+                  {
+                      "name":  "CMake Configure",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/CMakeCache.txt",
+                      "detail":  "Skipped by request; the existing CMake cache is used.",
+                      "exitCode":  0,
+                      "outputTail":  [
+
+                                     ]
+                  },
+                  {
+                      "name":  "Debug Build",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/Debug",
+                      "detail":  "Skipped by request; existing Debug binaries are used.",
+                      "exitCode":  0,
+                      "outputTail":  [
+
+                                     ]
+                  },
+                  {
+                      "name":  "CTest 12/12",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/Testing/Temporary/LastTest.log",
+                      "detail":  "All 12 CPU renderer acceptance tests passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "      Start  7: texture_sampling_acceptance",
+                                         " 7/12 Test  #7: texture_sampling_acceptance .............   Passed    0.03 sec",
+                                         "      Start  8: surface_attributes_acceptance",
+                                         " 8/12 Test  #8: surface_attributes_acceptance ...........   Passed    0.03 sec",
+                                         "      Start  9: diffuse_exposure_acceptance",
+                                         " 9/12 Test  #9: diffuse_exposure_acceptance .............   Passed    0.03 sec",
+                                         "      Start 10: ggx_brdf_acceptance",
+                                         "10/12 Test #10: ggx_brdf_acceptance .....................   Passed    0.02 sec",
+                                         "      Start 11: material_workflow_acceptance",
+                                         "11/12 Test #11: material_workflow_acceptance ............   Passed    0.03 sec",
+                                         "      Start 12: release_acceptance",
+                                         "12/12 Test #12: release_acceptance ......................   Passed    0.03 sec",
+                                         "",
+                                         "100% tests passed, 0 tests failed out of 12",
+                                         "",
+                                         "Total Test time (real) =   0.31 sec"
+                                     ]
+                  },
+                  {
+                      "name":  "Release PPM Artifact",
+                      "category":  "CPU Renderer",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "build/release_acceptance.ppm",
+                      "detail":  "The release acceptance produced a P6 image artifact; its fixed checksum is covered by CTest.",
+                      "exitCode":  0,
+                      "outputTail":  [
+
+                                     ]
+                  },
+                  {
+                      "name":  "Material Boundary Matrix",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/MaterialBoundaryBoard.png",
+                      "detail":  "Command completed with the required acceptance marker.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "Material boundary board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialBoundaryBoard.png"
+                                     ]
+                  },
+                  {
+                      "name":  "Material Function Library",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/MaterialFunctionLibraryValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_MATERIAL_FUNCTION_LIBRARY_V1: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialFunctionLibraryValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Texture Compression",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/TextureCompressionValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_TEXTURE_COMPRESSION_ACCEPTANCE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TextureCompressionValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "LOD Baseline",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/LODValidationReport.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_LOD_ACCEPTANCE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODComparisonBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LODValidationReport.json"
+                                     ]
+                  },
+                  {
+                      "name":  "BasePass Lighting Decomposition",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/BasePassLightingValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_BASEPASS_LIGHTING_ACCEPTANCE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingDecompositionBoard.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\BasePassLightingValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Direct-light PBR Integration",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_DIRECT_LIGHT_PBR_INTEGRATION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\DirectLightPbrIntegrationValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "PBR Parameter Regression",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/PbrParameterRegressionValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_PBR_PARAMETER_REGRESSION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\PbrParameterRegressionValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Vertex Displacement Basics",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_VERTEX_DISPLACEMENT_BASICS: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\VertexDisplacementBasicsValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Wave and Wind Animation",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/WaveWindAnimationValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_WAVE_WIND_ANIMATION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\WaveWindAnimationValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Vertex Displacement Modularization",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_VERTEX_DISPLACEMENT_MODULARIZATION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\VertexDisplacementModularizationValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Normal Layer Blending",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/NormalLayerBlendingValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_NORMAL_LAYER_BLENDING: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\NormalLayerBlendingValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Layered Normal Material",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/LayeredNormalMaterialValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_LAYERED_NORMAL_MATERIAL: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\LayeredNormalMaterialValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Procedural Mask",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/ProceduralMaskValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_PROCEDURAL_MASK: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\ProceduralMaskValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Edge Wear",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/EdgeWearValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_EDGE_WEAR: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\EdgeWearValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Snow Cover",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/SnowCoverValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_SNOW_COVER: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\SnowCoverValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Anisotropy Basics",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/AnisotropyBasicsValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_ANISOTROPY_BASICS: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\AnisotropyBasicsValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Anisotropic PBR Integration",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/AnisotropicPbrIntegrationValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_ANISOTROPIC_PBR_INTEGRATION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\AnisotropicPbrIntegrationValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Transparency and Refraction",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/TransparencyRefractionValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_TRANSPARENCY_REFRACTION: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\TransparencyRefractionValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Unified Material Interface",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_UNIFIED_MATERIAL_INTERFACE: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\UnifiedMaterialInterfaceValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Material Showcase and Documentation",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/MaterialShowcaseValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_MATERIAL_SHOWCASE: PASS",
+                                         "Board: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialShowcaseReference.png",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\MaterialShowcaseValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "HLSL Special Acceptance",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/HlslSpecialAcceptance.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_HLSL_SPECIAL_ACCEPTANCE: PASS",
+                                         "Archive: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Releases\\TA_HLSL_MaterialLibrary_v1.0.0.zip",
+                                         "SHA256: 70a8abf77aef7de6bb1750deae824de961493f3aed2f099daaa65653f5236990",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\HlslSpecialAcceptance.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Unity Static Validation",
+                      "category":  "Unity Offline",
+                      "required":  true,
+                      "status":  "PASS",
+                      "evidence":  "UnityMaterialLab/Reports/StaticValidation.json",
+                      "detail":  "Command and generated JSON report both passed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "UNITY_PROJECT_STATIC_ACCEPTANCE: PASS",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Reports\\StaticValidation.json"
+                                     ]
+                  },
+                  {
+                      "name":  "RenderDoc Capture Readiness",
+                      "category":  "External Runtime",
+                      "required":  false,
+                      "status":  "BLOCKED",
+                      "evidence":  "UnityMaterialLab/Reports/RenderDocCaptureReadiness.json",
+                      "detail":  "RenderDoc capture remains blocked because RenderDoc is not installed.",
+                      "exitCode":  0,
+                      "outputTail":  [
+                                         "RENDERDOC_CAPTURE_READINESS: BLOCKED_TOOLING",
+                                         "Report: E:\\ueProject\\home\\UnityMaterialLab\\Tools\\..\\Reports\\RenderDocCaptureReadiness.json"
+                                     ]
+                  },
+                  {
+                      "name":  "Unity Editor Runtime Validation",
+                      "category":  "External Runtime",
+                      "required":  false,
+                      "status":  "BLOCKED",
+                      "evidence":  "UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md",
+                      "detail":  "Unity Editor scene generation and shader import remain blocked by the local license entitlement.",
+                      "exitCode":  0,
+                      "outputTail":  [
+
+                                     ]
+                  }
+              ],
+    "blockers":  [
+                     {
+                         "name":  "RenderDoc Capture Readiness",
+                         "evidence":  "UnityMaterialLab/Reports/RenderDocCaptureReadiness.json",
+                         "detail":  "RenderDoc capture remains blocked because RenderDoc is not installed."
+                     },
+                     {
+                         "name":  "Unity Editor Runtime Validation",
+                         "evidence":  "UnityMaterialLab/Reports/EDITOR_VALIDATION_BLOCKED.md",
+                         "detail":  "Unity Editor scene generation and shader import remain blocked by the local license entitlement."
+                     }
+                 ],
+    "artifacts":  [
+                      "build/release_acceptance.ppm",
+                      "UnityMaterialLab/Reports/MaterialBoundaryBoard.png",
+                      "UnityMaterialLab/Reports/TextureCompressionBoard.png",
+                      "UnityMaterialLab/Reports/LODComparisonBoard.png",
+                      "UnityMaterialLab/Reports/BasePassLightingDecompositionBoard.png",
+                      "UnityMaterialLab/Reports/DirectLightPbrIntegrationValidation.json",
+                      "UnityMaterialLab/Reports/PbrParameterRegressionValidation.json",
+                      "UnityMaterialLab/Reports/VertexDisplacementBasicsValidation.json",
+                      "UnityMaterialLab/Reports/WaveWindAnimationValidation.json",
+                      "UnityMaterialLab/Reports/VertexDisplacementModularizationValidation.json",
+                      "UnityMaterialLab/Reports/NormalLayerBlendingValidation.json",
+                      "UnityMaterialLab/Reports/LayeredNormalMaterialValidation.json",
+                      "UnityMaterialLab/Reports/ProceduralMaskValidation.json",
+                      "UnityMaterialLab/Reports/EdgeWearValidation.json",
+                      "UnityMaterialLab/Reports/SnowCoverValidation.json",
+                      "UnityMaterialLab/Reports/TransparencyRefractionValidation.json",
+                      "UnityMaterialLab/Reports/UnifiedMaterialInterfaceValidation.json",
+                      "UnityMaterialLab/Reports/MaterialShowcaseReference.png",
+                      "UnityMaterialLab/Reports/MaterialShowcaseValidation.json",
+                      "UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.zip",
+                      "UnityMaterialLab/Releases/TA_HLSL_MaterialLibrary_v1.0.0.sha256",
+                      "UnityMaterialLab/Reports/HlslSpecialAcceptance.json",
+                      "UnityMaterialLab/Reports/StaticValidation.json"
+                  ]
+}
