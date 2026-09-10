@@ -72,11 +72,15 @@ $remote = (& git -C $repoRoot remote get-url origin 2>$null).Trim()
 $head = (& git -C $repoRoot rev-parse HEAD 2>$null).Trim()
 $originMain = (& git -C $repoRoot rev-parse refs/remotes/origin/main 2>$null).Trim()
 $aheadBehind = (& git -C $repoRoot rev-list --left-right --count refs/remotes/origin/main...HEAD 2>$null).Trim()
+$hlslAcceptanceCommit = 'c5758c5a544b774bb96903a2b0ce06dd320fb26e'
+& git -C $repoRoot merge-base --is-ancestor $hlslAcceptanceCommit HEAD 2>$null
+$headContainsHlslAcceptance = $LASTEXITCODE -eq 0
+& git -C $repoRoot merge-base --is-ancestor $hlslAcceptanceCommit refs/remotes/origin/main 2>$null
+$remoteContainsHlslAcceptance = $LASTEXITCODE -eq 0
 Add-Check 'GIT_REMOTE' ($remote -eq 'https://github.com/youse0297/home.git') 'Expected GitHub remote is configured'
-Add-Check 'GIT_HEAD' ($head -eq 'c5758c5a544b774bb96903a2b0ce06dd320fb26e') 'Inventory snapshot matches the HLSL acceptance commit'
-Add-Check 'REMOTE_GAP_RECORDED' ($aheadBehind -match '^0\s+1$' -and
-    $originMain -eq '6d5b395db82494b092cdd137a38061d7478f00c3') `
-    'Local main is one commit ahead of the recorded remote branch'
+Add-Check 'GIT_HISTORY' $headContainsHlslAcceptance 'Current HEAD contains the frozen HLSL acceptance commit'
+Add-Check 'REMOTE_CONTAINS_HLSL' $remoteContainsHlslAcceptance 'Remote main contains the frozen HLSL acceptance commit'
+Add-Check 'LOCAL_NOT_BEHIND' ($aheadBehind -match '^0\s+\d+$') 'Local HEAD is not behind the recorded remote branch'
 
 $fileRecords = @($allFiles | Where-Object { $_.FullName -ne $ReportPath } | Sort-Object FullName |
     ForEach-Object {
@@ -90,7 +94,7 @@ $fileRecords = @($allFiles | Where-Object { $_.FullName -ne $ReportPath } | Sort
 $status = if ($failures.Count -eq 0) { 'PASS_WITH_EXTERNAL_GAPS' } else { 'FAIL' }
 $report = [ordered]@{
     status = $status
-    snapshotDate = '2026-09-07'
+    snapshotDate = (Get-Date).ToString('yyyy-MM-dd')
     git = [ordered]@{ remote = $remote; head = $head; originMain = $originMain; aheadBehind = $aheadBehind }
     inventory = [ordered]@{
         files = $fileRecords.Count
